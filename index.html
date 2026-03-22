@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Restaurante Sabor Caseiro</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; line-height: 1.6; background: #f9f9f9; color: #333; }
+    header { background: #c0392b; color: white; text-align: center; padding: 60px 20px; }
+    header h1 { font-size: 3em; margin-bottom: 10px; }
+    nav { background: #e74c3c; padding: 15px; text-align: center; }
+    nav a { color: white; margin: 0 20px; text-decoration: none; font-weight: bold; }
+    nav a:hover { text-decoration: underline; }
+    section { padding: 50px 20px; max-width: 1200px; margin: 0 auto; }
+    #sobre { background: white; }
+    #menu { background: #ecf0f1; }
+    .prato { display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; margin-top: 30px; }
+    .prato-item { background: white; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 300px; overflow: hidden; text-align: center; }
+    .prato-item img { width: 100%; height: 200px; object-fit: cover; }
+    .prato-item h3 { padding: 15px; background: #c0392b; color: white; }
+    .prato-item p { padding: 15px; font-size: 1.1em; }
+    #localizacao { background: #2c3e50; color: white; text-align: center; }
+    #localizacao iframe { width: 100%; height: 400px; border: none; margin-top: 20px; }
+    #contacto { background: white; text-align: center; }
+    footer { background: #2c3e50; color: white; text-align: center; padding: 20px; }
+    .btn { display: inline-block; background: #27ae60; color: white; padding: 12px 30px; margin: 10px; text-decoration: none; border-radius: 5px; font-weight: bold; }
+    .btn:hover { background: #219653; }
+    @media (max-width: 768px) {
+      header h1 { font-size: 2.2em; }
+      nav a { margin: 0 10px; font-size: 0.9em; }
+      .prato-item { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Restaurante Sabor Caseiro</h1>
+    <p>Comida tradicional portuguesa feita com amor</p>
+  </header>
+
+  <nav>
+    <a href="#sobre">Sobre</a>
+    <a href="#menu">Menu</a>
+    <a href="#localizacao">Localização</a>
+    <a href="#contacto">Contacto</a>
+  </nav>
+
+  <section id="sobre">
+    <h2>Sobre Nós</h2>
+    <p>Bem-vindo ao Sabor Caseiro! Há mais de 10 anos servimos pratos tradicionais portugueses com ingredientes frescos e receitas de família. Venha provar o nosso famoso bacalhau à brás, cozido à portuguesa e sobremesas caseiras.</p>
+    <p>Horário: Segunda a Domingo das 12h às 23h</p>
+  </section>
+
+  <section id="menu">
+    <h2>Menu Principal</h2>
+    <div class="prato">
+      <div class="prato-item">
+        <img src="https://images.unsplash.com/photo-1600891964599-f61ba0e24092?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Bacalhau à Brás">
+        <h3>Bacalhau à Brás</h3>
+        <p>12,50 €</p>
+      </div>
+      <div class="prato-item">
+        <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Francesinha">
+        <h3>Francesinha</h3>
+        <p>14,90 €</p>
+      </div>
+      <div class="prato-item">
+        <img src="https://images.unsplash.com/photo-1565299585323-38d6b0865b47?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Cozido à Portuguesa">
+        <h3>Cozido à Portuguesa</h3>
+        <p>16,50 €</p>
+      </div>
+      <div class="prato-item">
+        <img src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Pastel de Nata">
+        <h3>Pastel de Nata</h3>
+        <p>2,00 €</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="localizacao">
+    <h2>Onde Estamos</h2>
+    <p>Rua do Sabor, 123 - Lisboa, Portugal</p>
+    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3112.3456789012345!2d-9.139987!3d38.722252!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd1932d8b8f8f8f8%3A0x8f8f8f8f8f8f8f8!2sLisboa!5e0!3m2!1spt-PT!2spt!4v1690000000000" allowfullscreen="" loading="lazy"></iframe>
+  </section>
+
+  <section id="contacto">
+    <h2>Contacto</h2>
+    <p>Telefone: 912 345 678</p>
+    <p>Email: contato@saborcaseiro.pt</p>
+    <p>WhatsApp: <a href="https://wa.me/351912345678" target="_blank" class="btn">Fale connosco no WhatsApp</a></p>
+  </section>
+
+  <footer>
+    <p>&copy; 2026 Restaurante Sabor Caseiro. Todos os direitos reservados.</p>
+  </footer>
+
+</body>
+</html>
