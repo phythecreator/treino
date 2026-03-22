@@ -3,598 +3,200 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Estúdio Pétala | Estética & Bem-Estar | Vila Real</title>
+    <title>PhyTheCreator | Agência de Websites de Alta Performance</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
-        /* ==============================
-           1. RESET & VARIAVEIS LIGHT MODE
-           ============================== */
         :root {
-            --primary-color: #d4a373; /* Bege/Bronze Suave - Cor de Destaque */
-            --bg-light: #ffffff; /* Fundo Principal - Branco Puro */
-            --bg-section: #f9f9f9; /* Fundo Alternado - Cinza Muito Claro */
-            --text-main: #2d2d2d; /* Texto Principal - Cinza Escuro (Melhor que Preto) */
-            --text-muted: #6c757d; /* Texto Secundário - Cinza Médio */
-            --border-color: #e0e0e0; /* Cor das Bordas */
-            --font-main: 'Montserrat', sans-serif;
-            --font-title: 'Playfair Display', serif; /* Fonte Elegante para Títulos */
+            --primary: #0066ff;
+            --bg: #ffffff;
+            --bg-alt: #f4f7ff;
+            --text: #1a1f26;
+            --text-light: #6b7280;
+            --shadow: 0 20px 40px rgba(0,0,0,0.06);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background: var(--bg); color: var(--text); line-height: 1.6; }
+        html { scroll-behavior: smooth; }
 
-        html {
-            scroll-behavior: smooth; /* Animação suave ao clicar no menu */
-            font-family: var(--font-main);
-            color: var(--text-main);
-            background-color: var(--bg-light);
+        /* --- NOTIFICAÇÃO PROFISSIONAL --- */
+        #smart-pop {
+            position: fixed; bottom: 30px; left: 30px; background: #fff; border-left: 5px solid var(--primary);
+            padding: 25px; border-radius: 12px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.2);
+            z-index: 10000; max-width: 380px; display: none; animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
         }
+        @keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-        body {
-            line-height: 1.6;
-            overflow-x: hidden; /* Evita scroll horizontal */
-        }
+        /* --- NAV --- */
+        nav { padding: 25px 8%; display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.8); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 100; border-bottom: 1px solid #eee; }
+        .logo { font-size: 24px; font-weight: 800; color: var(--text); letter-spacing: -1px; }
+        .logo span { color: var(--primary); }
+        .nav-links a { margin-left: 30px; text-decoration: none; color: var(--text); font-weight: 600; font-size: 14px; }
 
-        a { text-decoration: none; color: inherit; transition: 0.3s; }
-        ul { list-style: none; }
-        img { max-width: 100%; height: auto; display: block; }
+        /* --- HERO --- */
+        .hero { padding: 120px 8% 80px; text-align: center; background: radial-gradient(circle at top right, #f0f4ff, #fff); }
+        .hero h1 { font-size: 56px; font-weight: 800; margin-bottom: 20px; letter-spacing: -2px; line-height: 1.1; }
+        .hero p { font-size: 18px; color: var(--text-light); max-width: 650px; margin: 0 auto 40px; }
 
-        /* Títulos e Subtítulos Globais */
-        .section-title {
-            font-family: var(--font-title);
-            font-size: 38px;
-            text-align: center;
-            color: var(--text-main);
-            margin-bottom: 10px;
-            font-weight: 700;
-        }
+        /* --- SERVIÇOS --- */
+        .services { padding: 80px 8%; display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
+        .s-card { padding: 40px; background: var(--bg-alt); border-radius: 20px; transition: 0.3s; border: 1px solid transparent; }
+        .s-card:hover { background: #fff; border-color: var(--primary); box-shadow: var(--shadow); }
+        .s-card i { font-size: 32px; color: var(--primary); margin-bottom: 20px; }
 
-        .section-subtitle {
-            font-size: 16px;
-            text-align: center;
-            color: var(--text-muted);
-            margin-bottom: 60px;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-            font-weight: 400;
-        }
-
-        /* Botão Global */
-        .btn {
-            display: inline-block;
-            background-color: var(--primary-color);
-            color: #ffffff;
-            padding: 14px 35px;
-            font-weight: 600;
-            text-transform: uppercase;
-            border-radius: 50px; /* Botão Arredondado - Mais 'Soft' */
-            border: none;
-            cursor: pointer;
-            font-size: 14px;
-            letter-spacing: 1px;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-
-        .btn:hover {
-            background-color: #c09265;
-            transform: translateY(-3px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-        }
-
-        /* Container Padrão */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 5%;
-        }
-
-        /* ==============================
-           2. HEADER & MENU
-           ============================== */
-        header {
-            background-color: rgba(255, 255, 255, 0.98);
-            height: 90px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 5%;
-            position: fixed;
-            width: 100%;
-            top: 0;
-            z-index: 1000;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
-
-        .logo {
-            font-family: var(--font-title);
-            font-size: 28px;
-            font-weight: 700;
-            color: var(--text-main);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+        /* --- SIMULADOR DE MOCKUP (A MINA DE OURO) --- */
+        .simulator { padding: 100px 8%; background: var(--bg-alt); }
+        .sim-container { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center; background: #fff; padding: 50px; border-radius: 30px; box-shadow: var(--shadow); }
         
-        .logo i { color: var(--primary-color); }
-
-        .nav-links {
-            display: flex;
-            gap: 30px;
+        .mockup-window {
+            background: #f1f5f9; border-radius: 15px; padding: 10px; border: 4px solid #334155;
+            height: 400px; position: relative; overflow: hidden; transition: 0.5s;
         }
-
-        .nav-links a {
-            font-size: 14px;
-            text-transform: uppercase;
-            font-weight: 500;
-            color: var(--text-main);
-            letter-spacing: 1px;
-        }
-
-        .nav-links a:hover { color: var(--primary-color); }
-
-        /* Botão do Menu Mobile (Escondido no PC) */
-        .menu-toggle { display: none; color: var(--text-main); font-size: 24px; cursor: pointer; }
-
-        /* ==============================
-           3. SECÇÃO HERO (PÁGINA INICIAL)
-           ============================== */
-        .hero {
-            height: 100vh;
-            background: linear-gradient(rgba(255,255,255,0.85), rgba(255,255,255,0.95)), 
-                        url('https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?q=80&w=1920&auto=format&fit=crop');
-            background-size: cover;
-            background-position: center;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 0 5%;
-            padding-top: 90px;
-        }
-
-        .hero h1 {
-            font-family: var(--font-title);
-            font-size: 65px;
-            color: var(--text-main);
-            margin-bottom: 20px;
-            line-height: 1.1;
-            font-weight: 700;
-        }
-
-        .hero h1 span { color: var(--primary-color); }
-
-        .hero p {
-            font-size: 19px;
-            color: var(--text-muted);
-            margin-bottom: 45px;
-            max-width: 750px;
-            font-weight: 400;
-        }
-
-        /* ==============================
-           4. SECÇÃO SOBRE NÓS
-           ============================== */
-        .about { padding: 100px 0; background-color: var(--bg-light); }
-
-        .about-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 60px;
-            align-items: center;
-        }
-
-        .about-text h2 {
-            font-family: var(--font-title);
-            font-size: 36px;
-            color: var(--text-main);
-            margin-bottom: 20px;
-            text-align: left;
-        }
-
-        .about-text p {
-            color: var(--text-muted);
-            font-size: 16px;
-            margin-bottom: 20px;
-        }
-
-        .about-image img {
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
-
-        /* ==============================
-           5. SECÇÃO SERVIÇOS
-           ============================== */
-        .services { padding: 100px 0; background-color: var(--bg-section); }
-
-        .services-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-        }
-
-        .service-card {
-            background-color: var(--bg-light);
-            padding: 50px;
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-
-        .service-card:hover { 
-            border-color: var(--primary-color); 
-            transform: translateY(-8px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
-        }
-
-        .service-icon {
-            font-size: 45px;
-            color: var(--primary-color);
-            margin-bottom: 25px;
-            display: inline-block;
-            background-color: rgba(212, 163, 115, 0.1);
-            padding: 20px;
-            border-radius: 50%;
-        }
-
-        .service-card h3 { font-size: 22px; margin-bottom: 12px; color: var(--text-main); }
-        .service-card p { color: var(--text-muted); font-size: 15px; margin-bottom: 25px; }
-        .service-card .price { font-size: 26px; font-weight: 700; color: var(--primary-color); }
-
-        /* ==============================
-           6. SECÇÃO AVALIAÇÕES (TESTEMUNHOS)
-           ============================== */
-        .testimonials { padding: 100px 0; background-color: var(--bg-light); }
-
-        .testimonials-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
-            gap: 30px;
-        }
-
-        .testimonial-card {
-            background-color: var(--bg-section);
-            padding: 40px;
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
-            position: relative;
-        }
-
-        .quote-icon {
-            font-size: 35px;
-            color: var(--primary-color);
-            opacity: 0.2;
-            position: absolute;
-            top: 25px;
-            left: 25px;
-        }
-
-        .rating {
-            color: #ffc107; /* Cor Estrela Dourada */
-            font-size: 16px;
-            margin-bottom: 15px;
-        }
-
-        .testimonial-text {
-            color: var(--text-main);
-            font-style: italic;
-            margin-bottom: 25px;
-            margin-top: 15px;
-            font-size: 16px;
-            font-weight: 400;
-        }
-
-        .client-info { display: flex; align-items: center; gap: 18px; }
-        .client-info img { width: 55px; height: 55px; border-radius: 50%; object-fit: cover; border: 2px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .client-info h4 { font-size: 17px; color: var(--text-main); font-weight: 600; }
-        .client-info span { color: var(--text-muted); font-size: 14px; }
-
-        /* ==============================
-           7. SECÇÃO AGENDAMENTO & CONTACTO
-           ============================== */
-        .contact { padding: 100px 0; background-color: var(--bg-section); }
-
-        .contact-container {
-            display: grid;
-            grid-template-columns: 1fr 2fr;
-            gap: 60px;
-            align-items: start;
-        }
-
-        .contact-info { display: flex; flex-direction: column; gap: 35px; }
-
-        .info-item { display: flex; align-items: flex-start; gap: 18px; }
-        .info-item i { font-size: 22px; color: var(--primary-color); margin-top: 5px; }
-        .info-item h4 { margin-bottom: 6px; font-size: 18px; color: var(--text-main); }
-        .info-item p { color: var(--text-muted); font-size: 15px; }
-
-        /* Formulário de Agendamento */
-        .booking-form {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            background-color: var(--bg-light);
-            padding: 50px;
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-        }
-
-        .form-group { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-
-        input, textarea, select {
-            width: 100%;
-            padding: 16px;
-            background-color: #fdfdfd;
-            border: 1px solid var(--border-color);
-            color: var(--text-main);
-            border-radius: 6px;
-            font-size: 15px;
-            transition: 0.3s;
-        }
-
-        input:focus, textarea:focus, select:focus { border-color: var(--primary-color); outline: none; background-color: #fff; box-shadow: 0 0 0 3px rgba(212, 163, 115, 0.1); }
-        textarea { resize: none; height: 160px; }
+        .mockup-content { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; transition: 0.5s; }
         
-        /* Estilo para data e hora */
-        input[type="date"], input[type="time"] { color: var(--text-muted); }
-        input[type="date"]:focus, input[type="time"]:focus { color: var(--text-main); }
+        .control-panel { display: flex; flex-direction: column; gap: 15px; }
+        .control-panel select { padding: 15px; border-radius: 10px; border: 2px solid #eee; font-weight: 600; cursor: pointer; }
 
-        /* ==============================
-           8. SECÇÃO MAPA (LOCALIZAÇÃO)
-           ============================== */
-        .map { padding: 0; background-color: var(--bg-light); }
-        
-        /* Mapa responsivo */
-        .map-responsive {
-            overflow: hidden;
-            padding-bottom: 400px; /* Altura do mapa */
-            position: relative;
-            height: 0;
-            border-top: 1px solid var(--border-color);
-            border-bottom: 1px solid var(--border-color);
-        }
-        
-        .map-responsive iframe {
-            left: 0;
-            top: 0;
-            height: 100%;
-            width: 100%;
-            position: absolute;
-            border: 0;
-        }
+        /* --- PORTFÓLIO --- */
+        .portfolio { padding: 100px 8%; }
+        .p-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        .p-item { border-radius: 20px; overflow: hidden; box-shadow: var(--shadow); position: relative; height: 350px; }
+        .p-item img { width: 100%; height: 100%; object-fit: cover; }
+        .p-overlay { position: absolute; bottom: 0; left: 0; width: 100%; padding: 30px; background: linear-gradient(transparent, rgba(0,0,0,0.8)); color: #fff; }
 
-        /* ==============================
-           9. FOOTER & REDES SOCIAIS
-           ============================== */
-        footer {
-            padding: 60px 0;
-            background-color: var(--bg-light);
-            text-align: center;
-        }
+        .btn { background: var(--primary); color: #fff; padding: 16px 35px; border-radius: 12px; font-weight: 700; text-decoration: none; display: inline-block; transition: 0.3s; border: none; cursor: pointer; }
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,102,255,0.2); }
 
-        .social-links { display: flex; justify-content: center; gap: 25px; margin-bottom: 25px; }
-        .social-links a { font-size: 22px; color: var(--text-muted); transition: all 0.3s ease; }
-        .social-links a:hover { color: var(--primary-color); transform: scale(1.15); }
-
-        footer p { color: var(--text-muted); font-size: 14px; }
-        footer span { color: var(--primary-color); font-weight: 500; }
-
-        /* ==============================
-           10. RESPONSIVIDADE (TELEMÓVEL)
-           ============================== */
-        @media (max-width: 992px) {
-            .hero h1 { font-size: 50px; }
-            .about-container { grid-template-columns: 1fr; gap: 40px; text-align: center; }
-            .about-text h2 { text-align: center; font-size: 32px; }
-            .contact-container { grid-template-columns: 1fr; gap: 40px; }
-        }
-
-        @media (max-width: 768px) {
-            .nav-links { display: none; } /* Esconde o menu no mobile */
-            .menu-toggle { display: block; } /* Mostra o botão do menu */
-            header { height: 80px; }
-            .hero { padding-top: 80px; }
+        @media (max-width: 900px) { 
             .hero h1 { font-size: 38px; }
-            .hero p { font-size: 16px; margin-bottom: 35px; }
-            .form-group { grid-template-columns: 1fr; } /* Formulário em uma coluna */
-            .section-title { font-size: 30px; }
-            .booking-form { padding: 30px; }
-            .service-card { padding: 30px; }
-            .map-responsive { padding-bottom: 300px; }
+            .services, .sim-container { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="container" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-            <div class="logo">
-                <i class="fas fa-leaf"></i> Estúdio Pétala
-            </div>
-            <nav class="nav-links">
-                <a href="#home">Início</a>
-                <a href="#about">Quem Somos</a>
-                <a href="#services">Serviços</a>
-                <a href="#booking">Agendar</a>
-                <a href="#mapa">Onde Estamos</a>
-            </nav>
-            <div class="menu-toggle">
-                <i class="fas fa-bars"></i>
-            </div>
-        </div>
-    </header>
+    <div id="smart-pop">
+        <i class="fas fa-check-circle" style="color: var(--primary); font-size: 24px;"></i>
+        <h3 style="margin: 10px 0;">Solução Chave-na-mão</h3>
+        <p style="font-size: 14px; color: var(--text-light);">Incluímos: Design Exclusivo, Domínio Grátis, E-mail Profissional e Otimização Google Maps. Tudo em 48 horas.</p>
+        <button onclick="this.parentElement.style.display='none'" style="margin-top: 15px; background: none; border: none; font-weight: 800; cursor: pointer; color: var(--primary);">ENTENDIDO</button>
+    </div>
 
-    <section class="hero" id="home">
-        <div class="container">
-            <h1>Cuidamos da Tua <span>Beleza Natural</span></h1>
-            <p>Um refúgio de bem-estar em Vila Real. Descobre tratamentos personalizados para realçar a tua essência e relaxar a tua mente.</p>
-            <a href="#booking" class="btn">Fazer o Teu Agendamento</a>
+    <nav>
+        <div class="logo">PHY<span>CREATOR</span></div>
+        <div class="nav-links">
+            <a href="#sobre">Sobre</a>
+            <a href="#servicos">Serviços</a>
+            <a href="#simulador">Simulador</a>
+            <a href="https://wa.me/351912345678" class="btn" style="padding: 10px 20px; margin-left: 20px;">Orçamento Grátis</a>
+        </div>
+    </nav>
+
+    <section class="hero" id="sobre">
+        <h1>Transformamos Negócios de Vila Real em <span>Líderes Digitais</span></h1>
+        <p>Não criamos apenas sites. Criamos máquinas de vendas automatizadas para barbeiros, clínicas e restaurantes locais.</p>
+        <a href="#simulador" class="btn">Testar o Meu Futuro Website</a>
+    </section>
+
+    <section class="services" id="servicos">
+        <div class="s-card">
+            <i class="fas fa-rocket"></i>
+            <h3>Velocidade Extrema</h3>
+            <p>Sites que carregam em menos de 1 segundo para não perder nenhum cliente.</p>
+        </div>
+        <div class="s-card">
+            <i class="fas fa-mobile-alt"></i>
+            <h3>100% Mobile</h3>
+            <p>O seu site ficará perfeito em qualquer telemóvel ou tablet.</p>
+        </div>
+        <div class="s-card">
+            <i class="fas fa-search-location"></i>
+            <h3>SEO Local</h3>
+            <p>Apareça no topo das pesquisas quando alguém procurar pelo seu serviço em Vila Real.</p>
         </div>
     </section>
 
-    <section class="about" id="about">
-        <div class="container">
-            <div class="about-container">
-                <div class="about-text">
-                    <h2>Bem-Vinda ao Estúdio Pétala</h2>
-                    <p>Fundado em 2020 em Vila Real, o Estúdio Pétala nasceu da paixão por cuidar. A nossa missão é oferecer mais do que tratamentos de estética; queremos proporcionar um momento de pausa e reconexão com a tua própria beleza.</p>
-                    <p>Contamos com uma equipa de profissionais certificadas e dedicadas, focadas em resultados naturais e na tua total satisfação. Usamos apenas produtos premium e as técnicas mais modernas do mercado.</p>
-                    <a href="#booking" class="btn">Conhecer a Nossa Equipa</a>
-                </div>
-                <div class="about-image">
-                    <img src="https://images.unsplash.com/photo-1596178065887-1198b6148b2b?q=80&w=800&auto=format&fit=crop" alt="Equipa do Estúdio Pétala">
+    <section class="simulator" id="simulador">
+        <div class="sim-container">
+            <div>
+                <h2 style="font-size: 32px; margin-bottom: 20px;">Visualize o Seu Site Agora</h2>
+                <p style="margin-bottom: 30px; color: var(--text-light);">Escolha o seu nicho e veja como o seu negócio se tornará profissional com a nossa ajuda.</p>
+                <div class="control-panel">
+                    <label>Qual é o seu negócio?</label>
+                    <select id="nicho" onchange="updateMockup()">
+                        <option value="pizza">Pizzaria Italiana</option>
+                        <option value="barber">Barbearia Moderna</option>
+                        <option value="clinic">Clínica de Saúde/Estética</option>
+                    </select>
                 </div>
             </div>
-        </div>
-    </section>
-
-    <section class="services" id="services">
-        <div class="container">
-            <h2 class="section-title">Nossos Tratamentos</h2>
-            <p class="section-subtitle">Realça a tua beleza com os nossos serviços premium personalizados.</p>
-            
-            <div class="services-grid">
-                <div class="service-card">
-                    <div class="service-icon"><i class="fas fa-spa"></i></div>
-                    <h3>Limpeza de Pele Profunda</h3>
-                    <p>Remoção de impurezas, hidratação intensa e renovação celular para uma pele radiante.</p>
-                    <span class="price">45€</span>
-                </div>
-                <div class="service-card">
-                    <div class="service-icon"><i class="fas fa-hand-holding-heart"></i></div>
-                    <h3>Massagem Relaxante</h3>
-                    <p>Alívio de tensões, redução do stress e profundo bem-estar físico e mental.</p>
-                    <span class="price">55€</span>
-                </div>
-                <div class="service-card">
-                    <div class="service-icon"><i class="fas fa-magic"></i></div>
-                    <h3>Microblading</h3>
-                    <p>Sobrancelhas perfeitas e naturais, desenhadas fio a fio com precisão artística.</p>
-                    <span class="price">150€</span>
+            <div class="mockup-window" id="mock-window">
+                <div class="mockup-content" id="mock-content">
+                    <h2 id="mock-title">Pizzaria Bella Italia</h2>
+                    <p id="mock-desc">As melhores pizzas em forno de lenha agora com pedido online.</p>
+                    <div style="margin-top: 20px; background: #ff4444; padding: 10px 20px; border-radius: 5px; color: #fff; font-weight: 800;">VER MENU</div>
                 </div>
             </div>
         </div>
     </section>
 
-    <section class="testimonials" id="reviews">
-        <div class="container">
-            <h2 class="section-title">O Que Dizem Nossas Clientes</h2>
-            <p class="section-subtitle">A satisfação e o carinho de quem confia na nossa equipa.</p>
-            
-            <div class="testimonials-grid">
-                <div class="testimonial-card">
-                    <i class="fas fa-quote-left quote-icon"></i>
-                    <div class="rating">
-                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
-                    </div>
-                    <p class="testimonial-text">"A Limpeza de Pele que fiz no Estúdio Pétala foi fantástica! A minha pele nunca esteve tão limpa e luminosa. A atenção e o cuidado são únicos. Recomendo imenso!"</p>
-                    <div class="client-info">
-                        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Maria S.">
-                        <div>
-                            <h4>Maria S.</h4>
-                            <span>Vila Real</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="testimonial-card">
-                    <i class="fas fa-quote-left quote-icon"></i>
-                    <div class="rating">
-                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
-                    </div>
-                    <p class="testimonial-text">"A massagem relaxante foi o melhor momento da minha semana. O ambiente é super acolhedor e a massagista tem mãos de fada. Saí de lá leve e renovada!"</p>
-                    <div class="client-info">
-                        <img src="https://randomuser.me/api/portraits/women/65.jpg" alt="Ana P.">
-                        <div>
-                            <h4>Ana P.</h4>
-                            <span>Chaves</span>
-                        </div>
-                    </div>
-                </div>
+    <section class="portfolio">
+        <h2 style="text-align: center; margin-bottom: 50px; font-size: 36px;">Modelos Prontos para Entrega</h2>
+        <div class="p-grid">
+            <div class="p-item">
+                <img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?q=80&w=600" alt="Pizzaria">
+                <div class="p-overlay"><h3>Modelo Pizza Delivery</h3><p>Otimizado para vendas rápidas.</p></div>
+            </div>
+            <div class="p-item">
+                <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80&w=600" alt="Barbearia">
+                <div class="p-overlay"><h3>Modelo Barber Elite</h3><p>Focado em agendamentos WhatsApp.</p></div>
+            </div>
+            <div class="p-item">
+                <img src="https://images.unsplash.com/photo-1629909613654-28e377c37b09?q=80&w=600" alt="Clinica">
+                <div class="p-overlay"><h3>Modelo Clínica Clean</h3><p>Confiança e limpeza visual.</p></div>
             </div>
         </div>
     </section>
 
-    <section class="contact" id="booking">
-        <div class="container">
-            <h2 class="section-title">Marca a Tua Sessão</h2>
-            <p class="section-subtitle">Dúvidas ou agendamentos? Fala connosco ou preenche o formulário!</p>
-            
-            <div class="contact-container">
-                <div class="contact-info">
-                    <div class="info-item">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <div>
-                            <h4>Localização</h4>
-                            <p>Avenida Central de Vila Real, nº 456, 5000-000 Vila Real</p>
-                        </div>
-                    </div>
-                    <div class="info-item">
-                        <i class="fas fa-phone"></i>
-                        <div>
-                            <h4>Telefone</h4>
-                            <p>+351 912 345 678</p>
-                        </div>
-                    </div>
-                    <div class="info-item">
-                        <i class="fas fa-clock"></i>
-                        <div>
-                            <h4>Horário</h4>
-                            <p>Segunda - Sábado: 09:30 - 19:30<br>Domingo: Fechado</p>
-                        </div>
-                    </div>
-                </div>
-
-                <form class="booking-form">
-                    <div class="form-group">
-                        <input type="text" placeholder="Teu Nome Completo" required>
-                        <input type="email" placeholder="Teu E-mail Profissional" required>
-                    </div>
-                    <div class="form-group">
-                        <input type="tel" placeholder="Teu Telemóvel (ex: 912345678)" required>
-                        <select required>
-                            <option value="" disabled selected>Seleciona o Tratamento...</option>
-                            <option value="limpeza">Limpeza de Pele</option>
-                            <option value="massagem">Massagem Relaxante</option>
-                            <option value="microblading">Microblading</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <input type="date" required title="Seleciona a Data Desejada">
-                        <input type="time" required title="Seleciona a Hora Desejada (09:30 - 19:30)">
-                    </div>
-                    <textarea placeholder="Mensagem ou Observações (Opcional)"></textarea>
-                    <button type="submit" class="btn">Pedir Agendamento</button>
-                </form>
-            </div>
-        </div>
-    </section>
-    
-    <section class="map" id="mapa">
-        <div class="map-responsive">
-            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d11915.289196585933!2d-7.747971842854955!3d41.30050800742186!2m3!1f0!2f0!3f0!3m2!1i1024!2i1026!3m4!1s0xd24876b5d84877f%3A0xc3f148e658e469d8!2sVila%20Real!5e0!3m2!1spt-PT!2spt!4v1709298585255!5m2!1spt-PT!2spt" allowfullscreen="" loading="lazy"></iframe>
-        </div>
-    </section>
-
-    <footer>
-        <div class="container">
-            <div class="social-links">
-                <a href="https://facebook.com" target="_blank" title="Segue-nos no Facebook"><i class="fab fa-facebook-f"></i></a>
-                <a href="https://instagram.com" target="_blank" title="Segue-nos no Instagram"><i class="fab fa-instagram"></i></a>
-                <a href="https://wa.me/351912345678" target="_blank" title="Fala connosco no WhatsApp"><i class="fab fa-whatsapp"></i></a>
-            </div>
-            <p>&copy; 2024 Estúdio Pétala. Todos os direitos reservados. Vila Real.</p>
-            <p style="font-size: 12px; margin-top: 5px;">Desenvolvido por <span>phythencreator Websites</span>.</p>
-        </div>
+    <footer style="padding: 50px 8%; border-top: 1px solid #eee; text-align: center;">
+        <p>&copy; 2026 PhyTheCreator Soluções Digitais. Especialistas em Vila Real.</p>
     </footer>
 
+    <script>
+        // Notificação aparece após 2 seg
+        setTimeout(() => {
+            if(!localStorage.getItem('pop')) {
+                document.getElementById('smart-pop').style.display = 'block';
+                localStorage.setItem('pop', 'true');
+            }
+        }, 2000);
+
+        // Lógica do Simulador
+        function updateMockup() {
+            const nicho = document.getElementById('nicho').value;
+            const win = document.getElementById('mock-window');
+            const title = document.getElementById('mock-title');
+            const desc = document.getElementById('mock-desc');
+            const content = document.getElementById('mock-content');
+
+            if(nicho === 'pizza') {
+                win.style.background = "#fff5f5";
+                title.innerText = "Pizzaria Bella Italia";
+                desc.innerText = "As melhores pizzas em forno de lenha agora com pedido online.";
+                content.style.color = "#2d2d2d";
+            } else if(nicho === 'barber') {
+                win.style.background = "#121212";
+                title.innerText = "Barber Shop Elite";
+                desc.innerText = "Estilo e tradição. Marque o seu corte em 30 segundos.";
+                content.style.color = "#fff";
+            } else if(nicho === 'clinic') {
+                win.style.background = "#f0f9ff";
+                title.innerText = "Clínica Saúde Vital";
+                desc.innerText = "Cuidamos de si com a tecnologia mais avançada do mercado.";
+                content.style.color = "#0369a1";
+            }
+        }
+    </script>
 </body>
 </html>
