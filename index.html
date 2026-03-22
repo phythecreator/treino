@@ -3,199 +3,239 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PhyTheCreator | Agência de Websites de Alta Performance</title>
+    <title>VirgaDigital | Construtor de Presença Online</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #0066ff;
+            --primary: #6366f1; /* Indigo Moderno */
             --bg: #ffffff;
-            --bg-alt: #f4f7ff;
-            --text: #1a1f26;
-            --text-light: #6b7280;
-            --shadow: 0 20px 40px rgba(0,0,0,0.06);
+            --bg-soft: #f8fafc;
+            --text: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --accent: #f1f5f9;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background: var(--bg); color: var(--text); line-height: 1.6; }
-        html { scroll-behavior: smooth; }
+        body { background: var(--bg); color: var(--text); overflow-x: hidden; }
 
-        /* --- NOTIFICAÇÃO PROFISSIONAL --- */
-        #smart-pop {
-            position: fixed; bottom: 30px; left: 30px; background: #fff; border-left: 5px solid var(--primary);
-            padding: 25px; border-radius: 12px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.2);
-            z-index: 10000; max-width: 380px; display: none; animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        /* --- LAYOUT PRINCIPAL --- */
+        .app-container { display: grid; grid-template-columns: 400px 1fr; height: 100vh; }
+
+        /* --- SIDEBAR DE CONFIGURAÇÃO --- */
+        .sidebar { 
+            background: white; border-right: 1px solid var(--border); 
+            padding: 35px; overflow-y: auto; display: flex; flex-direction: column; gap: 30px;
         }
-        @keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-        /* --- NAV --- */
-        nav { padding: 25px 8%; display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.8); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 100; border-bottom: 1px solid #eee; }
-        .logo { font-size: 24px; font-weight: 800; color: var(--text); letter-spacing: -1px; }
-        .logo span { color: var(--primary); }
-        .nav-links a { margin-left: 30px; text-decoration: none; color: var(--text); font-weight: 600; font-size: 14px; }
+        .brand-logo { font-size: 24px; font-weight: 800; color: var(--primary); letter-spacing: -1px; margin-bottom: 10px; }
+        .brand-logo span { color: var(--text); }
 
-        /* --- HERO --- */
-        .hero { padding: 120px 8% 80px; text-align: center; background: radial-gradient(circle at top right, #f0f4ff, #fff); }
-        .hero h1 { font-size: 56px; font-weight: 800; margin-bottom: 20px; letter-spacing: -2px; line-height: 1.1; }
-        .hero p { font-size: 18px; color: var(--text-light); max-width: 650px; margin: 0 auto 40px; }
+        .config-section h3 { font-size: 14px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 15px; border-bottom: 1px solid var(--border); padding-bottom: 5px; }
 
-        /* --- SERVIÇOS --- */
-        .services { padding: 80px 8%; display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
-        .s-card { padding: 40px; background: var(--bg-alt); border-radius: 20px; transition: 0.3s; border: 1px solid transparent; }
-        .s-card:hover { background: #fff; border-color: var(--primary); box-shadow: var(--shadow); }
-        .s-card i { font-size: 32px; color: var(--primary); margin-bottom: 20px; }
-
-        /* --- SIMULADOR DE MOCKUP (A MINA DE OURO) --- */
-        .simulator { padding: 100px 8%; background: var(--bg-alt); }
-        .sim-container { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center; background: #fff; padding: 50px; border-radius: 30px; box-shadow: var(--shadow); }
+        .control { margin-bottom: 20px; }
+        label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 8px; }
         
-        .mockup-window {
-            background: #f1f5f9; border-radius: 15px; padding: 10px; border: 4px solid #334155;
-            height: 400px; position: relative; overflow: hidden; transition: 0.5s;
+        select, input { 
+            width: 100%; padding: 14px; border-radius: 10px; border: 1px solid var(--border); 
+            background: var(--bg-soft); font-size: 14px; outline: none; transition: 0.3s;
         }
-        .mockup-content { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; transition: 0.5s; }
+        select:focus, input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1); }
+
+        /* DOMÍNIOS COM PREÇOS INFLACIONADOS PARA LUCRO */
+        .domain-list { display: grid; grid-template-columns: 1fr; gap: 8px; }
+        .domain-option { 
+            padding: 12px; border: 1px solid var(--border); border-radius: 8px; cursor: pointer;
+            display: flex; justify-content: space-between; align-items: center; transition: 0.2s;
+            font-size: 14px; font-weight: 600;
+        }
+        .domain-option:hover { border-color: var(--primary); background: var(--accent); }
+        .domain-option.active { border-color: var(--primary); background: #eef2ff; color: var(--primary); }
+        .domain-price { font-size: 12px; color: var(--text-muted); }
+
+        /* --- QUADRO DE ORÇAMENTO --- */
+        .quote-box { 
+            background: var(--text); color: white; padding: 25px; border-radius: 15px; 
+            margin-top: auto; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+        }
+        .quote-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 14px; opacity: 0.8; }
+        .quote-total { display: flex; justify-content: space-between; border-top: 1px solid #334155; pt: 15px; margin-top: 10px; font-size: 22px; font-weight: 800; }
+        .quote-total span { color: #818cf8; }
+
+        /* --- ÁREA DE PREVIEW --- */
+        .preview-pane { background: #f1f5f9; padding: 40px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         
-        .control-panel { display: flex; flex-direction: column; gap: 15px; }
-        .control-panel select { padding: 15px; border-radius: 10px; border: 2px solid #eee; font-weight: 600; cursor: pointer; }
-
-        /* --- PORTFÓLIO --- */
-        .portfolio { padding: 100px 8%; }
-        .p-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
-        .p-item { border-radius: 20px; overflow: hidden; box-shadow: var(--shadow); position: relative; height: 350px; }
-        .p-item img { width: 100%; height: 100%; object-fit: cover; }
-        .p-overlay { position: absolute; bottom: 0; left: 0; width: 100%; padding: 30px; background: linear-gradient(transparent, rgba(0,0,0,0.8)); color: #fff; }
-
-        .btn { background: var(--primary); color: #fff; padding: 16px 35px; border-radius: 12px; font-weight: 700; text-decoration: none; display: inline-block; transition: 0.3s; border: none; cursor: pointer; }
-        .btn:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,102,255,0.2); }
-
-        @media (max-width: 900px) { 
-            .hero h1 { font-size: 38px; }
-            .services, .sim-container { grid-template-columns: 1fr; }
+        .device-mockup {
+            width: 100%; max-width: 950px; height: 100%; background: white; border-radius: 20px;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.1); overflow: hidden; display: flex; flex-direction: column;
+            border: 8px solid #1e293b; transition: 0.5s;
         }
+
+        .browser-bar { background: #1e293b; padding: 12px 20px; display: flex; align-items: center; gap: 15px; }
+        .dots { display: flex; gap: 6px; }
+        .dot { width: 10px; height: 10px; border-radius: 50%; background: #475569; }
+        .url-bar { background: #334155; flex: 1; border-radius: 6px; padding: 4px 15px; color: #94a3b8; font-size: 12px; font-family: monospace; }
+
+        #canvas { flex: 1; padding: 60px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; transition: 0.5s; }
+        #canvas img { width: 150px; height: 150px; border-radius: 50%; object-fit: cover; margin-bottom: 25px; border: 4px solid white; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        #canvas h1 { font-size: 48px; font-weight: 800; margin-bottom: 20px; letter-spacing: -2px; }
+        #canvas p { font-size: 18px; color: var(--text-muted); max-width: 550px; margin-bottom: 40px; }
+        #canvas-btn { padding: 18px 40px; border-radius: 50px; color: white; font-weight: 700; font-size: 14px; letter-spacing: 1px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); cursor: pointer; }
+
+        .btn-whatsapp { 
+            width: 100%; background: #22c55e; color: white; border: none; padding: 18px; 
+            border-radius: 12px; font-weight: 800; cursor: pointer; margin-top: 15px; 
+            display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 16px;
+        }
+
+        @media (max-width: 1100px) { .app-container { grid-template-columns: 1fr; height: auto; } .sidebar { border-right: none; border-bottom: 1px solid var(--border); } .preview-pane { padding: 20px; } .device-mockup { height: 500px; } }
     </style>
 </head>
 <body>
 
-    <div id="smart-pop">
-        <i class="fas fa-check-circle" style="color: var(--primary); font-size: 24px;"></i>
-        <h3 style="margin: 10px 0;">Solução Chave-na-mão</h3>
-        <p style="font-size: 14px; color: var(--text-light);">Incluímos: Design Exclusivo, Domínio Grátis, E-mail Profissional e Otimização Google Maps. Tudo em 48 horas.</p>
-        <button onclick="this.parentElement.style.display='none'" style="margin-top: 15px; background: none; border: none; font-weight: 800; cursor: pointer; color: var(--primary);">ENTENDIDO</button>
-    </div>
-
-    <nav>
-        <div class="logo">PHY<span>CREATOR</span></div>
-        <div class="nav-links">
-            <a href="#sobre">Sobre</a>
-            <a href="#servicos">Serviços</a>
-            <a href="#simulador">Simulador</a>
-            <a href="https://wa.me/351912345678" class="btn" style="padding: 10px 20px; margin-left: 20px;">Orçamento Grátis</a>
-        </div>
-    </nav>
-
-    <section class="hero" id="sobre">
-        <h1>Transformamos Negócios de Vila Real em <span>Líderes Digitais</span></h1>
-        <p>Não criamos apenas sites. Criamos máquinas de vendas automatizadas para barbeiros, clínicas e restaurantes locais.</p>
-        <a href="#simulador" class="btn">Testar o Meu Futuro Website</a>
-    </section>
-
-    <section class="services" id="servicos">
-        <div class="s-card">
-            <i class="fas fa-rocket"></i>
-            <h3>Velocidade Extrema</h3>
-            <p>Sites que carregam em menos de 1 segundo para não perder nenhum cliente.</p>
-        </div>
-        <div class="s-card">
-            <i class="fas fa-mobile-alt"></i>
-            <h3>100% Mobile</h3>
-            <p>O seu site ficará perfeito em qualquer telemóvel ou tablet.</p>
-        </div>
-        <div class="s-card">
-            <i class="fas fa-search-location"></i>
-            <h3>SEO Local</h3>
-            <p>Apareça no topo das pesquisas quando alguém procurar pelo seu serviço em Vila Real.</p>
-        </div>
-    </section>
-
-    <section class="simulator" id="simulador">
-        <div class="sim-container">
-            <div>
-                <h2 style="font-size: 32px; margin-bottom: 20px;">Visualize o Seu Site Agora</h2>
-                <p style="margin-bottom: 30px; color: var(--text-light);">Escolha o seu nicho e veja como o seu negócio se tornará profissional com a nossa ajuda.</p>
-                <div class="control-panel">
-                    <label>Qual é o seu negócio?</label>
-                    <select id="nicho" onchange="updateMockup()">
-                        <option value="pizza">Pizzaria Italiana</option>
-                        <option value="barber">Barbearia Moderna</option>
-                        <option value="clinic">Clínica de Saúde/Estética</option>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="brand-logo">Virga<span>Digital</span></div>
+            
+            <div class="config-section">
+                <h3>1. Estilo do Projeto</h3>
+                <div class="control">
+                    <label>Tipo de Website</label>
+                    <select id="siteType" onchange="updateEngine()">
+                        <option value="tech">Agência Tech / Digital</option>
+                        <option value="pizza">Restaurante / Pizzaria</option>
+                        <option value="barber">Barbearia Elite</option>
+                        <option value="clinic">Saúde & Estética</option>
+                        <option value="gym">Fitness / Ginásio</option>
                     </select>
                 </div>
-            </div>
-            <div class="mockup-window" id="mock-window">
-                <div class="mockup-content" id="mock-content">
-                    <h2 id="mock-title">Pizzaria Bella Italia</h2>
-                    <p id="mock-desc">As melhores pizzas em forno de lenha agora com pedido online.</p>
-                    <div style="margin-top: 20px; background: #ff4444; padding: 10px 20px; border-radius: 5px; color: #fff; font-weight: 800;">VER MENU</div>
+                <div class="control">
+                    <label>Título Principal</label>
+                    <input type="text" id="siteTitle" placeholder="Ex: Virga Coffee Shop" onkeyup="updateEngine()">
                 </div>
             </div>
-        </div>
-    </section>
 
-    <section class="portfolio">
-        <h2 style="text-align: center; margin-bottom: 50px; font-size: 36px;">Modelos Prontos para Entrega</h2>
-        <div class="p-grid">
-            <div class="p-item">
-                <img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?q=80&w=600" alt="Pizzaria">
-                <div class="p-overlay"><h3>Modelo Pizza Delivery</h3><p>Otimizado para vendas rápidas.</p></div>
+            <div class="config-section">
+                <h3>2. Domínio Próprio</h3>
+                <div class="domain-list">
+                    <div class="domain-option" onclick="setDomain('.pt', 25.00, this)">
+                        <span>negocio.pt</span> <span class="domain-price">25,00€/ano</span>
+                    </div>
+                    <div class="domain-option" onclick="setDomain('.net', 19.99, this)">
+                        <span>negocio.net</span> <span class="domain-price">19,99€/ano</span>
+                    </div>
+                    <div class="domain-option" onclick="setDomain('.digital', 12.99, this)">
+                        <span>negocio.digital</span> <span class="domain-price">12,99€/ano</span>
+                    </div>
+                    <div class="domain-option" onclick="setDomain('.shop', 9.99, this)">
+                        <span>negocio.shop</span> <span class="domain-price">9,99€/ano</span>
+                    </div>
+                    <div class="domain-option" onclick="setDomain('.tech', 14.99, this)">
+                        <span>negocio.tech</span> <span class="domain-price">14,99€/ano</span>
+                    </div>
+                </div>
             </div>
-            <div class="p-item">
-                <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80&w=600" alt="Barbearia">
-                <div class="p-overlay"><h3>Modelo Barber Elite</h3><p>Focado em agendamentos WhatsApp.</p></div>
-            </div>
-            <div class="p-item">
-                <img src="https://images.unsplash.com/photo-1629909613654-28e377c37b09?q=80&w=600" alt="Clinica">
-                <div class="p-overlay"><h3>Modelo Clínica Clean</h3><p>Confiança e limpeza visual.</p></div>
-            </div>
-        </div>
-    </section>
 
-    <footer style="padding: 50px 8%; border-top: 1px solid #eee; text-align: center;">
-        <p>&copy; 2026 PhyTheCreator Soluções Digitais. Especialistas em Vila Real.</p>
-    </footer>
+            <div class="quote-box">
+                <div class="quote-row"><span>Criação Website:</span> <span>60,00€</span></div>
+                <div class="quote-row"><span>Domínio Escolhido:</span> <span id="price-domain">0,00€</span></div>
+                <div class="quote-total">TOTAL: <span id="price-total">60,00€</span></div>
+                
+                <button class="btn-whatsapp" onclick="sendToWhatsapp()">
+                    <i class="fab fa-whatsapp"></i> OBTER ORÇAMENTO GRÁTIS
+                </button>
+            </div>
+        </aside>
+
+        <main class="preview-pane">
+            <div class="device-mockup">
+                <div class="browser-bar">
+                    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+                    <div class="url-bar" id="url-preview">https://virgadigital.pt/o-teu-projeto</div>
+                </div>
+                <div id="canvas">
+                    <img id="c-img" src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400" alt="Preview">
+                    <h1 id="c-title">VirgaDigital Agency</h1>
+                    <p id="c-desc">Construímos soluções digitais modernas que colocam o seu negócio no topo do mercado global.</p>
+                    <div id="canvas-btn">SABER MAIS</div>
+                </div>
+            </div>
+        </main>
+    </div>
 
     <script>
-        // Notificação aparece após 2 seg
-        setTimeout(() => {
-            if(!localStorage.getItem('pop')) {
-                document.getElementById('smart-pop').style.display = 'block';
-                localStorage.setItem('pop', 'true');
-            }
-        }, 2000);
+        let serviceFee = 60.00;
+        let domainFee = 0.00;
+        let selectedDomainText = ".pt";
 
-        // Lógica do Simulador
-        function updateMockup() {
-            const nicho = document.getElementById('nicho').value;
-            const win = document.getElementById('mock-window');
-            const title = document.getElementById('mock-title');
-            const desc = document.getElementById('mock-desc');
-            const content = document.getElementById('mock-content');
+        function setDomain(ext, price, element) {
+            domainFee = price;
+            selectedDomainText = ext;
+            
+            // UI Update
+            document.querySelectorAll('.domain-option').forEach(el => el.classList.remove('active'));
+            element.classList.add('active');
+            
+            document.getElementById('price-domain').innerText = price.toFixed(2) + "€";
+            document.getElementById('price-total').innerText = (serviceFee + domainFee).toFixed(2) + "€";
+            
+            updateEngine();
+        }
 
-            if(nicho === 'pizza') {
-                win.style.background = "#fff5f5";
-                title.innerText = "Pizzaria Bella Italia";
-                desc.innerText = "As melhores pizzas em forno de lenha agora com pedido online.";
-                content.style.color = "#2d2d2d";
-            } else if(nicho === 'barber') {
-                win.style.background = "#121212";
-                title.innerText = "Barber Shop Elite";
-                desc.innerText = "Estilo e tradição. Marque o seu corte em 30 segundos.";
-                content.style.color = "#fff";
-            } else if(nicho === 'clinic') {
-                win.style.background = "#f0f9ff";
-                title.innerText = "Clínica Saúde Vital";
-                desc.innerText = "Cuidamos de si com a tecnologia mais avançada do mercado.";
-                content.style.color = "#0369a1";
+        function updateEngine() {
+            const type = document.getElementById('siteType').value;
+            const title = document.getElementById('siteTitle').value || "O Teu Negócio";
+            const urlPreview = document.getElementById('url-preview');
+            
+            // Atualizar URL baseada no título e domínio
+            let slug = title.toLowerCase().replace(/ /g, "-");
+            urlPreview.innerText = `https://${slug}${selectedDomainText}`;
+
+            // Conteúdo Visual
+            const cImg = document.getElementById('c-img');
+            const cTitle = document.getElementById('c-title');
+            const cDesc = document.getElementById('c-desc');
+            const cBtn = document.getElementById('canvas-btn');
+            const canvas = document.getElementById('canvas');
+
+            cTitle.innerText = title;
+
+            if(type === 'tech') {
+                canvas.style.background = "#ffffff";
+                cBtn.style.background = "#6366f1";
+                cImg.src = "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400";
+            } else if(type === 'pizza') {
+                canvas.style.background = "#fffcf5";
+                cBtn.style.background = "#e11d48";
+                cImg.src = "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400";
+                cDesc.innerText = "A autêntica pizza artesanal, agora à distância de um clique.";
+            } else if(type === 'barber') {
+                canvas.style.background = "#0f172a";
+                cTitle.style.color = "#ffffff";
+                cDesc.style.color = "#94a3b8";
+                cBtn.style.background = "#f59e0b";
+                cImg.src = "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=400";
+                cDesc.innerText = "Mais do que um corte, uma experiência de estilo e tradição.";
+            } else if(type === 'clinic') {
+                canvas.style.background = "#f0fdf4";
+                cBtn.style.background = "#10b981";
+                cImg.src = "https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=400";
+                cDesc.innerText = "Cuidamos da sua saúde com a dedicação que você merece.";
+            } else if(type === 'gym') {
+                canvas.style.background = "#ffffff";
+                cBtn.style.background = "#000000";
+                cImg.src = "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400";
+                cDesc.innerText = "Supere os seus limites com acompanhamento profissional de elite.";
             }
+        }
+
+        function sendToWhatsapp() {
+            const title = document.getElementById('siteTitle').value || "Novo Projeto";
+            const total = (serviceFee + domainFee).toFixed(2);
+            const text = `Olá! Estive no configurador da VirgaDigital. Gostaria de avançar com o site para "${title}". 
+Orçamento estimado: ${total}€ (Incluindo domínio ${selectedDomainText}).`;
+            window.open(`https://wa.me/351912345678?text=${encodeURIComponent(text)}`);
         }
     </script>
 </body>
