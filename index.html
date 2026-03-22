@@ -3,339 +3,397 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>virgadigital — interfaces de elite</title>
+    <title>VirgaDigital — Interfaces de Elite</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
         /* -----------------------------------------------------------
-        design system: lowcase premium
+        Design System: Premium Minimalist
         -----------------------------------------------------------
         */
         :root {
             --bg: #ffffff;
-            --fg: #000000;
+            --fg: #0f172a;
             --accent: #2563eb;
             --muted: #64748b;
-            --border: #e2e8f0;
+            --border: #f1f5f9;
             --soft-bg: #f8fafc;
-            --radius: 0px; /* estética brutalista/moderna */
-            --transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            --radius: 12px;
+            --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; text-transform: lowercase; }
-        
-        body { background: var(--bg); color: var(--fg); line-height: 1.5; overflow-x: hidden; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background: var(--bg); color: var(--fg); line-height: 1.6; overflow-x: hidden; }
         
         /* -----------------------------------------------------------
-        layout
+        Navegação
         -----------------------------------------------------------
         */
         nav {
-            position: fixed; top: 0; width: 100%; padding: 30px 5%;
+            position: fixed; top: 0; width: 100%; padding: 25px 8%;
             display: flex; justify-content: space-between; align-items: center;
-            z-index: 1000; background: rgba(255,255,255,0.8); backdrop-filter: blur(10px);
+            z-index: 1000; background: rgba(255,255,255,0.9); backdrop-filter: blur(15px);
+            border-bottom: 1px solid var(--border);
         }
-
-        .logo { font-weight: 800; font-size: 20px; letter-spacing: -1px; }
+        .logo { font-weight: 800; font-size: 22px; letter-spacing: -1px; }
         .logo span { color: var(--accent); }
-
-        .nav-links { display: flex; gap: 30px; }
-        .nav-links a { text-decoration: none; color: var(--fg); font-weight: 500; font-size: 14px; opacity: 0.6; transition: 0.3s; }
-        .nav-links a:hover { opacity: 1; }
-
-        section { padding: 140px 10%; }
+        .nav-links { display: flex; gap: 40px; }
+        .nav-links a { text-decoration: none; color: var(--fg); font-weight: 600; font-size: 14px; transition: 0.3s; }
+        .nav-links a:hover { color: var(--accent); }
 
         /* -----------------------------------------------------------
-        hero
+        Hero Section
         -----------------------------------------------------------
         */
-        .hero { height: 100vh; display: flex; flex-direction: column; justify-content: center; }
-        .hero h1 { font-size: clamp(3rem, 8vw, 6rem); font-weight: 800; letter-spacing: -4px; line-height: 0.9; margin-bottom: 30px; }
-        .hero p { max-width: 500px; font-size: 1.1rem; color: var(--muted); margin-bottom: 40px; }
+        section { padding: 120px 10%; }
+        .hero { min-height: 90vh; display: flex; flex-direction: column; justify-content: center; }
+        .hero h1 { font-size: clamp(2.5rem, 6vw, 5rem); font-weight: 800; letter-spacing: -3px; line-height: 1.1; margin-bottom: 30px; }
+        .hero h1 span { color: var(--accent); }
+        .hero p { max-width: 600px; font-size: 1.25rem; color: var(--muted); margin-bottom: 40px; }
 
-        /* -----------------------------------------------------------
-        portfolio: o "site dentro do site"
-        -----------------------------------------------------------
-        */
-        .portfolio-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
-        .project-card { 
-            position: relative; height: 500px; background: var(--soft-bg); 
-            border: 1px solid var(--border); overflow: hidden; cursor: pointer;
-        }
-        .project-card img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(100%); transition: var(--transition); }
-        .project-card:hover img { filter: grayscale(0%); transform: scale(1.02); }
-        
-        .project-overlay {
-            position: absolute; bottom: 0; left: 0; padding: 40px; width: 100%;
-            background: linear-gradient(transparent, white);
-        }
-
-        /* modal do simulador de website */
-        #site-viewer {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: white; z-index: 2000; display: none; flex-direction: column;
-        }
-        .viewer-header {
-            padding: 15px 30px; border-bottom: 1px solid var(--border);
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        .viewer-frame { flex: 1; border: none; width: 100%; background: #eee; }
-        .close-viewer { cursor: pointer; font-weight: 800; font-size: 14px; border: 1px solid black; padding: 5px 15px; }
-
-        /* -----------------------------------------------------------
-        reviews: slider 4* e 5*
-        -----------------------------------------------------------
-        */
-        .reviews-container { background: var(--soft-bg); overflow: hidden; white-space: nowrap; padding: 60px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
-        .reviews-track { display: inline-block; animation: scrollReviews 40s linear infinite; }
-        .review-card {
-            display: inline-block; width: 350px; padding: 30px; background: white;
-            border: 1px solid var(--border); margin: 0 15px; vertical-align: top; white-space: normal;
-        }
-        .stars { color: #fbbf24; margin-bottom: 10px; font-size: 12px; }
-        .review-text { font-size: 14px; color: var(--fg); font-weight: 500; }
-        .review-author { display: block; margin-top: 15px; font-size: 12px; font-weight: 800; color: var(--muted); }
-
-        @keyframes scrollReviews { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-
-        /* -----------------------------------------------------------
-        configurador de preços
-        -----------------------------------------------------------
-        */
-        .engine { background: black; color: white; border-radius: 0px; display: grid; grid-template-columns: 1fr 400px; gap: 0; }
-        .engine-content { padding: 80px; border-right: 1px solid #333; }
-        .engine-sidebar { padding: 80px; background: #0a0a0a; display: flex; flex-direction: column; justify-content: space-between; }
-        
-        .selection-box { margin-bottom: 50px; }
-        .selection-box h3 { font-size: 12px; color: #666; margin-bottom: 20px; letter-spacing: 2px; }
-        
-        .option-list { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .opt { 
-            padding: 15px; border: 1px solid #333; cursor: pointer; transition: 0.3s; 
-            font-size: 13px; font-weight: 600; text-align: center;
-        }
-        .opt:hover { border-color: white; }
-        .opt.active { background: white; color: black; border-color: white; }
-
-        .price-display { font-size: 4rem; font-weight: 800; letter-spacing: -3px; margin: 30px 0; }
-        .btn-main { 
-            background: var(--accent); color: white; padding: 25px; text-align: center; 
-            font-weight: 800; cursor: pointer; border: none; font-size: 16px;
-        }
-
-        /* -----------------------------------------------------------
-        formulário de contacto
-        -----------------------------------------------------------
-        */
-        .contact-section { display: grid; grid-template-columns: 1fr 1fr; gap: 100px; }
-        input, textarea {
-            width: 100%; padding: 20px 0; border: none; border-bottom: 1px solid var(--border);
-            outline: none; font-size: 16px; margin-bottom: 30px; transition: 0.3s;
-        }
-        input:focus { border-bottom-color: var(--accent); }
-
-        /* -----------------------------------------------------------
-        detalhes de conversão
-        -----------------------------------------------------------
-        */
         .status-pill {
-            display: inline-flex; align-items: center; gap: 8px; font-size: 12px;
-            font-weight: 700; color: var(--success); margin-bottom: 20px;
+            display: inline-flex; align-items: center; gap: 8px; font-size: 13px;
+            font-weight: 700; color: #10b981; background: #ecfdf5; padding: 8px 16px; 
+            border-radius: 50px; margin-bottom: 25px;
         }
-        .pulse { width: 8px; height: 8px; background: #22c55e; border-radius: 50%; animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(34, 197, 94, 0); } 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); } }
+        .pulse { width: 8px; height: 8px; background: #10b981; border-radius: 50%; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); } 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); } }
 
-        footer { padding: 100px 10%; border-top: 1px solid var(--border); display: flex; justify-content: space-between; color: var(--muted); font-size: 12px; }
-
-        @media (max-width: 1000px) {
-            .engine, .contact-section, .portfolio-grid { grid-template-columns: 1fr; }
-            .hero h1 { font-size: 3.5rem; }
+        /* -----------------------------------------------------------
+        Reviews: 6 Cards (5x 5*, 1x 4*)
+        -----------------------------------------------------------
+        */
+        .reviews-section { background: var(--soft-bg); padding: 80px 0; overflow: hidden; }
+        .reviews-track { display: flex; gap: 20px; width: max-content; animation: scroll 35s linear infinite; padding-left: 20px; }
+        .review-card {
+            background: white; width: 350px; padding: 30px; border-radius: var(--radius);
+            border: 1px solid var(--border); flex-shrink: 0;
         }
+        .reviewer-info { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
+        .reviewer-info img { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; }
+        .reviewer-name h4 { font-size: 14px; font-weight: 800; }
+        .stars { color: #fbbf24; font-size: 12px; }
+        .review-text { font-size: 14px; color: var(--muted); font-style: italic; }
+
+        @keyframes scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+        /* -----------------------------------------------------------
+        Portfólio & Visualizador de Páginas
+        -----------------------------------------------------------
+        */
+        .portfolio-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; }
+        .project-card { 
+            border-radius: var(--radius); overflow: hidden; cursor: pointer; border: 1px solid var(--border);
+            transition: var(--transition);
+        }
+        .project-card:hover { transform: translateY(-10px); border-color: var(--accent); }
+        .project-img { height: 400px; background-size: cover; background-position: center; transition: 0.6s; }
+        .project-card:hover .project-img { transform: scale(1.05); }
+        .project-info { padding: 30px; background: white; }
+
+        /* Vista Interna (Página do Projeto) */
+        #project-view {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: white; z-index: 2000; display: none; overflow-y: auto;
+            padding: 80px 10%;
+        }
+        .close-view { position: fixed; top: 30px; right: 5%; font-weight: 800; cursor: pointer; font-size: 14px; padding: 10px 20px; border: 1px solid #000; }
+
+        /* -----------------------------------------------------------
+        Configurador de Preços (UI Atualizada)
+        -----------------------------------------------------------
+        */
+        .pricing-box { background: var(--fg); color: white; border-radius: 24px; display: grid; grid-template-columns: 1fr 400px; overflow: hidden; }
+        .pricing-config { padding: 60px; border-right: 1px solid #1e293b; }
+        .pricing-result { padding: 60px; background: #0a0a0a; display: flex; flex-direction: column; justify-content: center; }
+        
+        .option-group { margin-bottom: 40px; }
+        .option-group label { display: block; font-size: 11px; font-weight: 800; color: var(--muted); text-transform: uppercase; margin-bottom: 15px; letter-spacing: 1px; }
+        .grid-options { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
+        .opt { 
+            padding: 15px; border: 1px solid #334155; border-radius: 8px; cursor: pointer; text-align: center;
+            font-size: 13px; font-weight: 700; transition: 0.3s;
+        }
+        .opt.active { background: var(--accent); border-color: var(--accent); }
+        
+        .total-val { font-size: 4rem; font-weight: 800; margin: 20px 0; letter-spacing: -3px; }
+        .btn-order { background: white; color: black; border: none; padding: 20px; width: 100%; font-weight: 800; border-radius: 12px; cursor: pointer; font-size: 16px; }
+
+        /* -----------------------------------------------------------
+        FAQ (Acordeão)
+        -----------------------------------------------------------
+        */
+        .faq-item { border-bottom: 1px solid var(--border); padding: 25px 0; cursor: pointer; }
+        .faq-question { display: flex; justify-content: space-between; align-items: center; font-weight: 700; }
+        .faq-answer { max-height: 0; overflow: hidden; transition: 0.4s; color: var(--muted); font-size: 15px; padding-top: 0; }
+        .faq-item.active .faq-answer { max-height: 200px; padding-top: 15px; }
+
+        /* -----------------------------------------------------------
+        Chatbot
+        -----------------------------------------------------------
+        */
+        #chat-bubble {
+            position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px;
+            background: var(--accent); color: white; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; font-size: 24px; box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4); z-index: 999;
+        }
+        #chat-window {
+            position: fixed; bottom: 100px; right: 30px; width: 320px; height: 450px;
+            background: white; border-radius: var(--radius); box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+            display: none; flex-direction: column; z-index: 1000; overflow: hidden; border: 1px solid var(--border);
+        }
+        .chat-header { background: var(--accent); color: white; padding: 20px; font-weight: 800; font-size: 14px; }
+        .chat-body { flex: 1; padding: 20px; font-size: 13px; overflow-y: auto; }
+        .msg { margin-bottom: 15px; padding: 10px; border-radius: 10px; max-width: 80%; }
+        .msg-bot { background: var(--soft-bg); }
+
+        footer { padding: 80px 10%; border-top: 1px solid var(--border); display: flex; justify-content: space-between; color: var(--muted); font-size: 13px; font-weight: 600; }
+
+        @media (max-width: 900px) { .pricing-box, .portfolio-grid, .contact-content { grid-template-columns: 1fr; } .pricing-config, .pricing-result { border: none; padding: 40px; } }
     </style>
 </head>
 <body>
 
-    <div id="site-viewer">
-        <div class="viewer-header">
-            <div id="viewer-url">https://virgadigital.preview/projeto-exemplo</div>
-            <div class="close-viewer" onclick="closeViewer()">fechar simulação</div>
+    <div id="chat-bubble" onclick="toggleChat()"><i class="fas fa-comment-dots"></i></div>
+    <div id="chat-window">
+        <div class="chat-header">VirgaBot — Online</div>
+        <div class="chat-body" id="chat-msgs">
+            <div class="msg msg-bot">Olá! Sou o assistente da VirgaDigital. Posso ajudar-te a escolher o teu domínio ou explicar como entregamos o site em 48h?</div>
         </div>
-        <iframe src="" id="viewer-iframe" class="viewer-frame"></iframe>
+        <div style="padding: 15px; border-top: 1px solid var(--border); display: flex;">
+            <input type="text" placeholder="Escreve aqui..." style="border:none; flex:1; outline:none; font-size:13px;">
+            <i class="fas fa-paper-plane" style="color:var(--accent); cursor:pointer;"></i>
+        </div>
+    </div>
+
+    <div id="project-view">
+        <div class="close-view" onclick="closeProject()">FECHAR VOLTAR AO INÍCIO</div>
+        <div id="project-content">
+            </div>
     </div>
 
     <nav>
-        <div class="logo">virga<span>digital</span></div>
+        <div class="logo">Virga<span>Digital</span></div>
         <div class="nav-links">
-            <a href="#work">trabalho</a>
-            <a href="#prices">preços</a>
-            <a href="#contact">contacto</a>
+            <a href="#work">Projetos</a>
+            <a href="#prices">Preçário</a>
+            <a href="#faq">Dúvidas</a>
+            <a href="#contact" style="color: var(--accent);">Reservar Vaga</a>
         </div>
     </nav>
 
     <section class="hero">
-        <div class="status-pill"><div class="pulse"></div> 2 vagas disponíveis para esta semana</div>
-        <h1>criamos sites que<br><span>fazem dinheiro.</span></h1>
-        <p>interfaces de alta performance. entrega em 48h úteis. foco total em conversão e estética minimalista.</p>
-        <div style="display: flex; gap: 20px;">
-            <a href="#prices" class="btn-main" style="padding: 15px 40px;">começar agora</a>
+        <div class="status-pill"><div class="pulse"></div> Apenas 3 vagas para entrega esta semana</div>
+        <h1>Criamos sites que<br><span>fazem clientes.</span></h1>
+        <p>Design premium com foco em conversão. O seu negócio online pronto a faturar em apenas 48 horas úteis.</p>
+        <div>
+            <a href="#prices" class="btn-order" style="background: var(--accent); color:white; text-decoration:none; display:inline-block; width:auto; padding: 20px 50px;">Simular Orçamento</a>
         </div>
     </section>
 
-    <div class="reviews-container">
+    <div class="reviews-section">
         <div class="reviews-track" id="reviews-track">
             </div>
     </div>
 
     <section id="work">
-        <div style="margin-bottom: 60px;">
-            <h2 style="font-size: 32px; letter-spacing: -2px;">projetos selecionados</h2>
-            <p>clica para entrar na experiência de cada website.</p>
+        <div style="margin-bottom: 50px;">
+            <h2 style="font-size: 32px; letter-spacing: -2px;">Portfólio de Sucesso</h2>
+            <p>Carregue num projeto para ver os detalhes da interface e as funcionalidades.</p>
         </div>
         <div class="portfolio-grid">
-            <div class="project-card" onclick="openViewer('https://www.apple.com')"> <img src="https://images.unsplash.com/photo-1541746972996-4e0b0f43e01a?q=80&w=800" alt="Work">
-                <div class="project-overlay">
-                    <h3>01. agência de luxo</h3>
-                    <p style="font-size: 12px; opacity: 0.6;">ver website vivo →</p>
+            <div class="project-card" onclick="openProject('luxury')">
+                <div class="project-img" style="background-image: url('https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=800');"></div>
+                <div class="project-info">
+                    <h4>01. Boutique de Moda</h4>
+                    <p style="font-size: 13px; color: var(--muted); margin-top: 5px;">E-commerce Minimalista →</p>
                 </div>
             </div>
-            <div class="project-card" onclick="openViewer('https://www.stripe.com')">
-                <img src="https://images.unsplash.com/photo-1497215728101-856f4ea42174?q=80&w=800" alt="Work">
-                <div class="project-overlay">
-                    <h3>02. fintech portal</h3>
-                    <p style="font-size: 12px; opacity: 0.6;">ver website vivo →</p>
+            <div class="project-card" onclick="openProject('clinic')">
+                <div class="project-img" style="background-image: url('https://images.unsplash.com/photo-1629909613654-28e377c37b09?q=80&w=800');"></div>
+                <div class="project-info">
+                    <h4>02. Clínica Médica</h4>
+                    <p style="font-size: 13px; color: var(--muted); margin-top: 5px;">Sistema de Agendamento →</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="prices" style="padding: 0;">
-        <div class="engine">
-            <div class="engine-content">
-                <div class="selection-box">
-                    <h3>tipo de website</h3>
-                    <div class="option-list">
-                        <div class="opt active" onclick="setType('landing', this)">landing page</div>
-                        <div class="opt" onclick="setType('business', this)">site institucional</div>
+    <section id="prices">
+        <div class="pricing-box">
+            <div class="pricing-config">
+                <div class="option-group">
+                    <label>Tipo de Website</label>
+                    <div class="grid-options">
+                        <div class="opt active" onclick="updateBase(60, this)">Landing Page</div>
+                        <div class="opt" onclick="updateBase(100, this)">Institucional Multi-Página</div>
                     </div>
                 </div>
-
-                <div class="selection-box">
-                    <h3>extensão de domínio (.fun / .sbs / .xyz são promoções 1º ano)</h3>
-                    <div class="option-list" id="domain-list">
-                        <div class="opt active" data-p="25" onclick="setDomain('.pt', 25, this)">.pt (25€)</div>
-                        <div class="opt" data-p="5.99" onclick="setDomain('.fun', 5.99, this)">.fun (5,99€*)</div>
-                        <div class="opt" data-p="7.99" onclick="setDomain('.sbs', 7.99, this)">.sbs (7,99€*)</div>
-                        <div class="opt" data-p="7.99" onclick="setDomain('.xyz', 7.99, this)">.xyz (7,99€*)</div>
-                        <div class="opt" data-p="19.99" onclick="setDomain('.com', 19.99, this)">.com (19,99€)</div>
+                <div class="option-group">
+                    <label>Escolha o seu Domínio</label>
+                    <div class="grid-options">
+                        <div class="opt active" onclick="updateDomain(25, '.pt', this)">.pt (25€)</div>
+                        <div class="opt" onclick="updateDomain(5.99, '.fun', this)">.fun (5,99€*)</div>
+                        <div class="opt" onclick="updateDomain(7.99, '.sbs', this)">.sbs (7,99€*)</div>
+                        <div class="opt" onclick="updateDomain(7.99, '.xyz', this)">.xyz (7,99€*)</div>
+                        <div class="opt" onclick="updateDomain(19.99, '.com', this)">.com (19,99€)</div>
                     </div>
                 </div>
             </div>
-
-            <div class="engine-sidebar">
-                <div>
-                    <h3>investimento total</h3>
-                    <div class="price-display" id="total-price">85,00€</div>
-                    <p style="font-size: 12px; color: #666; margin-bottom: 20px;">* domínios em promoção aplicam-se apenas ao primeiro ano de registo.</p>
-                </div>
-                <button class="btn-main" onclick="order()">confirmar e iniciar projeto</button>
+            <div class="pricing-result">
+                <h3>Total do Projeto</h3>
+                <div class="total-val" id="total-val">85,00€</div>
+                <p style="font-size: 11px; color: #64748b; margin-bottom: 30px;">Pagamento Seguro: 50% início / 50% após aprovação final.</p>
+                <button class="btn-order" onclick="sendOrder()">Iniciar Agora</button>
             </div>
         </div>
     </section>
 
-    <section id="contact">
-        <div class="contact-section">
-            <div>
-                <h2 style="font-size: 48px; letter-spacing: -3px; margin-bottom: 20px;">vamos conversar.</h2>
-                <p>estamos prontos para dar vida ao teu projeto. responde em 1h.</p>
-            </div>
-            <form>
-                <input type="text" placeholder="o teu nome">
-                <input type="email" placeholder="e-mail de contacto">
-                <textarea placeholder="fala-nos sobre o teu negócio" rows="1"></textarea>
-                <button class="btn-main" type="button" style="width: 100%; background: black;">enviar mensagem</button>
+    <section id="faq">
+        <h2 style="margin-bottom: 40px;">Dúvidas Frequentes</h2>
+        <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">O site é mesmo entregue em 48 horas? <i class="fas fa-plus"></i></div>
+            <div class="faq-answer">Sim. Após o envio de todo o conteúdo (textos e fotos), a nossa equipa foca-se exclusivamente no seu projeto para garantir a entrega em 2 dias úteis.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">O que acontece após o primeiro ano do domínio? <i class="fas fa-plus"></i></div>
+            <div class="faq-answer">As extensões em promoção (.fun, .sbs, .xyz) têm um custo de renovação padrão após 12 meses. Avisaremos com 30 dias de antecedência.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">Terei acesso para editar o meu site? <i class="fas fa-plus"></i></div>
+            <div class="faq-answer">Sim, entregamos o site com um painel de gestão intuitivo para que possa alterar textos e imagens sem depender de nós.</div>
+        </div>
+    </section>
+
+    <section id="contact" style="background: var(--soft-bg);">
+        <div style="max-width: 800px; margin: 0 auto; text-align: center;">
+            <h2 style="font-size: 42px; margin-bottom: 20px;">Pronto para subir de nível?</h2>
+            <p style="margin-bottom: 40px;">Envie-nos uma mensagem e receba uma análise gratuita do seu negócio.</p>
+            <form style="background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
+                <input type="text" placeholder="Nome do Negócio" style="width:100%; padding:15px; border-radius:8px; border:1px solid var(--border); margin-bottom: 20px;">
+                <input type="email" placeholder="E-mail de Contacto" style="width:100%; padding:15px; border-radius:8px; border:1px solid var(--border); margin-bottom: 20px;">
+                <button type="button" class="btn-order" style="background: black; color: white;">Pedir Consultoria Grátis</button>
             </form>
         </div>
     </section>
 
     <footer>
-        <div>virgadigital © 2026 — porto, portugal</div>
-        <div style="display: flex; gap: 20px;">
-            <a href="#">instagram</a>
-            <a href="#">linkedin</a>
+        <div>VirgaDigital © 2026 — Portugal</div>
+        <div style="display: flex; gap: 30px;">
+            <span>geral@virgadigital.pt</span>
+            <span>WhatsApp: +351 912 345 678</span>
         </div>
     </footer>
 
     <script>
         // -----------------------------------------------------------
-        // 10 REVIEWS (4 de 5 estrelas, 1 de 4 estrelas)
+        // Lógica de Reviews (6 reviews: 5x5* e 1x4*)
         // -----------------------------------------------------------
-        const reviews = [
-            {n: "joão m.", s: 5, t: "entrega em menos de 48h. o site ficou incrível."},
-            {n: "carla s.", s: 5, t: "super profissional. o domínio .fun foi muito barato."},
-            {n: "pedro f.", s: 4, t: "gostei muito do design, apenas demorou um pouco na resposta inicial."},
-            {n: "ana r.", s: 5, t: "finalmente um site que não parece feito em 2010."},
-            {n: "marco l.", s: 5, t: "o configurador de preços é muito honesto. recomendo."},
-            {n: "sofia b.", s: 5, t: "melhor investimento que fiz para a minha loja."},
-            {n: "tiago g.", s: 5, t: "rápido, limpo e eficiente."},
-            {n: "beatriz p.", s: 5, t: "o suporte pós-venda é excelente."},
-            {n: "mário j.", s: 5, t: "conseguiram captar a essência da minha marca."},
-            {n: "lucia h.", s: 5, t: "recomendo a todos os meus colegas empresários."}
+        const reviewsData = [
+            {n: "Ana Martins", s: 5, t: "O design superou todas as minhas expectativas. Muito profissional!", img: "https://i.pravatar.cc/150?u=ana"},
+            {n: "João Pires", s: 5, t: "Entrega em 48h real. Recomendo para quem tem pressa e quer qualidade.", img: "https://i.pravatar.cc/150?u=joao"},
+            {n: "Ricardo Silva", s: 5, t: "O meu negócio de restauração ganhou uma vida nova online.", img: "https://i.pravatar.cc/150?u=ric"},
+            {n: "Marta Gonçalves", s: 4, t: "Excelente trabalho, apenas demorei um pouco a escolher as cores.", img: "https://i.pravatar.cc/150?u=marta"},
+            {n: "Hugo Costa", s: 5, t: "O simulador de preços é muito prático e transparente. Nota 10.", img: "https://i.pravatar.cc/150?u=hugo"},
+            {n: "Sofia Leite", s: 5, t: "Suporte impecável mesmo após o site estar online. Parabéns!", img: "https://i.pravatar.cc/150?u=sofia"}
         ];
 
         const track = document.getElementById('reviews-track');
-        [...reviews, ...reviews].forEach(r => {
-            let stars = '<i class="fas fa-star"></i>'.repeat(r.s);
-            if(r.s === 4) stars += '<i class="far fa-star"></i>';
+        [...reviewsData, ...reviewsData].forEach(r => {
+            const stars = '<i class="fas fa-star"></i>'.repeat(r.s) + (r.s === 4 ? '<i class="far fa-star"></i>' : '');
             track.innerHTML += `
                 <div class="review-card">
-                    <div class="stars">${stars}</div>
+                    <div class="reviewer-info">
+                        <img src="${r.img}" alt="User">
+                        <div class="reviewer-name"><h4>${r.n}</h4><div class="stars">${stars}</div></div>
+                    </div>
                     <p class="review-text">"${r.t}"</p>
-                    <span class="review-author">— ${r.n}</span>
                 </div>
             `;
         });
 
         // -----------------------------------------------------------
-        // LÓGICA DE PREÇOS
+        // Motor de Preços
         // -----------------------------------------------------------
-        let currentBase = 60;
-        let currentDomain = 25;
-        let currentExt = ".pt";
+        let base = 60;
+        let domain = 25;
+        let ext = ".pt";
 
-        function setDomain(ext, price, el) {
-            currentDomain = price;
-            currentExt = ext;
-            document.querySelectorAll('#domain-list .opt').forEach(o => o.classList.remove('active'));
+        function updateBase(p, el) {
+            base = p;
+            document.querySelectorAll('.opt').forEach(o => { if(o.innerText.includes('Page') || o.innerText.includes('Institucional')) o.classList.remove('active')});
             el.classList.add('active');
-            updatePrice();
+            calc();
         }
 
-        function updatePrice() {
-            const total = currentBase + currentDomain;
-            document.getElementById('total-price').innerText = total.toFixed(2).replace('.', ',') + "€";
+        function updateDomain(p, e, el) {
+            domain = p; ext = e;
+            document.querySelectorAll('.opt').forEach(o => { if(o.innerText.includes('.')) o.classList.remove('active')});
+            el.classList.add('active');
+            calc();
+        }
+
+        function calc() {
+            document.getElementById('total-val').innerText = (base + domain).toFixed(2).replace('.', ',') + "€";
+        }
+
+        function sendOrder() {
+            const msg = `Olá VirgaDigital! Quero iniciar o meu projeto: website de ${base}€ com domínio ${ext}.`;
+            window.open(`https://wa.me/351912345678?text=${encodeURIComponent(msg)}`);
         }
 
         // -----------------------------------------------------------
-        // SIMULADOR DE PORTFOLIO
+        // Navegação de Projetos (Páginas Internas)
         // -----------------------------------------------------------
-        function openViewer(url) {
-            document.getElementById('site-viewer').style.display = 'flex';
-            document.getElementById('viewer-iframe').src = url;
-            document.getElementById('viewer-url').innerText = url;
+        function openProject(slug) {
+            const view = document.getElementById('project-view');
+            const content = document.getElementById('project-content');
+            view.style.display = 'block';
             document.body.style.overflow = 'hidden';
+
+            if(slug === 'luxury') {
+                content.innerHTML = `
+                    <h1 style="font-size: 4rem; margin-bottom: 20px;">Boutique de Moda</h1>
+                    <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=1200" style="width:100%; border-radius:20px; margin-bottom:40px;">
+                    <div style="display:grid; grid-template-columns: 2fr 1fr; gap: 50px;">
+                        <div>
+                            <h2>O Desafio</h2>
+                            <p>Criar uma experiência de compra rápida e visualmente apelativa para uma marca de luxo.</p>
+                            <h2 style="margin-top:30px;">Funcionalidades Implementadas</h2>
+                            <ul>
+                                <li>Catálogo Dinâmico</li>
+                                <li>Checkout em 3 passos</li>
+                                <li>Otimização Mobile Absoluta</li>
+                            </ul>
+                        </div>
+                        <div style="background:var(--soft-bg); padding:30px; border-radius:20px;">
+                            <h4>Tecnologias</h4>
+                            <p>HTML5, CSS3, JS Engine, Shopify API</p>
+                            <h4 style="margin-top:20px;">Resultado</h4>
+                            <p>Aumento de 45% nas vendas mobile.</p>
+                        </div>
+                    </div>
+                `;
+            } else {
+                content.innerHTML = `<h1>Clínica Médica</h1><p>Em breve mais detalhes...</p>`;
+            }
         }
 
-        function closeViewer() {
-            document.getElementById('site-viewer').style.display = 'none';
-            document.getElementById('viewer-iframe').src = "";
+        function closeProject() {
+            document.getElementById('project-view').style.display = 'none';
             document.body.style.overflow = 'auto';
         }
 
-        function order() {
-            const msg = `olá! quero iniciar o meu site com domínio ${currentExt}. valor total: ${currentBase + currentDomain}€`;
-            window.open(`https://wa.me/351912345678?text=${encodeURIComponent(msg)}`);
+        // -----------------------------------------------------------
+        // Outros UI
+        // -----------------------------------------------------------
+        function toggleFaq(el) { el.classList.toggle('active'); }
+        function toggleChat() { 
+            const win = document.getElementById('chat-window');
+            win.style.display = win.style.display === 'flex' ? 'none' : 'flex';
         }
     </script>
 </body>
