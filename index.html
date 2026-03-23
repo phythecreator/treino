@@ -3,365 +3,230 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Evolução das Minhas Notas</title>
+    <title>GradeMaster Pro | Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary: #6366f1; /* Indigo moderno */
-            --primary-hover: #4f46e5;
-            --bg-gradient: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
-            --card-bg: #ffffff;
-            --text-main: #1f2937;
-            --text-muted: #6b7280;
-            --border-color: #e5e7eb;
-        }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: var(--bg-gradient);
-            color: var(--text-main);
-            max-width: 1050px;
-            margin: 0 auto;
-            padding: 30px 20px;
-            min-height: 100vh;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        h1 {
-            color: var(--primary);
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-
-        p {
-            color: var(--text-muted);
-            font-size: 0.95rem;
-        }
-
-        .card {
-            background: var(--card-bg);
-            border-radius: 16px;
-            padding: 25px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-            margin-bottom: 25px;
-        }
-
-        .table-responsive {
-            overflow-x: auto;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            white-space: nowrap;
-        }
-
-        th, td {
-            padding: 15px;
-            text-align: center;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        th {
-            font-weight: 500;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            font-size: 0.85rem;
-            letter-spacing: 0.05em;
-        }
-
-        td strong {
-            font-weight: 500;
-            color: var(--text-main);
-        }
-
-        select, input[type="number"] {
-            font-family: 'Poppins', sans-serif;
-            padding: 8px 12px;
-            border: 1px solid #d1d5db;
-            border-radius: 8px;
-            outline: none;
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
-
-        select:focus, input[type="number"]:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-        }
-
-        input[type="number"] {
-            width: 60px;
-            text-align: center;
-            font-weight: 500;
-        }
-
-        input[type="number"]:disabled {
-            background-color: #f3f4f6;
-            color: #9ca3af;
-            cursor: not-allowed;
-            border-color: #e5e7eb;
-        }
-
-        .btn-container {
-            text-align: center;
-            margin: 20px 0;
-        }
-
-        button {
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            padding: 12px 28px;
-            font-size: 1rem;
-            font-family: 'Poppins', sans-serif;
-            font-weight: 500;
-            cursor: pointer;
-            box-shadow: 0 4px 6px rgba(99, 102, 241, 0.2);
-            transition: all 0.2s ease;
-        }
-
-        button:hover {
-            background-color: var(--primary-hover);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(99, 102, 241, 0.3);
-        }
-
-        button:active {
-            transform: translateY(0);
-        }
-
-        .chart-container {
-            position: relative;
-            height: 500px;
-            width: 100%;
-        }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; }
+        .glass-card { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); border: 1px solid rgba(226, 232, 240, 0.8); }
+        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
     </style>
 </head>
-<body>
+<body class="p-4 md:p-8">
 
-    <div class="header">
-        <h1>Gestor de Notas 🎓</h1>
-        <p>Acompanha a tua evolução (Escala de 0 a 100)</p>
-    </div>
-
-    <div class="card">
-        <div class="table-responsive">
-            <table>
-                <thead>
-                    <tr>
-                        <th style="text-align: left;">Disciplina</th>
-                        <th>Nº de Testes</th>
-                        <th>Teste 1</th>
-                        <th>Teste 2</th>
-                        <th>Teste 3</th>
-                        <th>Teste 4</th>
-                    </tr>
-                </thead>
-                <tbody id="tabela-notas">
-                    </tbody>
-            </table>
+<div class="max-w-7xl mx-auto">
+    <header class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+        <div>
+            <h1 class="text-3xl font-bold text-slate-900">GradeMaster <span class="text-blue-600">Pro</span></h1>
+            <p class="text-slate-500">Monitorização de performance académica em tempo real.</p>
         </div>
-        
-        <div class="btn-container">
-            <button onclick="atualizarGrafico()">Guardar Notas & Atualizar Gráfico</button>
+        <div class="flex gap-4">
+            <div class="glass-card p-4 rounded-2xl shadow-sm text-center min-w-[120px]">
+                <span class="text-xs text-slate-500 uppercase font-bold tracking-wider">Média Geral</span>
+                <div id="media-geral" class="text-2xl font-bold text-blue-600">0.0</div>
+            </div>
+            <div class="glass-card p-4 rounded-2xl shadow-sm text-center min-w-[120px]">
+                <span class="text-xs text-slate-500 uppercase font-bold tracking-wider">Melhor Disciplina</span>
+                <div id="melhor-disc" class="text-sm font-bold text-emerald-600 mt-1">-</div>
+            </div>
+        </div>
+    </header>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div class="lg:col-span-8">
+            <div class="glass-card rounded-3xl shadow-sm overflow-hidden">
+                <table class="w-full text-left border-collapse">
+                    <thead class="bg-slate-50/50">
+                        <tr>
+                            <th class="p-4 text-xs font-bold text-slate-400 uppercase">Disciplina</th>
+                            <th class="p-4 text-xs font-bold text-slate-400 uppercase text-center">Testes</th>
+                            <th class="p-4 text-xs font-bold text-slate-400 uppercase text-center">Notas (0-100)</th>
+                            <th class="p-4 text-xs font-bold text-slate-400 uppercase text-right">Média</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabela-corpo" class="divide-y divide-slate-100">
+                        </tbody>
+                </table>
+                <div class="p-4 bg-slate-50/50 flex justify-end">
+                    <button onclick="salvarEAtualizar()" class="bg-slate-900 hover:bg-slate-800 text-white px-6 py-2 rounded-xl font-semibold transition-all transform active:scale-95 shadow-lg">
+                        Atualizar Dashboard
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="lg:col-span-4 space-y-6">
+            <div class="glass-card p-6 rounded-3xl shadow-sm">
+                <h3 class="text-lg font-bold mb-4 text-slate-800">Evolução por Disciplina</h3>
+                <select id="filtro-grafico" onchange="atualizarGraficos()" class="w-full p-3 bg-slate-100 border-none rounded-xl text-sm font-medium focus:ring-2 focus:ring-blue-500 mb-4">
+                    <option value="all">Todas as Disciplinas</option>
+                </select>
+                <div class="h-[250px]">
+                    <canvas id="lineChart"></canvas>
+                </div>
+            </div>
+
+            <div class="glass-card p-6 rounded-3xl shadow-sm">
+                <h3 class="text-lg font-bold mb-4 text-slate-800">Equilíbrio de Competências</h3>
+                <div class="h-[250px]">
+                    <canvas id="radarChart"></canvas>
+                </div>
+            </div>
         </div>
     </div>
+</div>
 
-    <div class="card">
-        <div class="chart-container">
-            <canvas id="meuGrafico"></canvas>
-        </div>
-    </div>
+<script>
+    const disciplinas = [
+        {nome: 'História', cor: '#f43f5e'}, {nome: 'Português', cor: '#3b82f6'},
+        {nome: 'Matemática', cor: '#10b981'}, {nome: 'Ciências', cor: '#f59e0b'},
+        {nome: 'Físico-Química', cor: '#8b5cf6'}, {nome: 'Inglês', cor: '#06b6d4'},
+        {nome: 'Francês', cor: '#ec4899'}, {nome: 'Geografia', cor: '#64748b'}
+    ];
 
-    <script>
-        const disciplinas = [
-            'História', 'Português', 'Matemática', 'Ciências', 
-            'Físico-Química', 'Inglês', 'Francês', 'Geografia'
-        ];
+    let lineChart, radarChart;
 
-        // Paleta de cores mais bonita e vibrante para o gráfico
-        const cores = [
-            '#ef4444', '#3b82f6', '#f59e0b', '#10b981', 
-            '#8b5cf6', '#f97316', '#64748b', '#ec4899'
-        ];
+    function init() {
+        const corpo = document.getElementById('tabela-corpo');
+        const filtro = document.getElementById('filtro-grafico');
 
-        const tabelaBody = document.getElementById('tabela-notas');
-        let chart;
+        disciplinas.forEach((d, idx) => {
+            // Dropdown filtro
+            const opt = document.createElement('option');
+            opt.value = idx;
+            opt.textContent = d.nome;
+            filtro.appendChild(opt);
 
-        // Limita o input para garantir que não passa de 100 nem desce de 0
-        function validarInput(input) {
-            if (input.value !== '') {
-                if (parseFloat(input.value) > 100) input.value = 100;
-                if (parseFloat(input.value) < 0) input.value = 0;
+            // Tabela
+            const qSalva = localStorage.getItem(`q-${idx}`) || '3';
+            const tr = document.createElement('tr');
+            tr.className = "hover:bg-slate-50/50 transition-colors";
+            tr.innerHTML = `
+                <td class="p-4"><span class="flex items-center gap-2"><div class="w-2 h-2 rounded-full" style="background:${d.cor}"></div><span class="font-semibold text-slate-700">${d.nome}</span></span></td>
+                <td class="p-4 text-center">
+                    <select id="q-${idx}" onchange="toggleInputs(${idx})" class="text-xs font-bold bg-slate-100 rounded-lg p-1 border-none">
+                        <option value="2" ${qSalva==='2'?'selected':''}>2</option>
+                        <option value="3" ${qSalva==='3'?'selected':''}>3</option>
+                        <option value="4" ${qSalva==='4'?'selected':''}>4</option>
+                    </select>
+                </td>
+                <td class="p-4 flex justify-center gap-2">
+                    ${[1,2,3,4].map(t => `<input type="number" id="n-${idx}-${t}" placeholder="T${t}" min="0" max="100" value="${localStorage.getItem(`n-${idx}-${t}`)||''}" class="w-12 h-10 text-center bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 transition-all text-sm font-bold">`).join('')}
+                </td>
+                <td class="p-4 text-right font-bold text-slate-400" id="media-${idx}">-</td>
+            `;
+            corpo.appendChild(tr);
+            toggleInputs(idx);
+        });
+        atualizarGraficos();
+    }
+
+    function toggleInputs(idx) {
+        const q = parseInt(document.getElementById(`q-${idx}`).value);
+        for(let t=1; t<=4; t++) {
+            const input = document.getElementById(`n-${idx}-${t}`);
+            input.style.display = t > q ? 'none' : 'block';
+        }
+        localStorage.setItem(`q-${idx}`, q);
+    }
+
+    function salvarEAtualizar() {
+        disciplinas.forEach((_, idx) => {
+            for(let t=1; t<=4; t++) {
+                localStorage.setItem(`n-${idx}-${t}`, document.getElementById(`n-${idx}-${t}`).value);
             }
-        }
+        });
+        atualizarGraficos();
+    }
 
-        // Lida com a mudança no número de testes (3 ou 4)
-        function alterarNumeroTestes(index) {
-            const select = document.getElementById(`qnt-testes-${index}`);
-            const inputT4 = document.getElementById(`nota-${index}-4`);
-            
-            if (select.value === '3') {
-                inputT4.disabled = true;
-                inputT4.value = ''; // Limpa o valor se mudar para 3
-            } else {
-                inputT4.disabled = false;
+    function atualizarGraficos() {
+        const filtroVal = document.getElementById('filtro-grafico').value;
+        const lineData = [];
+        const radarLabels = [];
+        const radarValues = [];
+        let somaMedias = 0;
+        let countMedias = 0;
+        let melhor = {nome: '-', nota: -1};
+
+        disciplinas.forEach((d, idx) => {
+            const notas = [];
+            let somaDisc = 0;
+            let countDisc = 0;
+            const q = parseInt(document.getElementById(`q-${idx}`).value);
+
+            for(let t=1; t<=4; t++) {
+                const v = document.getElementById(`n-${idx}-${t}`).value;
+                if(t <= q && v !== "") {
+                    const nota = parseFloat(v);
+                    notas.push(nota);
+                    somaDisc += nota;
+                    countDisc++;
+                } else if (t <= q) {
+                    notas.push(null);
+                }
             }
-            // Guarda a preferência
-            localStorage.setItem(`qnt-testes-${index}`, select.value);
-        }
 
-        // Gerar a tabela com as opções
-        function gerarTabela() {
-            disciplinas.forEach((disciplina, index) => {
-                const tr = document.createElement('tr');
-                
-                // Recupera se tinha 3 ou 4 testes guardados, padrão é 4
-                const qntTestesGuardada = localStorage.getItem(`qnt-testes-${index}`) || '4';
-                
-                let htmlStr = `<td style="text-align: left;"><strong>${disciplina}</strong></td>`;
-                
-                // Dropdown para escolher 3 ou 4 testes
-                htmlStr += `
-                    <td>
-                        <select id="qnt-testes-${index}" onchange="alterarNumeroTestes(${index})">
-                            <option value="4" ${qntTestesGuardada === '4' ? 'selected' : ''}>4 Testes</option>
-                            <option value="3" ${qntTestesGuardada === '3' ? 'selected' : ''}>3 Testes</option>
-                        </select>
-                    </td>
-                `;
+            const media = countDisc > 0 ? (somaDisc / countDisc).toFixed(1) : null;
+            const mediaEl = document.getElementById(`media-${idx}`);
+            mediaEl.textContent = media || '-';
+            mediaEl.className = `p-4 text-right font-bold ${media >= 70 ? 'text-emerald-500' : media < 50 ? 'text-rose-500' : 'text-amber-500'}`;
 
-                // Gerar as 4 caixas de notas
-                for (let i = 1; i <= 4; i++) {
-                    const idInput = `nota-${index}-${i}`;
-                    const valorGuardado = localStorage.getItem(idInput) || '';
-                    const isDisabled = (i === 4 && qntTestesGuardada === '3') ? 'disabled' : '';
-                    
-                    htmlStr += `<td><input type="number" id="${idInput}" value="${valorGuardado}" min="0" max="100" oninput="validarInput(this)" ${isDisabled}></td>`;
-                }
-                
-                tr.innerHTML = htmlStr;
-                tabelaBody.appendChild(tr);
-            });
-        }
+            if(media) {
+                somaMedias += parseFloat(media);
+                countMedias++;
+                if(parseFloat(media) > melhor.nota) melhor = {nome: d.nome, nota: parseFloat(media)};
+            }
 
-        // Função para guardar as notas e desenhar o gráfico
-        function atualizarGrafico() {
-            const datasets = [];
-
-            disciplinas.forEach((disciplina, index) => {
-                const notasDisciplina = [];
-                const qntTestes = document.getElementById(`qnt-testes-${index}`).value;
-                const limiteTestes = parseInt(qntTestes);
-
-                for (let i = 1; i <= 4; i++) {
-                    const idInput = `nota-${index}-${i}`;
-                    const input = document.getElementById(idInput);
-                    const valor = input.value;
-                    
-                    // Guarda o valor no localStorage
-                    localStorage.setItem(idInput, valor);
-                    
-                    // Se estivermos no teste 4 e a disciplina só tem 3 testes, o ponto é ignorado no gráfico (null)
-                    if (i === 4 && limiteTestes === 3) {
-                        notasDisciplina.push(null);
-                    } else {
-                        notasDisciplina.push(valor !== '' ? parseFloat(valor) : null);
-                    }
-                }
-
-                datasets.push({
-                    label: disciplina,
-                    data: notasDisciplina,
-                    borderColor: cores[index],
-                    backgroundColor: cores[index],
-                    borderWidth: 3,
-                    pointBackgroundColor: '#fff',
-                    pointBorderWidth: 2,
-                    pointRadius: 5,
-                    pointHoverRadius: 7,
-                    fill: false,
-                    tension: 0.3 // Curvatura suave nas linhas
+            if(filtroVal === 'all' || filtroVal == idx) {
+                lineData.push({
+                    label: d.nome, data: notas, borderColor: d.cor, backgroundColor: d.cor,
+                    tension: 0.4, borderWidth: filtroVal === 'all' ? 2 : 4, pointRadius: 4, spanGaps: true
                 });
-            });
-
-            desenharGrafico(datasets);
-            
-            // Um pequeno feedback visual de que gravou
-            const btn = document.querySelector('button');
-            const textoOriginal = btn.innerText;
-            btn.innerText = "Gravado com sucesso! ✓";
-            btn.style.backgroundColor = "#10b981"; // Cor verde
-            setTimeout(() => {
-                btn.innerText = textoOriginal;
-                btn.style.backgroundColor = "";
-            }, 2000);
-        }
-
-        // Função para desenhar o gráfico com Chart.js
-        function desenharGrafico(datasets) {
-            const ctx = document.getElementById('meuGrafico').getContext('2d');
-            
-            if (chart) {
-                chart.destroy();
             }
+            radarLabels.push(d.nome);
+            radarValues.push(media || 0);
+        });
 
-            // Oculta a grelha padrão para um aspeto mais limpo, e define a fonte
-            Chart.defaults.font.family = "'Poppins', sans-serif";
-            Chart.defaults.color = "#6b7280";
+        document.getElementById('media-geral').textContent = countMedias > 0 ? (somaMedias/countMedias).toFixed(1) : '0.0';
+        document.getElementById('melhor-disc').textContent = melhor.nome;
 
-            chart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['Teste 1', 'Teste 2', 'Teste 3', 'Teste 4'],
-                    datasets: datasets
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            min: 0,
-                            max: 100, // Escala fixa de 0 a 100
-                            grid: {
-                                color: '#f3f4f6'
-                            }
-                        },
-                        x: {
-                            grid: {
-                                display: false
-                            }
-                        }
-                    },
-                    plugins: {
-                        tooltip: {
-                            backgroundColor: 'rgba(31, 41, 55, 0.9)',
-                            padding: 12,
-                            titleFont: { size: 14 },
-                            bodyFont: { size: 14 }
-                        },
-                        legend: {
-                            position: 'top',
-                            labels: {
-                                usePointStyle: true,
-                                padding: 20
-                            }
-                        }
-                    }
-                }
-            });
-        }
+        renderLine(lineData);
+        renderRadar(radarLabels, radarValues);
+    }
 
-        window.onload = function() {
-            gerarTabela();
-            atualizarGrafico(); 
-        };
-    </script>
+    function renderLine(datasets) {
+        const ctx = document.getElementById('lineChart');
+        if(lineChart) lineChart.destroy();
+        lineChart = new Chart(ctx, {
+            type: 'line',
+            data: { labels: ['T1', 'T2', 'T3', 'T4'], datasets },
+            options: { 
+                responsive: true, maintainAspectRatio: false, 
+                plugins: { legend: { display: false } },
+                scales: { y: { min: 0, max: 100, grid: { color: '#f1f5f9' } }, x: { grid: { display: false } } }
+            }
+        });
+    }
+
+    function renderRadar(labels, data) {
+        const ctx = document.getElementById('radarChart');
+        if(radarChart) radarChart.destroy();
+        radarChart = new Chart(ctx, {
+            type: 'radar',
+            data: { 
+                labels, 
+                datasets: [{ label: 'Perfil', data, backgroundColor: 'rgba(59, 130, 246, 0.2)', borderColor: '#3b82f6', borderWidth: 2, pointRadius: 0 }] 
+            },
+            options: { 
+                responsive: true, maintainAspectRatio: false,
+                scales: { r: { min: 0, max: 100, ticks: { display: false } } },
+                plugins: { legend: { display: false } }
+            }
+        });
+    }
+
+    window.onload = init;
+</script>
 </body>
 </html>
