@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GradeMaster Infinity | Analytics & Career</title>
+    <title>GradeMaster Quantum | Intelligence Hub</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -16,379 +16,349 @@
         }
     </script>
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; transition: background 0.4s ease; }
-        .glass-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.3); }
-        .dark .glass-card { background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255,255,255,0.05); }
-        .input-glow:focus { box-shadow: 0 0 15px rgba(99, 102, 241, 0.3); }
-        .quiz-option { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
-        .quiz-option:hover { transform: translateX(8px); }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; transition: all 0.4s ease; scroll-behavior: smooth; }
+        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.1); }
+        .card-neo { background: white; border-radius: 2.5rem; box-shadow: 0 10px 40px -10px rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.03); }
+        .dark .card-neo { background: #0f172a; border: 1px solid rgba(255,255,255,0.05); box-shadow: none; }
+        .device-pc { max-width: 1400px; margin: auto; }
+        .device-mobile { max-width: 480px; margin: auto; }
+        .tab-active { border-bottom: 3px solid #6366f1; color: #6366f1; }
     </style>
 </head>
-<body class="bg-[#f1f5f9] dark:bg-[#020617] text-slate-900 dark:text-slate-100 min-h-screen pb-20">
+<body class="bg-[#f8fafc] dark:bg-[#020617] text-slate-900 dark:text-slate-100 min-h-screen">
 
-<div id="main-content" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 space-y-10">
+<div id="device-overlay" class="fixed inset-0 z-[100] bg-slate-900 flex items-center justify-center p-6 text-white">
+    <div class="text-center space-y-8 max-w-md">
+        <h2 class="text-4xl font-black tracking-tighter">BEM-VINDO AO QUANTUM</h2>
+        <p class="text-slate-400">Escolha a otimização da interface para começar:</p>
+        <div class="grid grid-cols-2 gap-4">
+            <button onclick="setDevice('pc')" class="p-6 bg-indigo-600 rounded-3xl font-bold hover:bg-indigo-700 transition-all">💻 COMPUTADOR</button>
+            <button onclick="setDevice('mobile')" class="p-6 bg-slate-800 rounded-3xl font-bold hover:bg-slate-700 transition-all">📱 TELEMÓVEL</button>
+        </div>
+    </div>
+</div>
+
+<div id="app-container" class="hidden pb-20 pt-10 px-4 md:px-10">
     
-    <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+    <header class="flex flex-col md:flex-row justify-between items-center mb-12 gap-6">
         <div>
-            <h1 class="text-5xl font-extrabold tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600">
-                GradeMaster Infinity
-            </h1>
-            <p class="mt-2 text-slate-500 dark:text-slate-400 font-medium text-lg">Plataforma de Alta Performance & Orientação de Carreira</p>
+            <span class="text-indigo-600 font-extrabold tracking-widest text-xs uppercase">Premium Student Dashboard</span>
+            <h1 class="text-5xl font-black tracking-tight mt-1">GradeMaster <span class="text-indigo-600">Quantum</span></h1>
         </div>
-        <div class="flex items-center gap-4 w-full lg:w-auto">
-            <button onclick="toggleTheme()" class="flex-1 lg:flex-none p-4 rounded-2xl glass-card shadow-sm hover:scale-105 transition-all">
-                <span id="theme-icon">🌙</span>
-            </button>
-            <button onclick="generatePDF()" class="flex-[2] lg:flex-none px-8 py-4 bg-slate-900 dark:bg-indigo-600 text-white rounded-2xl font-bold text-lg shadow-2xl hover:bg-slate-800 transition-all">
-                Exportar Report PDF
-            </button>
+        <div class="flex gap-4">
+            <button onclick="toggleTheme()" class="p-4 card-neo hover:scale-110 transition-all">🌓</button>
+            <button onclick="exportFullReport()" class="px-8 py-4 bg-slate-900 dark:bg-indigo-600 text-white rounded-2xl font-black shadow-2xl hover:opacity-90 transition-all">EXPORTAR RELATÓRIO</button>
         </div>
-    </div>
+    </header>
 
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        
-        <div class="lg:col-span-8 space-y-8">
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                <div class="glass-card p-6 rounded-[2.5rem] text-center">
-                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Média Global</p>
-                    <div id="global-avg" class="text-4xl font-black text-indigo-600">0.0</div>
-                </div>
-                <div class="glass-card p-6 rounded-[2.5rem] text-center">
-                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Ponto Forte</p>
-                    <div id="top-subject" class="text-xl font-bold text-emerald-500">N/A</div>
-                </div>
-                <div class="glass-card p-6 rounded-[2.5rem] text-center">
-                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Conselho</p>
-                    <div id="short-status" class="text-sm font-semibold text-slate-600 dark:text-slate-300 italic">-</div>
-                </div>
-            </div>
-
-            <div class="glass-card p-8 rounded-[3rem] shadow-sm">
-                <div class="flex justify-between items-center mb-8">
-                    <h2 class="text-2xl font-bold tracking-tight">Evolução Académica</h2>
-                    <div id="legend-box" class="flex flex-wrap gap-3"></div>
-                </div>
-                <div class="h-[450px]">
-                    <canvas id="lineChart"></canvas>
-                </div>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+        <div class="card-neo p-8">
+            <h3 class="text-xl font-bold mb-2">Equilíbrio Vocacional</h3>
+            <p class="text-sm text-slate-400 mb-6">Comparação entre as 3 grandes áreas académicas.</p>
+            <div class="h-[350px] flex justify-center">
+                <canvas id="radarAreas"></canvas>
             </div>
         </div>
-
-        <div class="lg:col-span-4 space-y-8">
-            <div class="glass-card p-8 rounded-[3rem] h-full flex flex-col items-center">
-                <h2 class="text-2xl font-bold tracking-tight mb-8 self-start">Círculo de Competências</h2>
-                <div class="w-full h-[350px]">
-                    <canvas id="radarChart"></canvas>
-                </div>
-                <div id="radar-analysis" class="mt-6 text-sm text-center text-slate-500 italic">
-                    Insere as notas para ver o teu perfil de competências.
-                </div>
+        <div class="card-neo p-8">
+            <h3 class="text-xl font-bold mb-2">Análise por Disciplina</h3>
+            <p class="text-sm text-slate-400 mb-6">Mapeamento detalhado de performance técnica.</p>
+            <div class="h-[350px] flex justify-center">
+                <canvas id="radarDisciplines"></canvas>
             </div>
         </div>
     </div>
 
-    <section class="glass-card rounded-[3rem] overflow-hidden shadow-sm">
-        <div class="p-8 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-white/30">
-            <h2 class="text-2xl font-bold">Lançamento de Notas Detalhado</h2>
-            <button onclick="recalculate()" class="px-6 py-2 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 transition-all">Sincronizar</button>
+    <section class="card-neo p-10 mb-12 bg-gradient-to-br from-white to-slate-50 dark:from-slate-900 dark:to-slate-800">
+        <div class="flex flex-col md:flex-row gap-10 items-center">
+            <div class="text-center md:text-left space-y-2">
+                <p class="text-xs font-black uppercase text-indigo-500 tracking-widest">Global Score</p>
+                <div id="media-global" class="text-8xl font-black leading-none">0.0</div>
+            </div>
+            <div class="flex-1 space-y-4">
+                <h3 class="text-2xl font-bold">Parecer de Performance Detalhado</h3>
+                <div id="parecer-longo" class="text-slate-600 dark:text-slate-400 leading-relaxed text-lg italic">
+                    Insira os seus dados para que a nossa inteligência possa processar o seu perfil académico e gerar um relatório de tendências.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="card-neo overflow-hidden mb-12">
+        <div class="p-8 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
+            <h2 class="text-2xl font-bold italic">Base de Dados de Notas</h2>
+            <button onclick="syncAll()" class="px-6 py-2 bg-emerald-500 text-white rounded-xl font-bold">SINCRONIZAR</button>
         </div>
         <div class="overflow-x-auto">
-            <table class="w-full">
-                <thead class="bg-slate-50/50 dark:bg-slate-900/50">
-                    <tr class="text-left text-xs font-bold text-slate-400 uppercase">
-                        <th class="p-6">Disciplina</th>
-                        <th class="p-6 text-center">Frequência</th>
-                        <th class="p-6 text-center">Resultados de Testes</th>
-                        <th class="p-6 text-right">Média</th>
+            <table class="w-full text-left">
+                <thead class="bg-slate-50 dark:bg-slate-900/50">
+                    <tr class="text-[10px] font-black uppercase text-slate-400 tracking-widest">
+                        <th class="p-6">Matéria</th>
+                        <th class="p-6 text-center">Configuração</th>
+                        <th class="p-6 text-center">Resultados (0-100)</th>
+                        <th class="p-6 text-right">Performance</th>
                     </tr>
                 </thead>
-                <tbody id="table-rows" class="divide-y divide-slate-100 dark:divide-slate-800"></tbody>
+                <tbody id="disciplinas-body" class="divide-y divide-slate-100 dark:divide-slate-800"></tbody>
             </table>
         </div>
     </section>
 
-    <section class="bg-slate-900 dark:bg-indigo-950 p-10 md:p-16 rounded-[4rem] text-white shadow-2xl overflow-hidden relative">
-        <div class="relative z-10">
-            <div class="text-center max-w-2xl mx-auto mb-16">
-                <span class="px-4 py-1 bg-indigo-500/20 text-indigo-300 rounded-full text-xs font-bold uppercase tracking-widest">IA Career Engine</span>
-                <h2 class="text-4xl font-black mt-4 mb-4">Quiz Vocacional de Elite</h2>
-                <p class="text-indigo-200 text-lg opacity-80">Um diagnóstico completo entre interesses pessoais e aptidões académicas.</p>
+    <section id="quiz-section" class="bg-indigo-700 dark:bg-indigo-900 rounded-[4rem] p-10 md:p-20 text-white shadow-3xl">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-center mb-16">
+                <span class="bg-white/20 px-4 py-2 rounded-full text-xs font-black uppercase tracking-widest">Vocational Engine 2.0</span>
+                <h2 class="text-5xl font-black mt-6">Teste de Orientação Definitivo</h2>
+                <p class="text-indigo-100 mt-4 text-xl opacity-80">17 questões estratégicas para alinhar o seu futuro no 10º ano.</p>
             </div>
 
-            <div id="quiz-container" class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+            <div id="quiz-flow" class="space-y-12">
                 </div>
 
-            <div class="flex flex-col items-center border-t border-white/10 pt-16">
-                <button onclick="analyzeCareer()" class="px-16 py-6 bg-white text-slate-900 rounded-[2rem] font-black text-xl hover:scale-105 transition-all shadow-xl">
-                    Gerar Diagnóstico Final
+            <div class="mt-20 text-center">
+                <button onclick="calculateFinalCareer()" class="px-16 py-6 bg-white text-indigo-900 rounded-3xl font-black text-2xl hover:scale-105 transition-all shadow-2xl">
+                    FINALIZAR DIAGNÓSTICO
                 </button>
+            </div>
 
-                <div id="career-report" class="hidden mt-16 w-full max-w-4xl p-10 bg-white/5 rounded-[3rem] border border-white/10">
-                    <div id="career-bars" class="grid grid-cols-1 md:grid-cols-3 gap-10 mb-10 text-center"></div>
-                    <div id="detailed-verdict" class="p-8 bg-indigo-500/20 rounded-3xl border border-indigo-400/30 text-center text-lg leading-relaxed"></div>
-                </div>
+            <div id="career-result-box" class="hidden mt-20 p-12 bg-white text-slate-900 rounded-[3rem] shadow-2xl">
+                <h4 class="text-3xl font-black text-center mb-10">O Seu Perfil Quantum:</h4>
+                <div id="result-bars" class="space-y-8 mb-10"></div>
+                <div id="result-text" class="p-8 bg-slate-50 rounded-3xl border-2 border-dashed border-indigo-200 text-lg leading-relaxed"></div>
             </div>
         </div>
     </section>
 </div>
 
 <script>
-const subjects = [
-    {n: 'Português', c: '#3b82f6', cat: 'H'}, {n: 'Matemática', c: '#ef4444', cat: 'S'},
-    {n: 'História', c: '#f59e0b', cat: 'H'}, {n: 'Ciências', c: '#10b981', cat: 'S'},
-    {n: 'Físico-Química', c: '#8b5cf6', cat: 'S'}, {n: 'Inglês', c: '#06b6d4', cat: 'H'},
-    {n: 'Economia', c: '#f43f5e', cat: 'E'}, {n: 'Geografia', c: '#64748b', cat: 'E'}
-];
+const data = {
+    subjects: [
+        {n: 'Português', c: '#3b82f6', cat: 'H'}, {n: 'Matemática', c: '#ef4444', cat: 'S'},
+        {n: 'História', c: '#f59e0b', cat: 'H'}, {n: 'Biologia', c: '#10b981', cat: 'S'},
+        {n: 'Físico-Química', c: '#8b5cf6', cat: 'S'}, {n: 'Economia', c: '#f43f5e', cat: 'E'},
+        {n: 'Inglês', c: '#06b6d4', cat: 'H'}, {n: 'Geografia', c: '#64748b', cat: 'E'}
+    ],
+    questions: [
+        {q: "Como prefere abordar um problema desconhecido?", o: [{t:"Analisando o contexto histórico e social", v:"H"}, {t:"Usando lógica matemática e dados puros", v:"S"}, {t:"Avaliando o impacto financeiro e custo-benefício", v:"E"}]},
+        {q: "Qual seria o seu projeto ideal?", o: [{t:"Escrever um romance ou peça de teatro", v:"H"}, {t:"Construir um protótipo tecnológico", v:"S"}, {t:"Criar um modelo de negócio rentável", v:"E"}]},
+        {q: "O que mais o fascina nas notícias?", o: [{t:"Conflitos mundiais e política", v:"H"}, {t:"Avanços na medicina e espaço", v:"S"}, {t:"Bolsa de valores e empresas", v:"E"}]},
+        {q: "Qual destas competências valoriza mais?", o: [{t:"Empatia e Retórica", v:"H"}, {t:"Rigor e Observação", v:"S"}, {t:"Estratégia e Eficiência", v:"E"}]},
+        {q: "Em que lugar se sente mais confortável?", o: [{t:"Uma biblioteca ou museu", v:"H"}, {t:"Um laboratório ou oficina", v:"S"}, {t:"Um escritório de gestão ou banco", v:"E"}]},
+        {q: "O seu passatempo favorito envolve:", o: [{t:"Ler, escrever ou artes", v:"H"}, {t:"Jogos de lógica, puzzles ou PC", v:"S"}, {t:"Planear viagens, eventos ou gerir poupanças", v:"E"}]},
+        {q: "Como vê o futuro da humanidade?", o: [{t:"Depende da evolução dos direitos e ética", v:"H"}, {t:"Será ditado pela inovação tecnológica", v:"S"}, {t:"Será moldado pela estabilidade económica", v:"E"}]},
+        {q: "Qual destas figuras admira mais?", o: [{t:"Um filósofo ou escritor famoso", v:"H"}, {t:"Um cientista ou inventor", v:"S"}, {t:"Um grande empreendedor ou economista", v:"E"}]},
+        {q: "Se pudesse viajar no tempo, iria para:", o: [{t:"Grécia Antiga para ouvir debates", v:"H"}, {t:"O futuro para ver naves espaciais", v:"S"}, {t:"A Revolução Industrial para ver o nascimento das empresas", v:"E"}]},
+        {q: "Gosta de lidar com números?", o: [{t:"Apenas se for necessário", v:"H"}, {t:"Sim, são a base de tudo", v:"S"}, {t:"Sim, para analisar tendências de mercado", v:"E"}]},
+        {q: "O que o irrita mais num projeto?", o: [{t:"Falta de sensibilidade humana", v:"H"}, {t:"Falta de provas científicas", v:"S"}, {t:"Falta de planeamento financeiro", v:"E"}]},
+        {q: "Prefere trabalhar:", o: [{t:"Em equipas focadas em pessoas", v:"H"}, {t:"Sozinho ou em equipas técnicas", v:"S"}, {t:"Em equipas focadas em resultados de negócio", v:"E"}]},
+        {q: "Qual o seu interesse pela justiça?", o: [{t:"Muito alto, adoro leis e ética", v:"H"}, {t:"Interessa-me a justiça forense/provas", v:"S"}, {t:"Interessa-me o impacto da lei na economia", v:"E"}]},
+        {q: "Como usa o seu telemóvel?", o: [{t:"Consumir cultura, redes e escrita", v:"H"}, {t:"Instalar novas apps e configurar tudo", v:"S"}, {t:"Monitorizar contas, preços e compras", v:"E"}]},
+        {q: "Gosta de debates acesos?", o: [{t:"Sim, adoro defender ideias", v:"H"}, {t:"Só se houver factos comprovados", v:"S"}, {t:"Só se for para chegar a uma solução útil", v:"E"}]},
+        {q: "O que o motiva a estudar?", o: [{t:"Compreender o mundo e a cultura", v:"H"}, {t:"Descobrir como as coisas funcionam", v:"S"}, {t:"Garantir uma carreira de sucesso financeiro", v:"E"}]},
+        {q: "Qual a sua relação com a escrita?", o: [{t:"Escrevo com facilidade e gosto", v:"H"}, {t:"Escrevo de forma direta e técnica", v:"S"}, {t:"Escrevo focando em relatórios e dados", v:"E"}]}
+    ]
+};
 
-const careerQuestions = [
-    {q: "Qual destes temas te fascina mais no dia-a-dia?", opts: [
-        {t: "Justiça, Direitos e História das Civilizações", v: "H"},
-        {t: "Mercados Financeiros, Gestão e Estratégia", v: "E"},
-        {t: "Novas Descobertas Científicas e Engenharia", v: "S"}
-    ]},
-    {q: "Em que tipo de atividade sentes que és melhor?", opts: [
-        {t: "Escrever textos, argumentar e debater ideias", v: "H"},
-        {t: "Organizar orçamentos, dados e logística", v: "E"},
-        {t: "Resolver problemas lógicos e fazer experiências", v: "S"}
-    ]},
-    {q: "Como preferes resolver um conflito?", opts: [
-        {t: "Através da análise ética e diálogo histórico", v: "H"},
-        {t: "Analisando custos, benefícios e eficiência", v: "E"},
-        {t: "Através do método científico e provas factuais", v: "S"}
-    ]},
-    {q: "O teu interesse por tecnologia está focado em:", opts: [
-        {t: "O impacto social e humano da tecnologia", v: "H"},
-        {t: "O potencial de lucro e inovação no mercado", v: "E"},
-        {t: "O hardware, o código e o funcionamento interno", v: "S"}
-    ]},
-    {q: "Se tivesses de ler um artigo agora, seria sobre:", opts: [
-        {t: "A evolução das línguas e literatura", v: "H"},
-        {t: "Como funciona a inflação e os impostos", v: "E"},
-        {t: "O avanço da inteligência artificial ou medicina", v: "S"}
-    ]}
-    // Adicionaria mais para chegar às 18, seguindo este padrão profissional
-];
+let charts = {};
+const quizData = {};
 
-let lineChart, radarChart;
-const quizAnswers = {};
+function setDevice(type) {
+    document.getElementById('device-overlay').classList.add('hidden');
+    const container = document.getElementById('app-container');
+    container.classList.remove('hidden');
+    container.className = type === 'pc' ? 'device-pc pb-20 pt-10 px-10' : 'device-mobile pb-20 pt-10 px-4';
+    init();
+}
 
 function init() {
-    const table = document.getElementById('table-rows');
-    const legend = document.getElementById('legend-box');
-    const quiz = document.getElementById('quiz-container');
+    const body = document.getElementById('disciplinas-body');
+    const quizFlow = document.getElementById('quiz-flow');
 
-    subjects.forEach((s, i) => {
-        legend.innerHTML += `<div class="flex items-center gap-2 px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-lg"><div class="w-3 h-3 rounded-full" style="background:${s.c}"></div><span class="text-[10px] font-bold uppercase">${s.n}</span></div>`;
-
+    data.subjects.forEach((s, i) => {
         const tr = document.createElement('tr');
-        tr.className = "hover:bg-slate-50/50 dark:hover:bg-slate-900/50 transition-all";
+        tr.className = "hover:bg-slate-50 dark:hover:bg-slate-900 transition-all";
         tr.innerHTML = `
-            <td class="p-6 font-bold">${s.n}</td>
+            <td class="p-6 font-bold flex items-center gap-3"><div class="w-3 h-3 rounded-full" style="background:${s.c}"></div>${s.n}</td>
             <td class="p-6 text-center">
-                <select id="q-${i}" onchange="updateInputs(${i})" class="bg-slate-100 dark:bg-slate-800 p-2 rounded-xl text-xs font-bold border-none outline-none">
+                <select id="q-${i}" onchange="updateRow(${i})" class="bg-slate-100 dark:bg-slate-800 p-2 rounded-xl text-[10px] font-black uppercase border-none">
                     <option value="2">2 Testes</option><option value="3">3 Testes</option><option value="4" selected>4 Testes</option>
                 </select>
             </td>
             <td class="p-6 flex justify-center gap-2">
-                ${[1,2,3,4].map(t => `<input type="number" id="n-${i}-${t}" placeholder="T${t}" min="0" max="100" class="w-12 h-12 text-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold focus:border-indigo-500 outline-none transition-all">`).join('')}
+                ${[1,2,3,4].map(t => `<input type="number" id="n-${i}-${t}" placeholder="T${t}" class="w-12 h-12 text-center bg-white dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 rounded-xl font-bold focus:border-indigo-500 outline-none">`).join('')}
             </td>
-            <td id="avg-${i}" class="p-6 text-right font-black text-slate-300">-</td>
+            <td id="m-${i}" class="p-6 text-right font-black text-slate-300">0.0</td>
         `;
-        table.appendChild(tr);
-        updateInputs(i);
+        body.appendChild(tr);
+        updateRow(i);
     });
 
-    careerQuestions.forEach((q, qIdx) => {
-        let html = `<div class="p-8 bg-white/5 rounded-[2.5rem] border border-white/5 hover:border-white/20 transition-all">
-            <p class="text-lg font-bold mb-6">${qIdx+1}. ${q.q}</p><div class="space-y-3">`;
-        q.opts.forEach((opt, oIdx) => {
-            html += `<button onclick="pick(${qIdx}, '${opt.v}', ${oIdx})" id="q-${qIdx}-${oIdx}" class="quiz-option w-full p-4 rounded-2xl bg-white/5 border border-white/10 text-left text-sm font-medium hover:bg-white/10">
-                ${opt.t}
-            </button>`;
+    data.questions.forEach((q, qi) => {
+        let h = `<div class="card-neo p-8 dark:bg-slate-800/50 border-none shadow-none"><p class="text-xl font-bold mb-6">${qi+1}. ${q.q}</p><div class="grid grid-cols-1 gap-3">`;
+        q.o.forEach((opt, oi) => {
+            h += `<button onclick="ans(${qi}, '${opt.v}', ${oi})" id="opt-${qi}-${oi}" class="p-4 rounded-2xl bg-white/10 border border-white/10 text-left hover:bg-white/20 transition-all text-sm">${opt.t}</button>`;
         });
-        quiz.innerHTML += html + `</div></div>`;
+        quizFlow.innerHTML += h + `</div></div>`;
     });
 
-    loadSession();
-    recalculate();
+    loadData();
+    syncAll();
 }
 
-function updateInputs(idx) {
-    const q = parseInt(document.getElementById(`q-${idx}`).value);
-    for(let t=1; t<=4; t++) document.getElementById(`n-${idx}-${t}`).style.visibility = t > q ? 'hidden' : 'visible';
+function updateRow(i) {
+    const q = parseInt(document.getElementById(`q-${i}`).value);
+    for(let t=1; t<=4; t++) document.getElementById(`n-${i}-${t}`).style.visibility = t > q ? 'hidden' : 'visible';
 }
 
-function pick(qIdx, val, oIdx) {
-    quizAnswers[qIdx] = val;
-    careerQuestions[qIdx].opts.forEach((_, i) => {
-        document.getElementById(`q-${qIdx}-${i}`).className = i === oIdx ? "quiz-option w-full p-4 rounded-2xl bg-indigo-500 text-white font-bold text-left text-sm" : "quiz-option w-full p-4 rounded-2xl bg-white/5 border border-white/10 text-left text-sm font-medium";
+function ans(qi, v, oi) {
+    quizData[qi] = v;
+    data.questions[qi].o.forEach((_, i) => {
+        document.getElementById(`opt-${qi}-${i}`).className = i === oi ? "p-4 rounded-2xl bg-white text-indigo-900 font-bold text-left text-sm" : "p-4 rounded-2xl bg-white/10 border border-white/10 text-left hover:bg-white/20 transition-all text-sm";
     });
 }
 
-function recalculate() {
-    const lineData = [];
-    const radarData = { S: 0, H: 0, E: 0 };
-    let totalS = 0, totalH = 0, totalE = 0;
-    let globSum = 0, globCount = 0;
-    let best = { n: '-', v: -1 }, worst = { n: '-', v: 101 };
+function syncAll() {
+    let globalSum = 0, count = 0;
+    const areaStats = { S:0, H:0, E:0, Sc:0, Hc:0, Ec:0 };
+    const discMarks = [];
+    const discLabels = [];
 
-    subjects.forEach((s, i) => {
+    data.subjects.forEach((s, i) => {
         const q = parseInt(document.getElementById(`q-${i}`).value);
-        const marks = [];
-        let dSum = 0, dCount = 0;
-
+        let sSum = 0, sC = 0;
         for(let t=1; t<=4; t++) {
-            const v = document.getElementById(`n-${i}-${t}`).value;
-            if(t <= q && v !== "") {
-                const val = parseFloat(v);
-                marks.push(val); dSum += val; dCount++;
-            } else if(t <= q) marks.push(null);
+            const val = document.getElementById(`n-${i}-${t}`).value;
+            if(t <= q && val !== "") {
+                const n = parseFloat(val);
+                sSum += n; sC++;
+            }
         }
-
-        const avg = dCount > 0 ? (dSum / dCount) : 0;
-        const avgEl = document.getElementById(`avg-${i}`);
-        avgEl.textContent = avg.toFixed(1);
-        avgEl.className = `p-6 text-right font-black ${avg >= 70 ? 'text-emerald-500' : avg < 50 ? 'text-rose-500' : 'text-amber-500'}`;
-
+        const avg = sC > 0 ? sSum / sC : 0;
+        document.getElementById(`m-${i}`).textContent = avg.toFixed(1);
+        document.getElementById(`m-${i}`).className = `p-6 text-right font-black ${avg >= 70 ? 'text-emerald-500' : avg < 50 ? 'text-rose-500' : 'text-amber-500'}`;
+        
         if(avg > 0) {
-            globSum += avg; globCount++;
-            if(avg > best.v) best = { n: s.n, v: avg };
-            if(avg < worst.v) worst = { n: s.n, v: avg };
-            
-            if(s.cat === 'S') { radarData.S += avg; totalS++; }
-            if(s.cat === 'H') { radarData.H += avg; totalH++; }
-            if(s.cat === 'E') { radarData.E += avg; totalE++; }
+            globalSum += avg; count++;
+            areaStats[s.cat] += avg;
+            areaStats[s.cat + 'c']++;
         }
-
-        lineData.push({
-            label: s.n, data: marks, borderColor: s.c, backgroundColor: s.c,
-            tension: 0.4, borderWidth: 3, pointRadius: 5, spanGaps: true
-        });
+        discMarks.push(avg);
+        discLabels.push(s.n);
     });
 
-    const finalAvg = globCount > 0 ? (globSum / globCount).toFixed(1) : "0.0";
-    document.getElementById('global-avg').textContent = finalAvg;
-    document.getElementById('top-subject').textContent = best.n;
-    
-    const status = document.getElementById('short-status');
-    if(finalAvg >= 85) status.textContent = "Excelente! Estás no caminho da elite.";
-    else if(finalAvg >= 70) status.textContent = "Bom nível. Foca em " + worst.n + " para subir.";
-    else status.textContent = "Atenção necessária em várias frentes.";
+    const finalAvg = count > 0 ? (globalSum / count).toFixed(1) : "0.0";
+    document.getElementById('media-global').textContent = finalAvg;
 
-    renderCharts(lineData, [
-        totalS > 0 ? radarData.S/totalS : 0, 
-        totalH > 0 ? radarData.H/totalH : 0, 
-        totalE > 0 ? radarData.E/totalE : 0
-    ]);
-    saveSession();
+    // Gerar Parecer Longo
+    let parecer = `Com uma média atual de ${finalAvg}, o seu desempenho é `;
+    if(finalAvg >= 85) parecer += `excecional. Demonstra uma consistência rara em múltiplas frentes, o que sugere que terá sucesso em qualquer curso do 10º ano. O seu foco deve ser agora a escolha por paixão e não por facilidade. `;
+    else if(finalAvg >= 70) parecer += `bastante sólido. Há uma base de trabalho estável, mas nota-se que certas áreas beneficiariam de uma revisão estratégica de métodos de estudo. `;
+    else parecer += `instável. É necessário um diagnóstico urgente sobre os hábitos de estudo. O 10º ano é mais exigente e precisa de consolidar bases agora. `;
+
+    const areasList = [
+        {n: 'Ciências', v: areaStats.Sc > 0 ? areaStats.S/areaStats.Sc : 0},
+        {n: 'Humanas', v: areaStats.Hc > 0 ? areaStats.H/areaStats.Hc : 0},
+        {n: 'Economia', v: areaStats.Ec > 0 ? areaStats.E/areaStats.Ec : 0}
+    ].sort((a,b) => b.v - a.v);
+
+    parecer += `Analisando a sua performance técnica, o seu ponto mais forte reside em ${areasList[0].n}, onde atinge o pico de rendimento. Por outro lado, a área de ${areasList[2].n} apresenta-se como o seu maior desafio atual.`;
+    document.getElementById('parecer-longo').textContent = parecer;
+
+    renderRadars(
+        [areasList.find(a=>a.n==='Ciências').v, areasList.find(a=>a.n==='Humanas').v, areasList.find(a=>a.n==='Economia').v],
+        discMarks, discLabels
+    );
+    saveData();
 }
 
-function renderCharts(lineDatasets, radarValues) {
-    const lCtx = document.getElementById('lineChart').getContext('2d');
-    if(lineChart) lineChart.destroy();
-    lineChart = new Chart(lCtx, {
-        type: 'line',
-        data: { labels: ['Teste 1', 'Teste 2', 'Teste 3', 'Teste 4'], datasets: lineDatasets },
-        options: { 
-            responsive: true, maintainAspectRatio: false, 
-            plugins: { legend: { display: false } },
-            scales: { y: { min: 0, max: 100 }, x: { grid: { display: false } } }
-        }
-    });
-
-    const rCtx = document.getElementById('radarChart').getContext('2d');
-    if(radarChart) radarChart.destroy();
-    radarChart = new Chart(rCtx, {
+function renderRadars(areaValues, discValues, discLabels) {
+    const config = (labels, values, color) => ({
         type: 'radar',
-        data: {
-            labels: ['Ciências (S)', 'Humanidades (H)', 'Economia (E)'],
-            datasets: [{
-                data: radarValues,
-                backgroundColor: 'rgba(99, 102, 241, 0.2)',
-                borderColor: '#6366f1',
-                borderWidth: 3,
-                pointRadius: 4
-            }]
-        },
+        data: { labels, datasets: [{ data: values, backgroundColor: color+'22', borderColor: color, borderWidth: 3, pointRadius: 4 }] },
         options: {
             responsive: true, maintainAspectRatio: false,
-            scales: { r: { min: 0, max: 100, ticks: { display: false } } },
+            scales: { r: { min: 0, max: 100, ticks: { display: false }, grid: { color: 'rgba(128,128,128,0.1)' } } },
             plugins: { legend: { display: false } }
         }
     });
+
+    if(charts.area) charts.area.destroy();
+    charts.area = new Chart(document.getElementById('radarAreas'), config(['Ciências', 'Humanidades', 'Socioeconómicas'], areaValues, '#6366f1'));
+
+    if(charts.disc) charts.disc.destroy();
+    charts.disc = new Chart(document.getElementById('radarDisciplines'), config(discLabels, discValues, '#10b981'));
 }
 
-function analyzeCareer() {
-    if(Object.keys(quizAnswers).length < careerQuestions.length) { alert("Responde a todas as perguntas!"); return; }
+function calculateFinalCareer() {
+    if(Object.keys(quizData).length < 17) { alert("Responda a todas as 17 perguntas!"); return; }
     
-    let scores = { S: 0, H: 0, E: 0 };
-    Object.values(quizAnswers).forEach(v => scores[v] += 10);
-    
-    // Mix com as Notas (Skill cross-analysis)
-    subjects.forEach((s, i) => {
-        const avg = parseFloat(document.getElementById(`avg-${i}`).textContent);
-        if(avg > 75) scores[s.cat] += 5;
+    let s=0, e=0, h=0;
+    Object.values(quizData).forEach(v => { if(v==='S') s+=10; else if(v==='E') e+=10; else h+=10; });
+
+    // Ponderação com Notas Reais
+    data.subjects.forEach((subj, i) => {
+        const avg = parseFloat(document.getElementById(`m-${i}`).textContent);
+        if(avg > 75) { if(subj.cat === 'S') s+=8; else if(subj.cat === 'E') e+=8; else h+=8; }
     });
 
-    const total = scores.S + scores.H + scores.E;
-    const pS = Math.round((scores.S/total)*100);
-    const pH = Math.round((scores.H/total)*100);
-    const pE = Math.round((scores.E/total)*100);
+    const total = s + e + h;
+    const pS = Math.round((s/total)*100), pE = Math.round((e/total)*100), pH = Math.round((h/total)*100);
 
-    document.getElementById('career-report').classList.remove('hidden');
-    document.getElementById('career-bars').innerHTML = `
-        ${careerCircle("Ciências", pS, "#10b981")}
-        ${careerCircle("Humanidades", pH, "#a855f7")}
-        ${careerCircle("Economia", pE, "#3b82f6")}
+    const box = document.getElementById('career-result-box');
+    box.classList.remove('hidden');
+    document.getElementById('result-bars').innerHTML = `
+        ${bar("Ciências e Tecnologias", pS, "bg-emerald-500")}
+        ${bar("Socioeconómicas", pE, "bg-blue-500")}
+        ${bar("Línguas e Humanidades", pH, "bg-purple-500")}
     `;
 
-    let verdict = "";
-    if(pS >= pH && pS >= pE) verdict = "O teu perfil é dominado pela curiosidade técnica e rigor científico. No 10º ano, Ciências e Tecnologias permitir-te-ão explorar o teu potencial máximo em engenharia, medicina ou inovação digital.";
-    else if(pH >= pS && pH >= pE) verdict = "A tua força reside na comunicação, análise ética e compreensão social. Línguas e Humanidades é o caminho ideal para carreiras em Direito, Relações Internacionais ou Psicologia.";
-    else verdict = "Tens uma mente estratégica voltada para a gestão e análise de sistemas complexos. Socioeconómicas é o percurso perfeito para o teu futuro em Economia, Gestão ou Finanças.";
-    
-    document.getElementById('detailed-verdict').innerHTML = `<strong>Veredito:</strong> ${verdict}`;
+    let v = "";
+    if(pS >= pE && pS >= pH) v = "O seu ADN é puramente analítico e experimental. No 10º ano, Ciências e Tecnologias permitirão que explore o seu potencial em Engenharia, Medicina ou Investigação. As suas notas atuais sustentam esta ambição.";
+    else if(pE >= pS && pE >= pH) v = "Visão estratégica e pragmatismo detetados. Socioeconómicas é o percurso ideal para quem, como você, gosta de entender as engrenagens do mundo moderno e da gestão de recursos.";
+    else v = "A sua força reside na análise crítica, ética e comunicação. Línguas e Humanidades é o terreno onde a sua mente mais brilha, preparando-o para Direito, Relações Internacionais ou Psicologia.";
+
+    document.getElementById('result-text').innerHTML = `<strong>Veredito:</strong> ${v}`;
+    window.scrollTo({ top: box.offsetTop - 50, behavior: 'smooth' });
 }
 
-function careerCircle(label, perc, color) {
-    return `<div>
-        <div class="text-4xl font-black mb-2" style="color:${color}">${perc}%</div>
-        <div class="text-xs uppercase font-bold tracking-widest opacity-60">${label}</div>
+function bar(l, p, c) {
+    return `<div class="space-y-2">
+        <div class="flex justify-between text-xs font-black uppercase"><span>${l}</span><span>${p}%</span></div>
+        <div class="w-full bg-slate-100 dark:bg-slate-700 rounded-full h-3 overflow-hidden">
+            <div class="${c} h-full transition-all duration-1000" style="width:${p}%"></div>
+        </div>
     </div>`;
 }
 
-function saveSession() {
-    subjects.forEach((_, i) => {
+function saveData() {
+    data.subjects.forEach((_, i) => {
         localStorage.setItem(`q-${i}`, document.getElementById(`q-${i}`).value);
         for(let t=1; t<=4; t++) localStorage.setItem(`n-${i}-${t}`, document.getElementById(`n-${i}-${t}`).value);
     });
 }
 
-function loadSession() {
-    subjects.forEach((_, i) => {
+function loadData() {
+    data.subjects.forEach((_, i) => {
         if(localStorage.getItem(`q-${i}`)) document.getElementById(`q-${i}`).value = localStorage.getItem(`q-${i}`);
         for(let t=1; t<=4; t++) document.getElementById(`n-${i}-${t}`).value = localStorage.getItem(`n-${i}-${t}`) || "";
-        updateInputs(i);
+        updateRow(i);
     });
 }
 
 function toggleTheme() {
     document.documentElement.classList.toggle('dark');
-    document.getElementById('theme-icon').textContent = document.documentElement.classList.contains('dark') ? "☀️" : "🌙";
-    recalculate();
+    syncAll();
 }
 
-async function generatePDF() {
+async function exportFullReport() {
     const { jsPDF } = window.jspdf;
-    const canvas = await html2canvas(document.getElementById('main-content'), { scale: 2, backgroundColor: document.documentElement.classList.contains('dark') ? '#020617' : '#f1f5f9' });
+    const canvas = await html2canvas(document.getElementById('app-container'), { scale: 2, useCORS: true, backgroundColor: document.documentElement.classList.contains('dark') ? '#020617' : '#f8fafc' });
     const img = canvas.toDataURL('image/png');
     const pdf = new jsPDF('p', 'mm', 'a4');
     const w = pdf.internal.pageSize.getWidth();
     pdf.addImage(img, 'PNG', 0, 0, w, (canvas.height * w) / canvas.width);
-    pdf.save('GradeMaster_Elite_Report.pdf');
+    pdf.save('Relatorio_Quantum_Elite.pdf');
 }
 
-window.onload = init;
 </script>
 </body>
 </html>
