@@ -5,98 +5,178 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Evolução das Minhas Notas</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #4CAF50;
-            --bg-color: #f4f7f6;
-            --text-color: #333;
+            --primary: #6366f1; /* Indigo moderno */
+            --primary-hover: #4f46e5;
+            --bg-gradient: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            --card-bg: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --border-color: #e5e7eb;
         }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            max-width: 1000px;
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-main);
+            max-width: 1050px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 30px 20px;
+            min-height: 100vh;
         }
-        h1, h2 {
+
+        .header {
             text-align: center;
-            color: #2c3e50;
+            margin-bottom: 30px;
         }
+
+        h1 {
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            margin-bottom: 25px;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
-            background: white;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            border-radius: 8px;
-            overflow: hidden;
-            margin-bottom: 20px;
+            white-space: nowrap;
         }
+
         th, td {
-            padding: 12px 15px;
+            padding: 15px;
             text-align: center;
-            border-bottom: 1px solid #ddd;
+            border-bottom: 1px solid var(--border-color);
         }
+
         th {
-            background-color: #2c3e50;
-            color: white;
+            font-weight: 500;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.05em;
         }
+
+        td strong {
+            font-weight: 500;
+            color: var(--text-main);
+        }
+
+        select, input[type="number"] {
+            font-family: 'Poppins', sans-serif;
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        select:focus, input[type="number"]:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
         input[type="number"] {
             width: 60px;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
             text-align: center;
+            font-weight: 500;
         }
+
+        input[type="number"]:disabled {
+            background-color: #f3f4f6;
+            color: #9ca3af;
+            cursor: not-allowed;
+            border-color: #e5e7eb;
+        }
+
+        .btn-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+
         button {
-            display: block;
-            width: 200px;
-            margin: 0 auto 30px auto;
-            padding: 12px;
-            background-color: var(--primary-color);
+            background-color: var(--primary);
             color: white;
             border: none;
-            border-radius: 5px;
-            font-size: 16px;
+            border-radius: 10px;
+            padding: 12px 28px;
+            font-size: 1rem;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
             cursor: pointer;
-            transition: background-color 0.3s;
+            box-shadow: 0 4px 6px rgba(99, 102, 241, 0.2);
+            transition: all 0.2s ease;
         }
+
         button:hover {
-            background-color: #45a049;
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(99, 102, 241, 0.3);
         }
+
+        button:active {
+            transform: translateY(0);
+        }
+
         .chart-container {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: relative;
+            height: 500px;
+            width: 100%;
         }
     </style>
 </head>
 <body>
 
-    <h1>Gestor de Notas Escolares 📚</h1>
-    <p style="text-align: center;">Insere as tuas notas abaixo (podes usar de 0 a 100 ou 0 a 20). As tuas notas ficam guardadas no teu navegador.</p>
-
-    <div style="overflow-x:auto;">
-        <table>
-            <thead>
-                <tr>
-                    <th>Disciplina</th>
-                    <th>Teste 1</th>
-                    <th>Teste 2</th>
-                    <th>Teste 3</th>
-                    <th>Teste 4</th>
-                </tr>
-            </thead>
-            <tbody id="tabela-notas">
-                </tbody>
-        </table>
+    <div class="header">
+        <h1>Gestor de Notas 🎓</h1>
+        <p>Acompanha a tua evolução (Escala de 0 a 100)</p>
     </div>
 
-    <button onclick="atualizarGrafico()">Guardar e Atualizar Gráfico</button>
+    <div class="card">
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="text-align: left;">Disciplina</th>
+                        <th>Nº de Testes</th>
+                        <th>Teste 1</th>
+                        <th>Teste 2</th>
+                        <th>Teste 3</th>
+                        <th>Teste 4</th>
+                    </tr>
+                </thead>
+                <tbody id="tabela-notas">
+                    </tbody>
+            </table>
+        </div>
+        
+        <div class="btn-container">
+            <button onclick="atualizarGrafico()">Guardar Notas & Atualizar Gráfico</button>
+        </div>
+    </div>
 
-    <div class="chart-container">
-        <canvas id="meuGrafico"></canvas>
+    <div class="card">
+        <div class="chart-container">
+            <canvas id="meuGrafico"></canvas>
+        </div>
     </div>
 
     <script>
@@ -105,26 +185,65 @@
             'Físico-Química', 'Inglês', 'Francês', 'Geografia'
         ];
 
-        // Cores para as linhas do gráfico
+        // Paleta de cores mais bonita e vibrante para o gráfico
         const cores = [
-            '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', 
-            '#9966FF', '#FF9F40', '#C9CBCF', '#8B4513'
+            '#ef4444', '#3b82f6', '#f59e0b', '#10b981', 
+            '#8b5cf6', '#f97316', '#64748b', '#ec4899'
         ];
 
         const tabelaBody = document.getElementById('tabela-notas');
         let chart;
 
-        // Gerar a tabela dinamicamente
+        // Limita o input para garantir que não passa de 100 nem desce de 0
+        function validarInput(input) {
+            if (input.value !== '') {
+                if (parseFloat(input.value) > 100) input.value = 100;
+                if (parseFloat(input.value) < 0) input.value = 0;
+            }
+        }
+
+        // Lida com a mudança no número de testes (3 ou 4)
+        function alterarNumeroTestes(index) {
+            const select = document.getElementById(`qnt-testes-${index}`);
+            const inputT4 = document.getElementById(`nota-${index}-4`);
+            
+            if (select.value === '3') {
+                inputT4.disabled = true;
+                inputT4.value = ''; // Limpa o valor se mudar para 3
+            } else {
+                inputT4.disabled = false;
+            }
+            // Guarda a preferência
+            localStorage.setItem(`qnt-testes-${index}`, select.value);
+        }
+
+        // Gerar a tabela com as opções
         function gerarTabela() {
             disciplinas.forEach((disciplina, index) => {
                 const tr = document.createElement('tr');
                 
-                let htmlStr = `<td><strong>${disciplina}</strong></td>`;
+                // Recupera se tinha 3 ou 4 testes guardados, padrão é 4
+                const qntTestesGuardada = localStorage.getItem(`qnt-testes-${index}`) || '4';
+                
+                let htmlStr = `<td style="text-align: left;"><strong>${disciplina}</strong></td>`;
+                
+                // Dropdown para escolher 3 ou 4 testes
+                htmlStr += `
+                    <td>
+                        <select id="qnt-testes-${index}" onchange="alterarNumeroTestes(${index})">
+                            <option value="4" ${qntTestesGuardada === '4' ? 'selected' : ''}>4 Testes</option>
+                            <option value="3" ${qntTestesGuardada === '3' ? 'selected' : ''}>3 Testes</option>
+                        </select>
+                    </td>
+                `;
+
+                // Gerar as 4 caixas de notas
                 for (let i = 1; i <= 4; i++) {
-                    // Tentar recuperar valores guardados anteriormente
                     const idInput = `nota-${index}-${i}`;
                     const valorGuardado = localStorage.getItem(idInput) || '';
-                    htmlStr += `<td><input type="number" id="${idInput}" value="${valorGuardado}" min="0" max="100"></td>`;
+                    const isDisabled = (i === 4 && qntTestesGuardada === '3') ? 'disabled' : '';
+                    
+                    htmlStr += `<td><input type="number" id="${idInput}" value="${valorGuardado}" min="0" max="100" oninput="validarInput(this)" ${isDisabled}></td>`;
                 }
                 
                 tr.innerHTML = htmlStr;
@@ -132,22 +251,29 @@
             });
         }
 
-        // Função para ler as notas, guardar e desenhar o gráfico
+        // Função para guardar as notas e desenhar o gráfico
         function atualizarGrafico() {
             const datasets = [];
 
             disciplinas.forEach((disciplina, index) => {
                 const notasDisciplina = [];
+                const qntTestes = document.getElementById(`qnt-testes-${index}`).value;
+                const limiteTestes = parseInt(qntTestes);
+
                 for (let i = 1; i <= 4; i++) {
                     const idInput = `nota-${index}-${i}`;
                     const input = document.getElementById(idInput);
                     const valor = input.value;
                     
-                    // Guardar no localStorage
+                    // Guarda o valor no localStorage
                     localStorage.setItem(idInput, valor);
                     
-                    // Adicionar ao array (se estiver vazio, coloca null para o gráfico não quebrar)
-                    notasDisciplina.push(valor !== '' ? parseFloat(valor) : null);
+                    // Se estivermos no teste 4 e a disciplina só tem 3 testes, o ponto é ignorado no gráfico (null)
+                    if (i === 4 && limiteTestes === 3) {
+                        notasDisciplina.push(null);
+                    } else {
+                        notasDisciplina.push(valor !== '' ? parseFloat(valor) : null);
+                    }
                 }
 
                 datasets.push({
@@ -155,23 +281,40 @@
                     data: notasDisciplina,
                     borderColor: cores[index],
                     backgroundColor: cores[index],
+                    borderWidth: 3,
+                    pointBackgroundColor: '#fff',
+                    pointBorderWidth: 2,
+                    pointRadius: 5,
+                    pointHoverRadius: 7,
                     fill: false,
-                    tension: 0.2 // Faz a linha ligeiramente curva
+                    tension: 0.3 // Curvatura suave nas linhas
                 });
             });
 
             desenharGrafico(datasets);
-            alert("Notas guardadas e gráfico atualizado! ✅");
+            
+            // Um pequeno feedback visual de que gravou
+            const btn = document.querySelector('button');
+            const textoOriginal = btn.innerText;
+            btn.innerText = "Gravado com sucesso! ✓";
+            btn.style.backgroundColor = "#10b981"; // Cor verde
+            setTimeout(() => {
+                btn.innerText = textoOriginal;
+                btn.style.backgroundColor = "";
+            }, 2000);
         }
 
         // Função para desenhar o gráfico com Chart.js
         function desenharGrafico(datasets) {
             const ctx = document.getElementById('meuGrafico').getContext('2d');
             
-            // Destrói o gráfico anterior se existir para não sobrepor
             if (chart) {
                 chart.destroy();
             }
+
+            // Oculta a grelha padrão para um aspeto mais limpo, e define a fonte
+            Chart.defaults.font.family = "'Poppins', sans-serif";
+            Chart.defaults.color = "#6b7280";
 
             chart = new Chart(ctx, {
                 type: 'line',
@@ -181,30 +324,43 @@
                 },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
                     scales: {
                         y: {
-                            beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: 'Nota'
+                            min: 0,
+                            max: 100, // Escala fixa de 0 a 100
+                            grid: {
+                                color: '#f3f4f6'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
                             }
                         }
                     },
                     plugins: {
-                        title: {
-                            display: true,
-                            text: 'Variação das Notas ao Longo do Ano',
-                            font: { size: 18 }
+                        tooltip: {
+                            backgroundColor: 'rgba(31, 41, 55, 0.9)',
+                            padding: 12,
+                            titleFont: { size: 14 },
+                            bodyFont: { size: 14 }
+                        },
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 20
+                            }
                         }
                     }
                 }
             });
         }
 
-        // Inicializar a página
         window.onload = function() {
             gerarTabela();
-            atualizarGrafico(); // Desenha logo o gráfico com os dados guardados
+            atualizarGrafico(); 
         };
     </script>
 </body>
