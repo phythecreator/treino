@@ -1,454 +1,211 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-PT">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VirgaDigital — Agência de Performance Web</title>
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;900&family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evolução das Minhas Notas</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* =========================================
-           1. VARIÁVEIS E BASE (SUPER OTIMIZADO)
-           ========================================= */
         :root {
-            --bg: #020617; /* Dark Mode Premium */
-            --fg: #f8fafc;
-            --accent: #3b82f6;
-            --accent-glow: rgba(59, 130, 246, 0.5);
-            --card-bg: #0f172a;
-            --border: #1e293b;
-            --muted: #94a3b8;
-            --success: #10b981;
-            --font-main: 'Plus Jakarta Sans', sans-serif;
-            --font-display: 'Outfit', sans-serif;
+            --primary-color: #4CAF50;
+            --bg-color: #f4f7f6;
+            --text-color: #333;
         }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
-        body { background: var(--bg); color: var(--fg); font-family: var(--font-main); overflow-x: hidden; line-height: 1.6; }
-        a { text-decoration: none; color: inherit; }
-        
-        /* Efeitos de Fundo */
-        .glow-bg {
-            position: absolute; width: 600px; height: 600px; background: var(--accent);
-            filter: blur(150px); opacity: 0.15; border-radius: 50%; z-index: -1; top: -200px; left: 50%; transform: translateX(-50%);
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
         }
-
-        /* =========================================
-           2. NAVEGAÇÃO "GLASSMORPHISM"
-           ========================================= */
-        nav {
-            position: fixed; top: 0; width: 100%; padding: 20px 5%;
-            display: flex; justify-content: space-between; align-items: center;
-            background: rgba(2, 6, 23, 0.7); backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border); z-index: 1000;
+        h1, h2 {
+            text-align: center;
+            color: #2c3e50;
         }
-        .logo { font-family: var(--font-display); font-size: 24px; font-weight: 900; letter-spacing: -1px; }
-        .logo span { color: var(--accent); }
-        .nav-btn { background: var(--accent); color: white; padding: 10px 24px; border-radius: 50px; font-weight: 800; font-size: 14px; transition: 0.3s; box-shadow: 0 0 20px var(--accent-glow); }
-        .nav-btn:hover { transform: scale(1.05); }
-
-        /* =========================================
-           3. HERO SECTION (CONVERSÃO MÁXIMA)
-           ========================================= */
-        .hero {
-            padding: 200px 5% 120px; text-align: center; position: relative;
-            display: flex; flex-direction: column; align-items: center;
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 20px;
         }
-        .hero-badge {
-            background: rgba(59, 130, 246, 0.1); border: 1px solid var(--accent); color: #60a5fa;
-            padding: 8px 20px; border-radius: 50px; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 30px;
+        th, td {
+            padding: 12px 15px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
         }
-        .hero h1 { font-family: var(--font-display); font-size: clamp(2.5rem, 6vw, 5.5rem); font-weight: 900; line-height: 1.05; letter-spacing: -2px; margin-bottom: 25px; }
-        .hero h1 span { background: linear-gradient(to right, #3b82f6, #8b5cf6); -webkit-background-clip: text; color: transparent; }
-        .hero p { font-size: clamp(1rem, 2vw, 1.25rem); color: var(--muted); max-width: 650px; margin-bottom: 40px; }
-        
-        /* =========================================
-           4. O GERADOR MÁGICO (INTELIGÊNCIA SIMULADA)
-           ========================================= */
-        .ai-generator {
-            background: var(--card-bg); border: 1px solid var(--border); border-radius: 24px;
-            padding: 10px; display: flex; width: 100%; max-width: 700px; box-shadow: 0 25px 50px rgba(0,0,0,0.5); margin-bottom: 60px; position: relative;
+        th {
+            background-color: #2c3e50;
+            color: white;
         }
-        .ai-generator input {
-            flex: 1; background: transparent; border: none; padding: 20px; color: white; font-size: 16px; outline: none;
+        input[type="number"] {
+            width: 60px;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            text-align: center;
         }
-        .btn-generate {
-            background: var(--fg); color: var(--bg); padding: 0 30px; border-radius: 16px; font-weight: 800; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 10px;
+        button {
+            display: block;
+            width: 200px;
+            margin: 0 auto 30px auto;
+            padding: 12px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
         }
-        .btn-generate:hover { background: var(--accent); color: white; }
-
-        /* Consola Falsa do Gerador */
-        #ai-console {
-            display: none; width: 100%; max-width: 700px; background: #000; border: 1px solid var(--border);
-            border-radius: 16px; padding: 25px; text-align: left; font-family: monospace; font-size: 13px; color: #10b981; margin-top: -30px; margin-bottom: 60px;
+        button:hover {
+            background-color: #45a049;
         }
-        .log-line { margin-bottom: 8px; opacity: 0; animation: fadeInLog 0.5s forwards; }
-        @keyframes fadeInLog { to { opacity: 1; } }
-        
-        .mockup-result { display: none; text-align: center; margin-top: 20px; padding: 30px; border: 2px dashed var(--accent); border-radius: 20px; background: rgba(59,130,246,0.05); }
-
-        /* =========================================
-           5. PORTFÓLIO COM MOCKUPS DE TELEMÓVEL
-           ========================================= */
-        .section { padding: 120px 5%; }
-        .sec-title { text-align: center; margin-bottom: 80px; }
-        .sec-title h2 { font-family: var(--font-display); font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; margin-bottom: 15px; }
-        .sec-title p { color: var(--muted); font-size: 1.1rem; }
-
-        .portfolio-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 50px; max-width: 1200px; margin: 0 auto; }
-        
-        .proj-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 30px; padding: 40px 30px; text-align: center; transition: 0.4s; }
-        .proj-card:hover { border-color: var(--accent); transform: translateY(-10px); }
-
-        /* Desenho do Telemóvel CSS */
-        .phone-mockup {
-            width: 220px; height: 450px; margin: 0 auto 30px;
-            border: 8px solid #1e293b; border-radius: 35px; position: relative;
-            overflow: hidden; background: #000; box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-        }
-        /* O "Notch" (a câmara no topo do ecrã) */
-        .phone-mockup::before {
-            content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
-            width: 100px; height: 20px; background: #1e293b; border-bottom-left-radius: 15px; border-bottom-right-radius: 15px; z-index: 2;
-        }
-        .phone-screen { width: 100%; height: 100%; background-size: cover; background-position: top; transition: 3s ease-in-out; }
-        .phone-mockup:hover .phone-screen { background-position: bottom; } /* Faz scroll automático ao passar o rato! */
-
-        /* =========================================
-           EXTRA 1: PERFORMANCE (MÉTRICAS)
-           ========================================= */
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px; max-width: 1000px; margin: 0 auto; }
-        .stat-box { background: linear-gradient(145deg, var(--card-bg), #020617); border: 1px solid var(--border); padding: 40px; border-radius: 24px; text-align: center; }
-        .stat-num { font-family: var(--font-display); font-size: 3.5rem; font-weight: 900; color: var(--success); margin-bottom: 10px; }
-
-        /* =========================================
-           EXTRA 2: METODOLOGIA DE TRABALHO
-           ========================================= */
-        .process-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; max-width: 1200px; margin: 0 auto; counter-reset: step; }
-        .step-card { background: var(--card-bg); border: 1px solid var(--border); padding: 40px; border-radius: 24px; position: relative; }
-        .step-card::before {
-            counter-increment: step; content: "0" counter(step); position: absolute; top: 20px; right: 30px;
-            font-family: var(--font-display); font-size: 4rem; font-weight: 900; color: rgba(255,255,255,0.03);
-        }
-        .step-icon { width: 60px; height: 60px; background: rgba(59,130,246,0.1); color: var(--accent); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 25px; }
-
-        /* =========================================
-           EXTRA 3: FAQ (PERGUNTAS FREQUENTES)
-           ========================================= */
-        .faq-wrap { max-width: 800px; margin: 0 auto; }
-        .faq-item { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; margin-bottom: 15px; overflow: hidden; }
-        .faq-q { padding: 25px; font-weight: 700; display: flex; justify-content: space-between; cursor: pointer; }
-        .faq-a { padding: 0 25px; max-height: 0; overflow: hidden; transition: 0.4s ease-out; color: var(--muted); }
-        .faq-item.active .faq-a { padding-bottom: 25px; max-height: 300px; }
-        .faq-item.active .faq-q { color: var(--accent); }
-
-        /* =========================================
-           CHATBOT AVANÇADO 2.0
-           ========================================= */
-        .chat-btn { position: fixed; bottom: 30px; right: 30px; width: 65px; height: 65px; background: var(--accent); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; z-index: 1500; box-shadow: 0 10px 30px var(--accent-glow); cursor: pointer; border: none; }
-        
-        .chat-window {
-            position: fixed; bottom: 110px; right: 30px; width: 360px; height: 550px; max-height: 75vh;
-            background: var(--card-bg); border-radius: 24px; border: 1px solid var(--border);
-            box-shadow: 0 30px 60px rgba(0,0,0,0.8); display: none; flex-direction: column; z-index: 1500; overflow: hidden;
-        }
-        .chat-header { background: #020617; padding: 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); }
-        .bot-avatar { width: 40px; height: 40px; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; }
-        .chat-body { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
-        
-        .msg { padding: 14px 18px; border-radius: 18px; font-size: 14px; max-width: 85%; }
-        .msg.bot { background: #1e293b; color: white; align-self: flex-start; border-bottom-left-radius: 4px; }
-        .msg.user { background: var(--accent); color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
-        
-        .chat-input { display: flex; padding: 15px; border-top: 1px solid var(--border); background: #020617; }
-        .chat-input input { flex: 1; background: transparent; border: none; color: white; outline: none; font-size: 14px; }
-        .chat-input button { color: var(--accent); font-size: 18px; }
-        .typing { font-size: 12px; color: var(--muted); font-style: italic; display: none; margin-left: 10px; }
-
-        @media (max-width: 768px) {
-            .hero { padding-top: 150px; }
-            .ai-generator { flex-direction: column; border-radius: 16px; }
-            .ai-generator input { border-bottom: 1px solid var(--border); }
-            .btn-generate { padding: 15px; border-radius: 0 0 16px 16px; justify-content: center; }
-            .chat-window { width: 90%; right: 5%; bottom: 100px; }
+        .chart-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
     </style>
 </head>
 <body>
 
-    <div class="glow-bg"></div>
+    <h1>Gestor de Notas Escolares 📚</h1>
+    <p style="text-align: center;">Insere as tuas notas abaixo (podes usar de 0 a 100 ou 0 a 20). As tuas notas ficam guardadas no teu navegador.</p>
 
-    <nav>
-        <div class="logo">Virga<span>Digital</span></div>
-        <a href="https://wa.me/351912143606" class="nav-btn"><i class="fab fa-whatsapp"></i> Falar com Especialista</a>
-    </nav>
+    <div style="overflow-x:auto;">
+        <table>
+            <thead>
+                <tr>
+                    <th>Disciplina</th>
+                    <th>Teste 1</th>
+                    <th>Teste 2</th>
+                    <th>Teste 3</th>
+                    <th>Teste 4</th>
+                </tr>
+            </thead>
+            <tbody id="tabela-notas">
+                </tbody>
+        </table>
+    </div>
 
-    <section class="hero">
-        <div class="hero-badge">A revolução digital em Vila Real</div>
-        <h1>Convertemos Visitantes<br><span>em Clientes Fiéis.</span></h1>
-        <p>A sua atual presença digital está a afastar clientes. Nós desenvolvemos interfaces mobile-first desenhadas especificamente para maximizar as vendas do seu negócio.</p>
-        
-        <div class="ai-generator">
-            <input type="text" id="ai-input" placeholder="Descreva o seu negócio (ex: Restaurante de francesinhas no Porto...)">
-            <button class="btn-generate" onclick="runGenerator()"><i class="fas fa-magic"></i> Gerar Magia</button>
-        </div>
+    <button onclick="atualizarGrafico()">Guardar e Atualizar Gráfico</button>
 
-        <div id="ai-console"></div>
-        <div id="ai-result" class="mockup-result">
-            <h3 style="color: white; margin-bottom: 10px; font-size: 24px;">🎉 Protótipo Arquitetado!</h3>
-            <p style="color: var(--muted); margin-bottom: 20px;">Analisámos o seu pedido. A estrutura base do código de alta conversão está pronta para ser aplicada.</p>
-            <a href="https://wa.me/351912143606" class="nav-btn" style="display: inline-block;">Ver Protótipo no WhatsApp (912 143 606)</a>
-        </div>
-    </section>
-
-    <section class="section" style="background: rgba(255,255,255,0.02); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
-        <div class="sec-title">
-            <h2>Velocidade é Dinheiro</h2>
-            <p>Se o seu site atual demora mais de 3 segundos a carregar, o cliente desiste e vai à concorrência.</p>
-        </div>
-        <div class="stats-grid">
-            <div class="stat-box">
-                <div class="stat-num">99%</div>
-                <div style="font-weight: 700;">Google Lighthouse Score</div>
-                <p style="font-size: 13px; color: var(--muted); margin-top: 10px;">Otimização extrema de código para carregamento instantâneo.</p>
-            </div>
-            <div class="stat-box">
-                <div class="stat-num">48h</div>
-                <div style="font-weight: 700;">Tempo de Entrega</div>
-                <p style="font-size: 13px; color: var(--muted); margin-top: 10px;">Do pagamento à publicação online, sem burocracias.</p>
-            </div>
-            <div class="stat-box">
-                <div class="stat-num">100%</div>
-                <div style="font-weight: 700;">Mobile-First</div>
-                <p style="font-size: 13px; color: var(--muted); margin-top: 10px;">Desenhado primeiro para o ecrã onde o seu cliente realmente está.</p>
-            </div>
-        </div>
-    </section>
-
-    <section class="section" id="portfolio">
-        <div class="sec-title">
-            <h2>Casos de Sucesso</h2>
-            <p>Passe o rato (ou clique) nos ecrãs para ver o site a rolar.</p>
-        </div>
-        <div class="portfolio-grid">
-            
-            <div class="proj-card">
-                <div class="phone-mockup">
-                    <div class="phone-screen" style="background-image: url('image_c28380.png');"></div>
-                </div>
-                <h3 style="font-size: 20px; margin-bottom: 10px;">Restauração Inteligente</h3>
-                <p style="font-size: 14px; color: var(--muted); margin-bottom: 20px;">O cliente pediu o fim dos PDFs lentos. Entregamos um Menu Digital dinâmico por QR Code.</p>
-                <div style="background: rgba(16,185,129,0.1); color: var(--success); padding: 10px; border-radius: 10px; font-size: 13px; font-weight: 700;">+30% Pedidos nas Mesas</div>
-            </div>
-
-            <div class="proj-card">
-                <div class="phone-mockup">
-                    <div class="phone-screen" style="background-image: url('image_c283a0.png');"></div>
-                </div>
-                <h3 style="font-size: 20px; margin-bottom: 10px;">Funil de Reservas WhatsApp</h3>
-                <p style="font-size: 14px; color: var(--muted); margin-bottom: 20px;">O cliente perdia marcações no Instagram. Criamos uma landing page com ligação direta ao número 912 143 606.</p>
-                <div style="background: rgba(16,185,129,0.1); color: var(--success); padding: 10px; border-radius: 10px; font-size: 13px; font-weight: 700;">Zero Reservas Perdidas</div>
-            </div>
-
-        </div>
-    </section>
-
-    <section class="section" style="background: rgba(255,255,255,0.02); border-top: 1px solid var(--border);">
-        <div class="sec-title">
-            <h2>O Nosso Processo (Sem Dores de Cabeça)</h2>
-        </div>
-        <div class="process-grid">
-            <div class="step-card">
-                <div class="step-icon"><i class="fas fa-search"></i></div>
-                <h3 style="margin-bottom: 10px;">Auditoria Grátis</h3>
-                <p style="font-size: 14px; color: var(--muted);">Analisamos a sua presença digital atual e identificamos por onde está a perder dinheiro e clientes.</p>
-            </div>
-            <div class="step-card">
-                <div class="step-icon"><i class="fas fa-laptop-code"></i></div>
-                <h3 style="margin-bottom: 10px;">Design & Código</h3>
-                <p style="font-size: 14px; color: var(--muted);">Desenhamos o layout focado na conversão (ex: botão de Ligar Agora sempre visível no telemóvel).</p>
-            </div>
-            <div class="step-card">
-                <div class="step-icon"><i class="fas fa-rocket"></i></div>
-                <h3 style="margin-bottom: 10px;">Lançamento em 48h</h3>
-                <p style="font-size: 14px; color: var(--muted);">Configuramos o seu domínio (.pt/.com) e colocamos a sua máquina de vendas online e segura.</p>
-            </div>
-        </div>
-    </section>
-
-    <section class="section">
-        <div class="sec-title">
-            <h2>Perguntas Frequentes</h2>
-        </div>
-        <div class="faq-wrap">
-            <div class="faq-item" onclick="toggleFaq(this)">
-                <div class="faq-q">Tenho de pagar mensalidades caras? <i class="fas fa-chevron-down"></i></div>
-                <div class="faq-a">Não. Na VirgaDigital paga o desenvolvimento do site uma única vez. O único custo anual que terá no futuro é a renovação do seu Domínio (ex: .pt) que ronda os 25€/ano.</div>
-            </div>
-            <div class="faq-item" onclick="toggleFaq(this)">
-                <div class="faq-q">Eu não tenho fotos boas do meu negócio. E agora? <i class="fas fa-chevron-down"></i></div>
-                <div class="faq-a">Se for da região de Vila Real, podemos agendar uma sessão fotográfica rápida. Caso contrário, utilizamos bancos de imagens premium que se adequam perfeitamente ao seu nicho de mercado.</div>
-            </div>
-            <div class="faq-item" onclick="toggleFaq(this)">
-                <div class="faq-q">Como posso contactar-vos rapidamente? <i class="fas fa-chevron-down"></i></div>
-                <div class="faq-a">O método mais rápido é enviando mensagem ou ligando para o nosso número direto: <strong>912 143 606</strong>.</div>
-            </div>
-        </div>
-    </section>
-
-    <footer style="padding: 40px 5%; text-align: center; border-top: 1px solid var(--border); font-size: 14px; color: var(--muted);">
-        <p style="font-family: var(--font-display); font-size: 20px; font-weight: 800; color: white; margin-bottom: 10px;">VirgaDigital</p>
-        <p>Vila Real, Portugal | Call & WhatsApp: 912 143 606</p>
-    </footer>
-
-    <button class="chat-btn" onclick="toggleChat()"><i class="fas fa-comment"></i></button>
-    <div class="chat-window" id="chat-win">
-        <div class="chat-header">
-            <div style="display: flex; align-items: center; gap: 15px;">
-                <div class="bot-avatar"><i class="fas fa-robot"></i></div>
-                <div>
-                    <h4 style="font-size: 15px; font-weight: 700; color: white;">IA VirgaDigital</h4>
-                    <p style="font-size: 11px; color: var(--success);">Online - Resposta imediata</p>
-                </div>
-            </div>
-            <button onclick="toggleChat()" style="color: var(--muted); font-size: 18px;"><i class="fas fa-times"></i></button>
-        </div>
-        <div class="chat-body" id="chat-msgs">
-            <div class="msg bot">Olá! Sou o assistente avançado da VirgaDigital. Em que posso ajudar a escalar o seu negócio hoje? (Pode perguntar sobre preços, prazos, ou pedir o nosso contacto).</div>
-            <div class="typing" id="typing-indicator">A escrever...</div>
-        </div>
-        <div class="chat-input">
-            <input type="text" id="user-input" placeholder="Escreva a sua dúvida..." onkeypress="if(event.key === 'Enter') sendMsg()">
-            <button onclick="sendMsg()"><i class="fas fa-paper-plane"></i></button>
-        </div>
+    <div class="chart-container">
+        <canvas id="meuGrafico"></canvas>
     </div>
 
     <script>
-        // 1. O GERADOR MÁGICO DE SITES (Animação de Consola)
-        function runGenerator() {
-            const input = document.getElementById('ai-input').value;
-            if(!input) { alert("Por favor, descreva primeiro o seu negócio."); return; }
-            
-            const consoleBox = document.getElementById('ai-console');
-            const resultBox = document.getElementById('ai-result');
-            
-            // Esconde resultados anteriores
-            resultBox.style.display = 'none';
-            consoleBox.style.display = 'block';
-            consoleBox.innerHTML = ''; // Limpa a consola
-
-            // Textos falsos de processamento estilo Matrix/Hacker
-            const logs = [
-                "> A inicializar VirgaEngine 10.0...",
-                `> A analisar o nicho de mercado: "${input.substring(0, 20)}..."`,
-                "> A compilar estrutura de ficheiros HTML/CSS Grid...",
-                "> A injetar código de conversão Mobile-First...",
-                "> A aplicar regras de SEO locais para Vila Real/Porto...",
-                "> A empacotar o design premium. 99% concluído...",
-                "> PROTÓTIPO GERADO COM SUCESSO!"
-            ];
-
-            let i = 0;
-            // Loop com atraso para parecer que está a pensar
-            const interval = setInterval(() => {
-                if(i < logs.length) {
-                    let p = document.createElement('p');
-                    p.className = 'log-line';
-                    p.innerText = logs[i];
-                    consoleBox.appendChild(p);
-                    i++;
-                } else {
-                    clearInterval(interval);
-                    setTimeout(() => {
-                        consoleBox.style.display = 'none';
-                        resultBox.style.display = 'block';
-                    }, 800);
-                }
-            }, 600);
-        }
-
-        // 2. ACORDEÃO PARA FAQ
-        function toggleFaq(el) {
-            el.classList.toggle('active');
-        }
-
-        // 3. O CÉREBRO DO CHATBOT 2.0 (Muito mais inteligente)
-        const chatWin = document.getElementById('chat-win');
-        const chatMsgs = document.getElementById('chat-msgs');
-        const inputField = document.getElementById('user-input');
-        const typing = document.getElementById('typing-indicator');
-
-        function toggleChat() { chatWin.style.display = chatWin.style.display === 'flex' ? 'none' : 'flex'; }
-
-        // O Cérebro: Usa Expressões Regulares (Regex) para entender melhor a frase toda
-        const botBrain = [
-            { 
-                pattern: /(preço|preco|valor|custa|pagar|orçamento|euros|€)/i, 
-                reply: 'Nós não temos "custos", temos investimentos que geram retorno. Os nossos projetos começam nos 60€ (Landing Page Simples) ou 120€ (Site Completo). Podemos falar melhor pelo WhatsApp (912 143 606)?' 
-            },
-            { 
-                pattern: /(tempo|prazo|demora|dias|rápido|horas|quando)/i, 
-                reply: 'A nossa regra de ouro é: 48 horas úteis. A partir do momento em que temos as fotos e textos do negócio, o site fica online e pronto a faturar em apenas 2 dias.' 
-            },
-            { 
-                pattern: /(restaurante|menu|ementa|comida|qr|café|pastelaria)/i, 
-                reply: 'O setor da restauração é a nossa especialidade! Desenhamos menus digitais limpos e rápidos. Chega de os clientes fazerem zoom em PDFs lentos. Quer ver um protótipo a funcionar?' 
-            },
-            { 
-                pattern: /(contacto|falar|telefone|numero|telemovel|whatsapp|ligar)/i, 
-                reply: 'Pode falar com o desenvolvedor principal agora mesmo! Envie mensagem ou ligue para: <strong>912 143 606</strong>.' 
-            },
-            { 
-                pattern: /(porto|vila real|onde|localização|morada|cidade)/i, 
-                reply: 'A base da VirgaDigital é em Vila Real, mas como o nosso trabalho é digital, servimos clientes no Porto e em todo o país com a mesma proximidade e excelência.' 
-            },
-            { 
-                pattern: /(ola|olá|bom dia|boa tarde|boa noite|boas)/i, 
-                reply: 'Olá! Sou a IA da VirgaDigital. Percebeu como este chatbot é rápido? Podemos instalar um igualzinho no site da sua empresa. Como posso ajudar agora?' 
-            }
+        const disciplinas = [
+            'História', 'Português', 'Matemática', 'Ciências', 
+            'Físico-Química', 'Inglês', 'Francês', 'Geografia'
         ];
 
-        function sendMsg() {
-            let txt = inputField.value.trim();
-            if(!txt) return;
-            
-            // Adiciona a pergunta do utilizador à janela
-            chatMsgs.insertBefore(createMsgEl(txt, 'user'), typing);
-            inputField.value = '';
-            
-            typing.style.display = 'block';
-            chatMsgs.scrollTop = chatMsgs.scrollHeight;
+        // Cores para as linhas do gráfico
+        const cores = [
+            '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', 
+            '#9966FF', '#FF9F40', '#C9CBCF', '#8B4513'
+        ];
 
-            // IA "a processar" (Tempo variável para ser realista)
-            let thinkTime = Math.floor(Math.random() * 1000) + 800; 
+        const tabelaBody = document.getElementById('tabela-notas');
+        let chart;
 
-            setTimeout(() => {
-                typing.style.display = 'none';
+        // Gerar a tabela dinamicamente
+        function gerarTabela() {
+            disciplinas.forEach((disciplina, index) => {
+                const tr = document.createElement('tr');
                 
-                // Resposta padrão caso não entenda nada
-                let finalReply = "Interessante. Para eu lhe dar a melhor resposta técnica sobre isso, o ideal é enviar um WhatsApp diretamente para o 912 143 606. O nosso especialista responderá de imediato!";
+                let htmlStr = `<td><strong>${disciplina}</strong></td>`;
+                for (let i = 1; i <= 4; i++) {
+                    // Tentar recuperar valores guardados anteriormente
+                    const idInput = `nota-${index}-${i}`;
+                    const valorGuardado = localStorage.getItem(idInput) || '';
+                    htmlStr += `<td><input type="number" id="${idInput}" value="${valorGuardado}" min="0" max="100"></td>`;
+                }
                 
-                // Procura correspondência inteligente no cérebro usando regex
-                for(let logic of botBrain) {
-                    if(logic.pattern.test(txt)) {
-                        finalReply = logic.reply;
-                        break;
-                    }
+                tr.innerHTML = htmlStr;
+                tabelaBody.appendChild(tr);
+            });
+        }
+
+        // Função para ler as notas, guardar e desenhar o gráfico
+        function atualizarGrafico() {
+            const datasets = [];
+
+            disciplinas.forEach((disciplina, index) => {
+                const notasDisciplina = [];
+                for (let i = 1; i <= 4; i++) {
+                    const idInput = `nota-${index}-${i}`;
+                    const input = document.getElementById(idInput);
+                    const valor = input.value;
+                    
+                    // Guardar no localStorage
+                    localStorage.setItem(idInput, valor);
+                    
+                    // Adicionar ao array (se estiver vazio, coloca null para o gráfico não quebrar)
+                    notasDisciplina.push(valor !== '' ? parseFloat(valor) : null);
                 }
 
-                chatMsgs.insertBefore(createMsgEl(finalReply, 'bot'), typing);
-                chatMsgs.scrollTop = chatMsgs.scrollHeight;
-            }, thinkTime);
+                datasets.push({
+                    label: disciplina,
+                    data: notasDisciplina,
+                    borderColor: cores[index],
+                    backgroundColor: cores[index],
+                    fill: false,
+                    tension: 0.2 // Faz a linha ligeiramente curva
+                });
+            });
+
+            desenharGrafico(datasets);
+            alert("Notas guardadas e gráfico atualizado! ✅");
         }
 
-        function createMsgEl(txt, type) {
-            let div = document.createElement('div');
-            div.className = `msg ${type}`;
-            div.innerHTML = txt;
-            return div;
+        // Função para desenhar o gráfico com Chart.js
+        function desenharGrafico(datasets) {
+            const ctx = document.getElementById('meuGrafico').getContext('2d');
+            
+            // Destrói o gráfico anterior se existir para não sobrepor
+            if (chart) {
+                chart.destroy();
+            }
+
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Teste 1', 'Teste 2', 'Teste 3', 'Teste 4'],
+                    datasets: datasets
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Nota'
+                            }
+                        }
+                    },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Variação das Notas ao Longo do Ano',
+                            font: { size: 18 }
+                        }
+                    }
+                }
+            });
         }
+
+        // Inicializar a página
+        window.onload = function() {
+            gerarTabela();
+            atualizarGrafico(); // Desenha logo o gráfico com os dados guardados
+        };
     </script>
 </body>
 </html>
