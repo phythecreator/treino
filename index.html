@@ -32,8 +32,6 @@
         .card-neo:hover { transform: translateY(-3px); box-shadow: 0 25px 50px -15px rgba(99, 102, 241, 0.2); }
         .device-pc { max-width: 1400px; margin: auto; }
         .device-mobile { max-width: 480px; margin: auto; }
-        
-        /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
@@ -72,48 +70,34 @@
         <div class="card-neo p-8">
             <h3 class="text-xl font-bold mb-2 flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-indigo-500"></span> Equilíbrio Vocacional</h3>
             <p class="text-sm text-slate-500 dark:text-slate-400 mb-6">Média global das 3 grandes áreas académicas.</p>
-            <div class="h-[300px] flex justify-center">
-                <canvas id="radarAreas"></canvas>
-            </div>
+            <div class="h-[300px] flex justify-center"><canvas id="radarAreas"></canvas></div>
         </div>
         <div class="card-neo p-8">
             <h3 class="text-xl font-bold mb-2 flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-emerald-500"></span> Perfil Multidisciplinar</h3>
             <p class="text-sm text-slate-500 dark:text-slate-400 mb-6">Desempenho relativo entre todas as matérias.</p>
-            <div class="h-[300px] flex justify-center">
-                <canvas id="radarDisciplines"></canvas>
-            </div>
+            <div class="h-[300px] flex justify-center"><canvas id="radarDisciplines"></canvas></div>
         </div>
     </div>
 
-    <div class="card-neo p-8 mb-12">
-        <h3 class="text-xl font-bold mb-2 flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-rose-500"></span> Avaliação por Disciplina (0-100)</h3>
-        <p class="text-sm text-slate-500 dark:text-slate-400 mb-6">Mapeamento linear das tuas notas médias organizadas por cor da disciplina.</p>
-        <div class="h-[350px] w-full">
-            <canvas id="barDisciplines"></canvas>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+        <div class="card-neo p-8">
+            <h3 class="text-xl font-bold mb-2 flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-rose-500"></span> Avaliação por Disciplina (0-100)</h3>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mb-6">Mapeamento linear das tuas notas médias.</p>
+            <div class="h-[300px] w-full"><canvas id="barDisciplines"></canvas></div>
+        </div>
+        <div class="card-neo p-8">
+            <h3 class="text-xl font-bold mb-2 flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-amber-500"></span> Evolução no Tempo</h3>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mb-6">Trajetória das tuas notas (Teste 1 a 4).</p>
+            <div class="h-[300px] w-full"><canvas id="lineEvolution"></canvas></div>
         </div>
     </div>
-
-    <section class="card-neo p-10 mb-12 bg-gradient-to-br from-indigo-50 to-white dark:from-slate-800 dark:to-slate-900 border-indigo-100 dark:border-slate-700">
-        <div class="flex flex-col md:flex-row gap-10 items-center">
-            <div class="text-center md:text-left space-y-2 min-w-[200px]">
-                <p class="text-xs font-black uppercase text-indigo-500 tracking-widest">Score Académico Global</p>
-                <div id="media-global" class="text-8xl font-black leading-none text-transparent bg-clip-text bg-gradient-to-br from-slate-900 to-indigo-600 dark:from-white dark:to-indigo-400">0.0</div>
-            </div>
-            <div class="flex-1 space-y-4">
-                <h3 class="text-2xl font-bold">Diagnóstico da Inteligência Artificial</h3>
-                <div id="parecer-longo" class="text-slate-600 dark:text-slate-300 leading-relaxed text-lg bg-white/50 dark:bg-slate-900/50 p-6 rounded-2xl border border-white/20">
-                    Insere os teus dados abaixo para que a nossa IA processe o teu perfil académico e gere um relatório de tendências formativas.
-                </div>
-            </div>
-        </div>
-    </section>
 
     <section class="card-neo overflow-hidden mb-12">
         <div class="p-8 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-white dark:bg-slate-900">
             <h2 class="text-2xl font-bold">Base de Dados de Avaliações</h2>
             <button onclick="syncAll()" class="px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl font-bold shadow-lg shadow-emerald-500/30 transition-all flex items-center gap-2">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                SINCRONIZAR
+                SINCRONIZAR NOTAS
             </button>
         </div>
         <div class="overflow-x-auto">
@@ -136,9 +120,9 @@
         
         <div class="max-w-4xl mx-auto relative z-10">
             <div class="text-center mb-16">
-                <span class="bg-white/10 border border-white/20 px-5 py-2 rounded-full text-xs font-black uppercase tracking-widest backdrop-blur-sm">Quantum Vocational Engine 3.0</span>
-                <h2 class="text-4xl md:text-5xl font-black mt-6 leading-tight">Mapeamento de Carreira</h2>
-                <p class="text-indigo-100 mt-4 text-lg opacity-90 max-w-2xl mx-auto">Responde às 17 questões com honestidade. O algoritmo irá cruzar os teus gostos pessoais com o teu desempenho real nas notas.</p>
+                <span class="bg-white/10 border border-white/20 px-5 py-2 rounded-full text-xs font-black uppercase tracking-widest backdrop-blur-sm">Quantum Engine (50% Notas / 50% Gostos)</span>
+                <h2 class="text-4xl md:text-5xl font-black mt-6 leading-tight">Mapeamento de Gostos</h2>
+                <p class="text-indigo-100 mt-4 text-lg opacity-90 max-w-2xl mx-auto">Estas 17 perguntas são puramente sobre as tuas preferências. Vamos cruzar isto com as tuas notas reais.</p>
             </div>
 
             <div id="quiz-flow" class="space-y-8"></div>
@@ -150,12 +134,20 @@
             </div>
 
             <div id="career-result-box" class="hidden mt-16 p-10 md:p-12 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-[2.5rem] shadow-2xl transition-all">
-                <h4 class="text-3xl font-black text-center mb-4">O Teu Perfil Ideal de 10º Ano</h4>
-                <p class="text-center text-slate-500 dark:text-slate-400 mb-10 text-sm font-medium">Calculado com base em Notas Reais (40%) + Interesses (60%)</p>
+                <h4 class="text-3xl font-black text-center mb-4">O Teu Perfil Ideal</h4>
+                <p class="text-center text-slate-500 dark:text-slate-400 mb-10 text-sm font-medium">Calculado com base em Notas Reais (50%) + Gostos Pessoais (50%)</p>
                 
                 <div id="result-bars" class="space-y-8 mb-10"></div>
                 
-                <div id="result-text" class="p-8 bg-indigo-50 dark:bg-slate-900/50 rounded-2xl border border-indigo-100 dark:border-slate-700 text-lg leading-relaxed font-medium"></div>
+                <div id="result-text" class="p-8 bg-indigo-50 dark:bg-slate-900/50 rounded-2xl border border-indigo-100 dark:border-slate-700 text-lg leading-relaxed font-medium mb-8"></div>
+
+                <div class="p-8 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-2xl">
+                    <h5 class="text-xl font-bold text-emerald-800 dark:text-emerald-400 mb-4 flex items-center gap-2">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        Roadmap para os 100%
+                    </h5>
+                    <ul id="tips-list" class="space-y-3 text-emerald-700 dark:text-emerald-300 font-medium"></ul>
+                </div>
             </div>
         </div>
     </section>
@@ -169,25 +161,25 @@ const data = {
         {n: 'Físico-Química', c: '#8b5cf6', cat: 'S'}, {n: 'Economia', c: '#f43f5e', cat: 'E'},
         {n: 'Inglês', c: '#06b6d4', cat: 'H'}, {n: 'Geografia', c: '#64748b', cat: 'E'}
     ],
-    // 17 perguntas, 4 opções cada. M = Multidisciplinar (Dá pontos divididos)
+    // Perguntas puramente sobre GOSTOS, sem opções mistas (para forçar o algoritmo)
     questions: [
-        {q: "Como preferes abordar um problema desconhecido?", o: [{t:"Analisando o contexto histórico e social (Ler sobre o assunto)", v:"H"}, {t:"Usando lógica matemática, experiências e dados puros", v:"S"}, {t:"Avaliando o impacto financeiro e o custo-benefício", v:"E"}, {t:"Organizando uma equipa para encontrar várias soluções", v:"M"}]},
-        {q: "Qual seria o teu projeto escolar ideal?", o: [{t:"Escrever um romance, artigo ou peça de teatro", v:"H"}, {t:"Construir um protótipo tecnológico ou robot", v:"S"}, {t:"Criar um modelo de negócio ou uma mini-empresa", v:"E"}, {t:"Produzir um documentário multimédia", v:"M"}]},
-        {q: "O que mais te prende a atenção nas notícias?", o: [{t:"Direitos humanos, política e cultura", v:"H"}, {t:"Avanços na inteligência artificial, espaço ou medicina", v:"S"}, {t:"Inflação, bolsa de valores e mercado de trabalho", v:"E"}, {t:"Tendências de comportamento e inovações do dia-a-dia", v:"M"}]},
-        {q: "Qual destas competências valorizas mais em ti?", o: [{t:"Empatia, argumentação e boa comunicação", v:"H"}, {t:"Rigor, detalhe e capacidade de observação", v:"S"}, {t:"Estratégia, liderança e eficiência", v:"E"}, {t:"Adaptabilidade e criatividade para resolver imprevistos", v:"M"}]},
-        {q: "Em que lugar te sentes mais estimulado a trabalhar?", o: [{t:"Numa biblioteca silenciosa ou museu", v:"H"}, {t:"Num laboratório moderno ou com um computador potente", v:"S"}, {t:"Num escritório movimentado ou num banco", v:"E"}, {t:"Num estúdio de design ou espaço de coworking", v:"M"}]},
-        {q: "O teu passatempo favorito ao fim de semana envolve:", o: [{t:"Ler livros, ir ao cinema ou visitar exposições", v:"H"}, {t:"Jogar videojogos de estratégia, puzzles ou programar", v:"S"}, {t:"Planear eventos, gerir as tuas poupanças ou jogar Monopólio", v:"E"}, {t:"Um pouco de tudo, dependendo de quem está comigo", v:"M"}]},
-        {q: "Como vês o futuro da humanidade?", o: [{t:"Depende da evolução da nossa ética e leis sociais", v:"H"}, {t:"Será totalmente ditado pela inovação tecnológica e espacial", v:"S"}, {t:"Será moldado pelo comércio global e estabilidade económica", v:"E"}, {t:"Será uma fusão de inovação com sustentabilidade ecológica", v:"M"}]},
-        {q: "Qual destas figuras históricas ou modernas admiras mais?", o: [{t:"Um filósofo, sociólogo ou grande escritor", v:"H"}, {t:"Um cientista brilhante ou inventor", v:"S"}, {t:"Um CEO de sucesso ou um grande economista", v:"E"}, {t:"Um ativista ou diplomata que mudou o mundo", v:"M"}]},
-        {q: "Se pudesses viajar no tempo, para onde irias?", o: [{t:"Grécia Antiga para ouvir os grandes debates de filosofia", v:"H"}, {t:"Ao futuro para ver como funcionam as naves e cidades", v:"S"}, {t:"À Revolução Industrial para ver o nascimento do capitalismo", v:"E"}, {t:"Ao Renascimento, para ver a mistura de Arte e Ciência", v:"M"}]},
-        {q: "Sentes-te confortável a lidar com números e cálculos complexos?", o: [{t:"Evito sempre que posso, prefiro palavras", v:"H"}, {t:"Adoro, os números são a linguagem do universo", v:"S"}, {t:"Gosto de os usar para analisar gráficos e mercados", v:"E"}, {t:"Uso-os apenas como ferramenta para organizar projetos", v:"M"}]},
-        {q: "O que te irrita mais num trabalho de grupo?", o: [{t:"Falta de sensibilidade e comunicação entre os membros", v:"H"}, {t:"Afirmações sem provas ou erros de lógica", v:"S"}, {t:"Desorganização e perda de tempo/recursos", v:"E"}, {t:"Falta de criatividade e ideias sempre iguais", v:"M"}]},
-        {q: "Numa grande empresa, que departamento escolherias?", o: [{t:"Recursos Humanos ou Relações Públicas", v:"H"}, {t:"Pesquisa & Desenvolvimento (R&D) ou IT", v:"S"}, {t:"Departamento Financeiro ou Vendas", v:"E"}, {t:"Marketing e Gestão Geral", v:"M"}]},
-        {q: "Qual o teu interesse pela ideia de Justiça?", o: [{t:"Enorme, adoro debater leis, moral e a sociedade", v:"H"}, {t:"Gosto da justiça forense, provas de DNA e criminologia", v:"S"}, {t:"Interessa-me o impacto da lei no comércio e nos impostos", v:"E"}, {t:"Gosto de perceber como as leis ajudam o meio ambiente", v:"M"}]},
-        {q: "Como usas mais o teu telemóvel?", o: [{t:"Redes sociais para seguir artistas, ler artigos ou escrever", v:"H"}, {t:"Testar apps novas, automatizar tarefas e ver reviews de tech", v:"S"}, {t:"Acompanhar preços, comprar coisas ou organizar calendários", v:"E"}, {t:"Criar conteúdos, editar vídeos ou fotos", v:"M"}]},
-        {q: "Gostas de debates acesos na sala de aula?", o: [{t:"Sim, adoro defender os meus ideais de forma apaixonada", v:"H"}, {t:"Só se for debatido com base no método científico", v:"S"}, {t:"Só se houver um objetivo claro no fim para resolver um problema", v:"E"}, {t:"Gosto mais de ouvir as duas partes e encontrar um meio-termo", v:"M"}]},
-        {q: "Qual a tua maior motivação para estudar uma matéria difícil?", o: [{t:"Compreender melhor a condição humana e a cultura", v:"H"}, {t:"O desafio intelectual de descobrir como o sistema funciona", v:"S"}, {t:"Saber que isso me vai garantir um emprego muito bem pago", v:"E"}, {t:"A vontade de provar a mim mesmo que consigo aprender tudo", v:"M"}]},
-        {q: "Como classificarias a tua relação com a escrita?", o: [{t:"Excelente, escrevo com profundidade e expressividade", v:"H"}, {t:"Prática e direta. Só escrevo o estritamente necessário", v:"S"}, {t:"Focada e persuasiva, excelente para relatórios e propostas", v:"E"}, {t:"Criativa, gosto de inventar formatos e fazer esquemas visuais", v:"M"}]}
+        {q: "O que preferes ler nos teus tempos livres?", o: [{t:"Livros de ficção, romances ou biografias", v:"H"}, {t:"Artigos científicos, tecnologia ou astronomia", v:"S"}, {t:"Livros sobre negócios, dinheiro ou sucesso", v:"E"}, {t:"Notícias sobre o mundo e sociedade atual", v:"H"}]},
+        {q: "Se pudesses criar um canal de YouTube, sobre o que seria?", o: [{t:"Análise de filmes, livros ou história", v:"H"}, {t:"Experiências, gadgets ou programação", v:"S"}, {t:"Como investir, gerir dinheiro ou marketing", v:"E"}, {t:"Debates sobre política e leis", v:"H"}]},
+        {q: "Que tipo de documentário te prende logo ao ecrã?", o: [{t:"Culturas antigas e impérios perdidos", v:"H"}, {t:"A natureza, o corpo humano ou o espaço", v:"S"}, {t:"A ascensão e queda de grandes empresas", v:"E"}, {t:"O impacto da globalização na sociedade", v:"E"}]},
+        {q: "Se fosses CEO de uma empresa, qual seria o teu papel principal?", o: [{t:"Garantir o bem-estar e a comunicação da equipa", v:"H"}, {t:"Desenvolver o produto mais inovador do mercado", v:"S"}, {t:"Analisar os lucros, custos e expansão de mercado", v:"E"}, {t:"Negociar contratos com outras grandes empresas", v:"E"}]},
+        {q: "Qual é o teu jogo ou tipo de puzzle favorito?", o: [{t:"Jogos narrativos onde as tuas escolhas mudam a história", v:"H"}, {t:"Jogos de lógica pura, xadrez ou resolver cubos de Rubik", v:"S"}, {t:"Jogos de gestão de cidades ou impérios (ex: Monopoly, SimCity)", v:"E"}, {t:"Jogos de palavras e vocabulário (ex: Scrabble)", v:"H"}]},
+        {q: "Como gostas de ajudar os teus amigos?", o: [{t:"A ouvi-los e a dar conselhos sobre a vida", v:"H"}, {t:"A arranjar os seus computadores ou explicar matéria", v:"S"}, {t:"A ajudá-los a organizar orçamentos ou vender algo", v:"E"}, {t:"A ajudá-los a argumentar com os pais ou professores", v:"H"}]},
+        {q: "Quando olhas para uma cidade grande, o que pensas primeiro?", o: [{t:"Como vivem as pessoas e a cultura daquele local", v:"H"}, {t:"Como foi construída a engenharia dos prédios", v:"S"}, {t:"Quais são os negócios que geram mais dinheiro ali", v:"E"}, {t:"Como está organizada a rede de transportes e logística", v:"E"}]},
+        {q: "Qual seria a tua invenção de sonho?", o: [{t:"Uma máquina de tradução universal de pensamentos", v:"H"}, {t:"Uma cura para uma doença ou um motor infinito", v:"S"}, {t:"Um sistema perfeito que acabasse com a pobreza financeira", v:"E"}, {t:"Um novo sistema político totalmente justo", v:"H"}]},
+        {q: "O que te atrai mais num museu?", o: [{t:"As pinturas clássicas e a literatura exposta", v:"H"}, {t:"Os esqueletos de dinossauros ou máquinas antigas", v:"S"}, {t:"A evolução do comércio e das moedas antigas", v:"E"}, {t:"A história da revolução industrial", v:"E"}]},
+        {q: "O que preferes fazer com números no teu dia a dia?", o: [{t:"Ignorá-los o máximo possível", v:"H"}, {t:"Usá-los para resolver problemas e calcular medidas", v:"S"}, {t:"Usá-los para calcular descontos e rentabilidade", v:"E"}, {t:"Gosto de matemática pura e equações abstratas", v:"S"}]},
+        {q: "Num debate com os teus amigos, que tipo de argumento usas mais?", o: [{t:"Apelo à empatia, moral e justiça social", v:"H"}, {t:"Uso factos, estatísticas ou leis da física", v:"S"}, {t:"Falo sobre o que é mais prático, eficiente e rentável", v:"E"}, {t:"Analiso o problema de forma lógica e fria", v:"S"}]},
+        {q: "Se pudesses ser especialista num assunto de imediato, seria:", o: [{t:"Psicologia humana", v:"H"}, {t:"Inteligência Artificial", v:"S"}, {t:"Mercados Financeiros", v:"E"}, {t:"Genética", v:"S"}]},
+        {q: "Qual destas frases te define melhor?", o: [{t:"'A palavra tem o poder de mudar o mundo.'", v:"H"}, {t:"'Para cada problema, existe uma solução técnica.'", v:"S"}, {t:"'O tempo é dinheiro e a organização é tudo.'", v:"E"}, {t:"'A ciência é a luz na escuridão.'", v:"S"}]},
+        {q: "O que preferes fazer numa folha de papel em branco?", o: [{t:"Escrever um poema, texto ou desenhar", v:"H"}, {t:"Fazer esquemas, fórmulas ou desenhar invenções", v:"S"}, {t:"Fazer gráficos, listas de tarefas e planos", v:"E"}, {t:"Planear uma estratégia", v:"E"}]},
+        {q: "Qual seria a tua profissão de sonho (só baseada em gosto)?", o: [{t:"Escritor, Advogado ou Jornalista", v:"H"}, {t:"Médico, Engenheiro ou Cientista", v:"S"}, {t:"Gestor, Economista ou Empresário", v:"E"}, {t:"Arquiteto ou Programador", v:"S"}]},
+        {q: "O que te irrita mais?", o: [{t:"A injustiça social e a falta de empatia", v:"H"}, {t:"As pessoas negarem provas científicas ou factos", v:"S"}, {t:"Desperdício de recursos, dinheiro ou tempo", v:"E"}, {t:"A falta de raciocínio lógico", v:"S"}]},
+        {q: "Se tivesses que escolher apenas uma área para ler para o resto da vida:", o: [{t:"Literatura e Filosofia", v:"H"}, {t:"Biologia e Física", v:"S"}, {t:"Economia e Gestão", v:"E"}, {t:"Matemática e Lógica", v:"S"}]}
     ]
 };
 
@@ -206,7 +198,6 @@ function init() {
     const body = document.getElementById('disciplinas-body');
     const quizFlow = document.getElementById('quiz-flow');
 
-    // Popular Tabela
     data.subjects.forEach((s, i) => {
         const tr = document.createElement('tr');
         tr.className = "hover:bg-slate-50 dark:hover:bg-slate-800/80 transition-all border-b border-slate-50 dark:border-slate-800/50";
@@ -221,7 +212,7 @@ function init() {
                 </select>
             </td>
             <td class="p-6 flex justify-center gap-2 flex-wrap">
-                ${[1,2,3,4].map(t => `<input type="number" id="n-${i}-${t}" placeholder="T${t}" min="0" max="100" class="w-12 h-12 md:w-14 md:h-14 text-center bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 rounded-xl font-bold text-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-900 outline-none transition-all shadow-sm">`).join('')}
+                ${[1,2,3,4].map(t => `<input type="number" id="n-${i}-${t}" oninput="syncAll()" placeholder="T${t}" min="0" max="100" class="w-12 h-12 md:w-14 md:h-14 text-center bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 rounded-xl font-bold text-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-900 outline-none transition-all shadow-sm">`).join('')}
             </td>
             <td id="m-${i}" class="p-6 text-right font-black text-slate-300 text-xl">0.0</td>
         `;
@@ -229,7 +220,6 @@ function init() {
         updateRow(i);
     });
 
-    // Popular Quiz
     data.questions.forEach((q, qi) => {
         let h = `<div class="bg-white/10 dark:bg-slate-800/40 p-6 md:p-8 rounded-[2rem] border border-white/20 backdrop-blur-md">
             <p class="text-xl md:text-2xl font-bold mb-6 flex gap-3"><span class="text-indigo-300">${qi+1}.</span> ${q.q}</p>
@@ -241,7 +231,7 @@ function init() {
     });
 
     loadData();
-    syncAll();
+    syncAll(); // Auto-sync on load
 }
 
 function updateRow(i) {
@@ -251,6 +241,7 @@ function updateRow(i) {
         if(t > q) { el.style.display = 'none'; el.value = ""; } 
         else { el.style.display = 'block'; }
     }
+    syncAll();
 }
 
 function ans(qi, v, oi) {
@@ -271,17 +262,24 @@ function syncAll() {
     const discMarks = [];
     const discLabels = [];
     const discColors = [];
+    const lineDatasets = [];
 
     data.subjects.forEach((s, i) => {
         const q = parseInt(document.getElementById(`q-${i}`).value);
         let sSum = 0, sC = 0;
+        const testPoints = [];
+        
         for(let t=1; t<=4; t++) {
             const val = document.getElementById(`n-${i}-${t}`).value;
             if(t <= q && val !== "") {
                 const n = parseFloat(val);
                 sSum += n; sC++;
+                testPoints.push(n);
+            } else if (t <= q) {
+                testPoints.push(null); // Para manter a continuidade no gráfico de linhas
             }
         }
+        
         const avg = sC > 0 ? sSum / sC : 0;
         document.getElementById(`m-${i}`).textContent = avg.toFixed(1);
         
@@ -301,118 +299,111 @@ function syncAll() {
         discMarks.push(avg);
         discLabels.push(s.n);
         discColors.push(s.c);
+        
+        if(sC > 0) {
+            lineDatasets.push({
+                label: s.n,
+                data: testPoints,
+                borderColor: s.c,
+                backgroundColor: s.c + '44',
+                tension: 0.3,
+                borderWidth: 2,
+                pointRadius: 4,
+                spanGaps: true
+            });
+        }
     });
 
     const finalAvg = count > 0 ? (globalSum / count).toFixed(1) : "0.0";
     document.getElementById('media-global').textContent = finalAvg;
 
-    // Parecer Longo
-    let parecer = `Com uma média atual de <strong>${finalAvg}</strong>, o teu desempenho é `;
-    if(count === 0) parecer = "Insere as tuas notas na tabela abaixo para a inteligência artificial desenhar o teu perfil de competências e sugerir caminhos de estudo.";
-    else if(finalAvg >= 85) parecer += `<strong>excecional</strong>. Demonstras uma consistência rara em múltiplas frentes, o que sugere que terás sucesso em qualquer curso no 10º ano. O teu foco deve ser a escolha por paixão. `;
-    else if(finalAvg >= 70) parecer += `<strong>bastante sólido</strong>. Existe uma base de trabalho estável, mas nota-se que certas disciplinas beneficiariam de uma revisão nos teus métodos de estudo. `;
-    else parecer += `<strong>instável</strong>. É necessário um diagnóstico aos teus hábitos de estudo. O 10º ano exige mais autonomia, é preciso consolidar bases agora. `;
-
-    const areasList = [
-        {n: 'Ciências', v: areaStats.Sc > 0 ? areaStats.S/areaStats.Sc : 0},
-        {n: 'Humanidades', v: areaStats.Hc > 0 ? areaStats.H/areaStats.Hc : 0},
-        {n: 'Economia', v: areaStats.Ec > 0 ? areaStats.E/areaStats.Ec : 0}
-    ].sort((a,b) => b.v - a.v);
-
-    if(count > 0) parecer += `Tecnicamente, o teu ponto mais forte reside em <strong>${areasList[0].n}</strong>. Por outro lado, <strong>${areasList[2].n}</strong> apresenta-se como o teu maior desafio atual.`;
-    document.getElementById('parecer-longo').innerHTML = parecer;
-
     renderCharts(
-        [areasList.find(a=>a.n==='Ciências').v, areasList.find(a=>a.n==='Humanidades').v, areasList.find(a=>a.n==='Economia').v],
-        discMarks, discLabels, discColors
+        [
+            areaStats.Sc > 0 ? areaStats.S/areaStats.Sc : 0, 
+            areaStats.Hc > 0 ? areaStats.H/areaStats.Hc : 0, 
+            areaStats.Ec > 0 ? areaStats.E/areaStats.Ec : 0
+        ],
+        discMarks, discLabels, discColors, lineDatasets
     );
     saveData();
 }
 
-function renderCharts(areaValues, discValues, discLabels, discColors) {
+function renderCharts(areaValues, discValues, discLabels, discColors, lineDatasets) {
     Chart.defaults.color = document.documentElement.classList.contains('dark') ? '#94a3b8' : '#64748b';
     Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
 
-    // 1. Radar Áreas
     if(charts.area) charts.area.destroy();
     charts.area = new Chart(document.getElementById('radarAreas'), {
         type: 'radar',
         data: { labels: ['Ciências', 'Humanidades', 'Economia'], datasets: [{ data: areaValues, backgroundColor: 'rgba(99, 102, 241, 0.2)', borderColor: '#6366f1', borderWidth: 3, pointBackgroundColor: '#6366f1' }] },
-        options: { responsive: true, maintainAspectRatio: false, scales: { r: { min: 0, max: 100, ticks: { display: false }, grid: { color: 'rgba(128,128,128,0.2)' }, angleLines: { color: 'rgba(128,128,128,0.2)' } } }, plugins: { legend: { display: false } } }
+        options: { responsive: true, maintainAspectRatio: false, scales: { r: { min: 0, max: 100, ticks: { display: false } } }, plugins: { legend: { display: false } } }
     });
 
-    // 2. Radar Disciplinas
     if(charts.disc) charts.disc.destroy();
     charts.disc = new Chart(document.getElementById('radarDisciplines'), {
         type: 'radar',
-        data: { labels: discLabels, datasets: [{ data: discValues, backgroundColor: 'rgba(16, 185, 129, 0.2)', borderColor: '#10b981', borderWidth: 2, pointBackgroundColor: '#10b981', pointRadius: 3 }] },
-        options: { responsive: true, maintainAspectRatio: false, scales: { r: { min: 0, max: 100, ticks: { display: false }, grid: { color: 'rgba(128,128,128,0.2)' }, angleLines: { color: 'rgba(128,128,128,0.2)' } } }, plugins: { legend: { display: false } } }
+        data: { labels: discLabels, datasets: [{ data: discValues, backgroundColor: 'rgba(16, 185, 129, 0.2)', borderColor: '#10b981', borderWidth: 2, pointBackgroundColor: '#10b981' }] },
+        options: { responsive: true, maintainAspectRatio: false, scales: { r: { min: 0, max: 100, ticks: { display: false } } }, plugins: { legend: { display: false } } }
     });
 
-    // 3. NOVO: Gráfico de Barras Colorido (Gráfico em Caixa por Disciplina)
     if(charts.bar) charts.bar.destroy();
     charts.bar = new Chart(document.getElementById('barDisciplines'), {
         type: 'bar',
+        data: { labels: discLabels, datasets: [{ data: discValues, backgroundColor: discColors, borderRadius: 8 }] },
+        options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 100 }, x: { grid: { display: false } } }, plugins: { legend: { display: false } } }
+    });
+
+    // Novo Gráfico de Linhas (Evolução)
+    if(charts.line) charts.line.destroy();
+    charts.line = new Chart(document.getElementById('lineEvolution'), {
+        type: 'line',
         data: { 
-            labels: discLabels, 
-            datasets: [{ 
-                label: 'Nota Média', 
-                data: discValues, 
-                backgroundColor: discColors, 
-                borderRadius: 8,
-                borderSkipped: false
-            }] 
+            labels: ['Teste 1', 'Teste 2', 'Teste 3', 'Teste 4'], 
+            datasets: lineDatasets.length > 0 ? lineDatasets : [{label: 'Sem dados', data: []}]
         },
-        options: {
-            responsive: true, maintainAspectRatio: false,
-            scales: { 
-                y: { beginAtZero: true, max: 100, grid: { color: 'rgba(128,128,128,0.1)' } },
-                x: { grid: { display: false } }
-            },
-            plugins: { legend: { display: false }, tooltip: { padding: 12, cornerRadius: 8 } }
+        options: { 
+            responsive: true, maintainAspectRatio: false, 
+            scales: { y: { beginAtZero: true, max: 100 } }, 
+            plugins: { legend: { display: false, position: 'bottom', labels: { boxWidth: 10 } } } 
         }
     });
 }
 
 function calculateFinalCareer() {
-    if(Object.keys(quizData).length < 17) { alert("Por favor, responde às 17 perguntas para o algoritmo ser preciso!"); return; }
+    if(Object.keys(quizData).length < 17) { alert("Responde a todas as 17 perguntas para podermos dar-te dicas precisas!"); return; }
     
-    // Pontuações do Quiz (Base 0 a 100 para o Quiz)
+    // 50% Gostos (Quiz)
     let qS = 0, qE = 0, qH = 0;
-    const valPerQuestion = 100 / 17; // peso de cada questão
+    const valPerQuestion = 100 / 17; 
 
     Object.values(quizData).forEach(v => { 
         if(v === 'S') qS += valPerQuestion; 
         else if(v === 'E') qE += valPerQuestion; 
         else if(v === 'H') qH += valPerQuestion;
-        else if(v === 'M') { 
-            // Distribuir pontos por M
-            qS += valPerQuestion * 0.33; 
-            qE += valPerQuestion * 0.33; 
-            qH += valPerQuestion * 0.33; 
-        }
     });
 
-    // Pontuações das Notas (Base 0 a 100 para as Notas)
+    // 50% Notas Reais
     let nS = 0, cS = 0, nE = 0, cE = 0, nH = 0, cH = 0;
+    const lowestSubjects = [];
+
     data.subjects.forEach((subj, i) => {
         const avg = parseFloat(document.getElementById(`m-${i}`).textContent) || 0;
         if(avg > 0) {
+            lowestSubjects.push({n: subj.n, c: subj.cat, v: avg});
             if(subj.cat === 'S') { nS += avg; cS++; }
             else if(subj.cat === 'E') { nE += avg; cE++; }
             else if(subj.cat === 'H') { nH += avg; cH++; }
         }
     });
 
-    // Médias das notas por área
-    const notaS = cS > 0 ? (nS / cS) : 50; // default 50 se não houver notas
-    const notaE = cE > 0 ? (nE / cE) : 50;
-    const notaH = cH > 0 ? (nH / cH) : 50;
+    const notaS = cS > 0 ? (nS / cS) : 0;
+    const notaE = cE > 0 ? (nE / cE) : 0;
+    const notaH = cH > 0 ? (nH / cH) : 0;
 
-    // FÓRMULA FINAL: 60% Quiz (Gostos) + 40% Notas (Performance Técnica)
-    const finalS = Math.round((qS * 0.6) + (notaS * 0.4));
-    const finalE = Math.round((qE * 0.6) + (notaE * 0.4));
-    const finalH = Math.round((qH * 0.6) + (notaH * 0.4));
+    // FÓRMULA EXATA 50/50
+    const finalS = Math.round((qS * 0.5) + (notaS * 0.5));
+    const finalE = Math.round((qE * 0.5) + (notaE * 0.5));
+    const finalH = Math.round((qH * 0.5) + (notaH * 0.5));
 
     const box = document.getElementById('career-result-box');
     box.classList.remove('hidden');
@@ -422,26 +413,51 @@ function calculateFinalCareer() {
         ${bar("Línguas e Humanidades", Math.min(finalH, 100), "bg-purple-500")}
     `;
 
-    let v = "";
-    if(finalS >= finalE && finalS >= finalH) {
-        v = "O teu ADN é puramente analítico, lógico e experimental. No 10º ano, <strong>Ciências e Tecnologias</strong> permitirão que explores o teu potencial em Engenharia, Saúde, Tecnologias de Informação ou Investigação Científica.";
-    } else if(finalE >= finalS && finalE >= finalH) {
-        v = "Visão estratégica e pragmatismo detetados. <strong>Socioeconómicas</strong> é o percurso ideal para quem, como tu, gosta de entender as engrenagens do mundo moderno, gerir recursos, liderar e enveredar pela Gestão, Finanças ou Marketing.";
+    // Identificar a área vencedora
+    let bestArea = '';
+    let bestCat = '';
+    let bestScore = Math.max(finalS, finalE, finalH);
+
+    if(finalS === bestScore) { bestArea = "Ciências e Tecnologias"; bestCat = 'S'; }
+    else if(finalE === bestScore) { bestArea = "Socioeconómicas"; bestCat = 'E'; }
+    else { bestArea = "Línguas e Humanidades"; bestCat = 'H'; }
+
+    document.getElementById('result-text').innerHTML = `<strong>Veredito:</strong> Com base na intersecção dos teus gostos puros e da tua performance académica, o teu caminho ideal é <strong>${bestArea}</strong> com uma afinidade de ${bestScore}%.`;
+
+    // Gerar Dicas Dinâmicas para chegar aos 100%
+    const tipsList = document.getElementById('tips-list');
+    tipsList.innerHTML = '';
+    
+    if (bestScore >= 98) {
+        tipsList.innerHTML = "<li>🎉 Impressionante! Estás perfeitamente alinhado com a tua área. Mantém o rigor nas tuas disciplinas núcleo.</li>";
     } else {
-        v = "A tua força reside na análise crítica, compreensão da sociedade e na comunicação. <strong>Línguas e Humanidades</strong> é o terreno onde a tua mente mais brilha, preparando-te para Direito, Psicologia, Relações Internacionais ou Artes Literárias.";
+        // Encontrar as disciplinas dessa área com notas mais baixas
+        const areaSubjects = lowestSubjects.filter(s => s.c === bestCat).sort((a,b) => a.v - b.v);
+        
+        let dicas = [];
+        if(areaSubjects.length > 0 && areaSubjects[0].v < 90) {
+            dicas.push(`<li>📈 Para subires a tua média em ${bestArea}, foca-te em aumentar a tua nota a <strong>${areaSubjects[0].n}</strong> (atualmente com ${areaSubjects[0].v}). Revê a matéria onde perdeste pontos no último teste.</li>`);
+        }
+        
+        // Avaliar parte do Quiz
+        let quizScoreForBest = (bestCat === 'S' ? qS : bestCat === 'E' ? qE : qH);
+        if(quizScoreForBest < 80) {
+            dicas.push(`<li>🧠 Tenta explorar mais hobbies práticos relacionados com ${bestArea}. O teu quiz mostra que os teus interesses estão um pouco divididos com outras áreas. Vê alguns vídeos no YouTube sobre profissões desta área para ver se te apaixonas.</li>`);
+        }
+
+        dicas.push(`<li>🎯 Garante que nas próximas avaliações não desces as notas nas tuas disciplinas mais fortes, pois elas "puxam" a tua média (peso de 50%) para cima. O gráfico de evolução mostra-te onde tens de estabilizar!</li>`);
+
+        tipsList.innerHTML = dicas.join('');
     }
 
-    document.getElementById('result-text').innerHTML = `<strong>Veredito da IA:</strong> ${v}`;
     window.scrollTo({ top: box.offsetTop - 50, behavior: 'smooth' });
 }
 
 function bar(l, p, c) {
     return `<div class="space-y-3">
-        <div class="flex justify-between text-sm font-black uppercase text-slate-700 dark:text-slate-300"><span>${l}</span><span>${p}/100</span></div>
+        <div class="flex justify-between text-sm font-black uppercase text-slate-700 dark:text-slate-300"><span>${l}</span><span>${p}%</span></div>
         <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-4 overflow-hidden shadow-inner">
-            <div class="${c} h-full transition-all duration-1000 relative" style="width:${p}%">
-                <div class="absolute inset-0 bg-white/20 w-full" style="background-image: linear-gradient(45deg, rgba(255,255,255,.15) 25%, transparent 25%, transparent 50%, rgba(255,255,255,.15) 50%, rgba(255,255,255,.15) 75%, transparent 75%, transparent); background-size: 1rem 1rem;"></div>
-            </div>
+            <div class="${c} h-full transition-all duration-1000 relative" style="width:${p}%"></div>
         </div>
     </div>`;
 }
@@ -473,9 +489,7 @@ async function exportFullReport() {
     
     const { jsPDF } = window.jspdf;
     const canvas = await html2canvas(document.getElementById('app-container'), { 
-        scale: 2, 
-        useCORS: true, 
-        backgroundColor: document.documentElement.classList.contains('dark') ? '#020617' : '#f8fafc' 
+        scale: 2, useCORS: true, backgroundColor: document.documentElement.classList.contains('dark') ? '#020617' : '#f8fafc' 
     });
     const img = canvas.toDataURL('image/jpeg', 0.9);
     const pdf = new jsPDF('p', 'mm', 'a4');
