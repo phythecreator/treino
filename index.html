@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GradeMaster Elite | Dashboard & Career</title>
+    <title>GradeMaster Infinity | Analytics & Career</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -16,90 +16,116 @@
         }
     </script>
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; transition: all 0.3s ease; }
-        .glass { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
-        .grade-input:focus { transform: translateY(-2px); border-color: #6366f1; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2); }
-        .btn-fancy { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
-        .btn-fancy:active { transform: scale(0.95); }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; transition: background 0.4s ease; }
+        .glass-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.3); }
+        .dark .glass-card { background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255,255,255,0.05); }
+        .input-glow:focus { box-shadow: 0 0 15px rgba(99, 102, 241, 0.3); }
+        .quiz-option { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+        .quiz-option:hover { transform: translateX(8px); }
     </style>
 </head>
-<body class="bg-[#f8fafc] dark:bg-[#0f172a] text-slate-900 dark:text-slate-100 min-h-screen">
+<body class="bg-[#f1f5f9] dark:bg-[#020617] text-slate-900 dark:text-slate-100 min-h-screen pb-20">
 
-<div id="capture-area" class="max-w-6xl mx-auto p-4 md:p-10 space-y-10">
+<div id="main-content" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 space-y-10">
     
-    <nav class="flex flex-col md:flex-row justify-between items-center gap-6">
+    <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
         <div>
-            <h1 class="text-4xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 to-purple-600">GradeMaster Elite</h1>
-            <p class="text-slate-500 dark:text-slate-400 font-medium">Performance Académica & Orientação Vocacional</p>
+            <h1 class="text-5xl font-extrabold tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600">
+                GradeMaster Infinity
+            </h1>
+            <p class="mt-2 text-slate-500 dark:text-slate-400 font-medium text-lg">Plataforma de Alta Performance & Orientação de Carreira</p>
         </div>
-        <div class="flex items-center gap-4">
-            <button onclick="toggleDark()" class="p-3 rounded-2xl bg-white dark:bg-slate-800 shadow-xl border border-slate-200 dark:border-slate-700 hover:rotate-12 transition-all">
-                <span id="theme-toggle-icon">🌙</span>
+        <div class="flex items-center gap-4 w-full lg:w-auto">
+            <button onclick="toggleTheme()" class="flex-1 lg:flex-none p-4 rounded-2xl glass-card shadow-sm hover:scale-105 transition-all">
+                <span id="theme-icon">🌙</span>
             </button>
-            <button onclick="exportPDF()" class="btn-fancy px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl font-bold shadow-lg shadow-indigo-200 dark:shadow-none">
-                Exportar Relatório PDF
+            <button onclick="generatePDF()" class="flex-[2] lg:flex-none px-8 py-4 bg-slate-900 dark:bg-indigo-600 text-white rounded-2xl font-bold text-lg shadow-2xl hover:bg-slate-800 transition-all">
+                Exportar Report PDF
             </button>
-        </div>
-    </nav>
-
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div class="bg-white dark:bg-slate-800 p-6 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700">
-            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Média Global</p>
-            <h2 id="media-global" class="text-4xl font-black text-indigo-600">0.0</h2>
-        </div>
-        <div class="bg-white dark:bg-slate-800 p-6 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700">
-            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Status Atual</p>
-            <h2 id="status-escolar" class="text-xl font-bold text-emerald-500">A iniciar...</h2>
-        </div>
-        <div class="bg-white dark:bg-slate-800 p-6 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700 md:col-span-2">
-            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Análise de Performance</p>
-            <p id="insight-texto" class="text-sm font-medium text-slate-600 dark:text-slate-300 italic">Insere as tuas notas para gerar um parecer.</p>
         </div>
     </div>
 
-    <section class="bg-white dark:bg-slate-800 p-8 rounded-[2rem] shadow-2xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-700">
-        <div class="flex flex-wrap justify-center gap-4 mb-8" id="legend-container"></div>
-        <div class="h-[450px]">
-            <canvas id="heroChart"></canvas>
-        </div>
-    </section>
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <div class="lg:col-span-8 space-y-8">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                <div class="glass-card p-6 rounded-[2.5rem] text-center">
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Média Global</p>
+                    <div id="global-avg" class="text-4xl font-black text-indigo-600">0.0</div>
+                </div>
+                <div class="glass-card p-6 rounded-[2.5rem] text-center">
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Ponto Forte</p>
+                    <div id="top-subject" class="text-xl font-bold text-emerald-500">N/A</div>
+                </div>
+                <div class="glass-card p-6 rounded-[2.5rem] text-center">
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Conselho</p>
+                    <div id="short-status" class="text-sm font-semibold text-slate-600 dark:text-slate-300 italic">-</div>
+                </div>
+            </div>
 
-    <section class="grid grid-cols-1 lg:grid-cols-12 gap-10">
-        <div class="lg:col-span-12 bg-white dark:bg-slate-800 rounded-[2rem] shadow-xl overflow-hidden border border-slate-100 dark:border-slate-700">
-            <table class="w-full text-left">
-                <thead class="bg-slate-50 dark:bg-slate-900/50">
-                    <tr>
-                        <th class="p-6 text-xs font-bold text-slate-400 uppercase">Disciplina</th>
-                        <th class="p-6 text-xs font-bold text-slate-400 uppercase text-center">Configuração</th>
-                        <th class="p-6 text-xs font-bold text-slate-400 uppercase text-center">Notas (0-100)</th>
-                        <th class="p-6 text-xs font-bold text-slate-400 uppercase text-right">Média</th>
-                    </tr>
-                </thead>
-                <tbody id="table-body" class="divide-y divide-slate-100 dark:divide-slate-700"></tbody>
-            </table>
-            <div class="p-6 bg-slate-50 dark:bg-slate-900/50 flex justify-center">
-                <button onclick="processAll()" class="btn-fancy px-12 py-4 bg-slate-900 dark:bg-indigo-600 text-white rounded-2xl font-bold text-lg shadow-xl">
-                    Sincronizar Dados & Gráfico
-                </button>
+            <div class="glass-card p-8 rounded-[3rem] shadow-sm">
+                <div class="flex justify-between items-center mb-8">
+                    <h2 class="text-2xl font-bold tracking-tight">Evolução Académica</h2>
+                    <div id="legend-box" class="flex flex-wrap gap-3"></div>
+                </div>
+                <div class="h-[450px]">
+                    <canvas id="lineChart"></canvas>
+                </div>
             </div>
         </div>
+
+        <div class="lg:col-span-4 space-y-8">
+            <div class="glass-card p-8 rounded-[3rem] h-full flex flex-col items-center">
+                <h2 class="text-2xl font-bold tracking-tight mb-8 self-start">Círculo de Competências</h2>
+                <div class="w-full h-[350px]">
+                    <canvas id="radarChart"></canvas>
+                </div>
+                <div id="radar-analysis" class="mt-6 text-sm text-center text-slate-500 italic">
+                    Insere as notas para ver o teu perfil de competências.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section class="glass-card rounded-[3rem] overflow-hidden shadow-sm">
+        <div class="p-8 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-white/30">
+            <h2 class="text-2xl font-bold">Lançamento de Notas Detalhado</h2>
+            <button onclick="recalculate()" class="px-6 py-2 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 transition-all">Sincronizar</button>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead class="bg-slate-50/50 dark:bg-slate-900/50">
+                    <tr class="text-left text-xs font-bold text-slate-400 uppercase">
+                        <th class="p-6">Disciplina</th>
+                        <th class="p-6 text-center">Frequência</th>
+                        <th class="p-6 text-center">Resultados de Testes</th>
+                        <th class="p-6 text-right">Média</th>
+                    </tr>
+                </thead>
+                <tbody id="table-rows" class="divide-y divide-slate-100 dark:divide-slate-800"></tbody>
+            </table>
+        </div>
     </section>
 
-    <section class="bg-slate-900 dark:bg-slate-800 p-10 rounded-[3rem] text-white shadow-2xl relative overflow-hidden">
+    <section class="bg-slate-900 dark:bg-indigo-950 p-10 md:p-16 rounded-[4rem] text-white shadow-2xl overflow-hidden relative">
         <div class="relative z-10">
-            <h2 class="text-3xl font-black mb-2">Bússola Vocacional 10º Ano</h2>
-            <p class="text-slate-400 mb-10">Um mix de interesses e aptidões reais para definir o teu futuro.</p>
-            
-            <div id="quiz-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12"></div>
+            <div class="text-center max-w-2xl mx-auto mb-16">
+                <span class="px-4 py-1 bg-indigo-500/20 text-indigo-300 rounded-full text-xs font-bold uppercase tracking-widest">IA Career Engine</span>
+                <h2 class="text-4xl font-black mt-4 mb-4">Quiz Vocacional de Elite</h2>
+                <p class="text-indigo-200 text-lg opacity-80">Um diagnóstico completo entre interesses pessoais e aptidões académicas.</p>
+            </div>
 
-            <div class="flex flex-col items-center">
-                <button onclick="calculateCareer()" class="btn-fancy px-14 py-5 bg-emerald-500 text-white rounded-3xl font-black text-xl shadow-2xl shadow-emerald-500/20">
-                    Gerar Diagnóstico de Carreira
+            <div id="quiz-container" class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+                </div>
+
+            <div class="flex flex-col items-center border-t border-white/10 pt-16">
+                <button onclick="analyzeCareer()" class="px-16 py-6 bg-white text-slate-900 rounded-[2rem] font-black text-xl hover:scale-105 transition-all shadow-xl">
+                    Gerar Diagnóstico Final
                 </button>
-                
-                <div id="career-results" class="hidden mt-12 w-full max-w-3xl bg-white/10 p-8 rounded-[2rem] border border-white/10">
-                    <div id="career-bars" class="space-y-8"></div>
-                    <div id="final-verdict" class="mt-10 p-6 bg-emerald-500/20 border border-emerald-500/30 rounded-2xl text-center text-emerald-400 font-bold text-lg"></div>
+
+                <div id="career-report" class="hidden mt-16 w-full max-w-4xl p-10 bg-white/5 rounded-[3rem] border border-white/10">
+                    <div id="career-bars" class="grid grid-cols-1 md:grid-cols-3 gap-10 mb-10 text-center"></div>
+                    <div id="detailed-verdict" class="p-8 bg-indigo-500/20 rounded-3xl border border-indigo-400/30 text-center text-lg leading-relaxed"></div>
                 </div>
             </div>
         </div>
@@ -107,120 +133,106 @@
 </div>
 
 <script>
-const disciplines = [
-    {n: 'História', c: '#ef4444', cat: 'H'}, {n: 'Português', c: '#3b82f6', cat: 'H'},
-    {n: 'Matemática', c: '#10b981', cat: 'S'}, {n: 'Ciências', c: '#f59e0b', cat: 'S'},
+const subjects = [
+    {n: 'Português', c: '#3b82f6', cat: 'H'}, {n: 'Matemática', c: '#ef4444', cat: 'S'},
+    {n: 'História', c: '#f59e0b', cat: 'H'}, {n: 'Ciências', c: '#10b981', cat: 'S'},
     {n: 'Físico-Química', c: '#8b5cf6', cat: 'S'}, {n: 'Inglês', c: '#06b6d4', cat: 'H'},
-    {n: 'Francês', c: '#ec4899', cat: 'H'}, {n: 'Geografia', c: '#64748b', cat: 'E'}
+    {n: 'Economia', c: '#f43f5e', cat: 'E'}, {n: 'Geografia', c: '#64748b', cat: 'E'}
 ];
 
-const questions = [
-    {q: "Como preferes passar uma tarde livre?", type: "MC", opts: [
-        {t: "A ler ou a escrever", v: "H"}, {t: "A montar peças ou a investigar", v: "S"}, {t: "A planear um negócio", v: "E"}
+const careerQuestions = [
+    {q: "Qual destes temas te fascina mais no dia-a-dia?", opts: [
+        {t: "Justiça, Direitos e História das Civilizações", v: "H"},
+        {t: "Mercados Financeiros, Gestão e Estratégia", v: "E"},
+        {t: "Novas Descobertas Científicas e Engenharia", v: "S"}
     ]},
-    {q: "Gostas de resolver equações complexas?", type: "YN", v: "S"},
-    {q: "O que te fascina mais num museu?", type: "MC", opts: [
-        {t: "Arte e Civilizações", v: "H"}, {t: "Invenções e Ciência", v: "S"}, {t: "A logística do espaço", v: "E"}
+    {q: "Em que tipo de atividade sentes que és melhor?", opts: [
+        {t: "Escrever textos, argumentar e debater ideias", v: "H"},
+        {t: "Organizar orçamentos, dados e logística", v: "E"},
+        {t: "Resolver problemas lógicos e fazer experiências", v: "S"}
     ]},
-    {q: "Segues notícias sobre o mercado financeiro?", type: "YN", v: "E"},
-    {q: "Preferes trabalhar sozinho num projeto técnico?", type: "YN", v: "S"},
-    {q: "Tens facilidade em convencer pessoas com argumentos?", type: "YN", v: "H"},
-    {q: "Gostarias de gerir uma equipa numa grande empresa?", type: "YN", v: "E"},
-    {q: "Ficas curioso sobre como as células funcionam?", type: "YN", v: "S"},
-    {q: "Preferes analisar um poema a analisar um gráfico?", type: "YN", v: "H"},
-    {q: "O que preferes dominar?", type: "MC", opts: [
-        {t: "Várias línguas", v: "H"}, {t: "Linguagens de código", v: "S"}, {t: "Estratégias de venda", v: "E"}
+    {q: "Como preferes resolver um conflito?", opts: [
+        {t: "Através da análise ética e diálogo histórico", v: "H"},
+        {t: "Analisando custos, benefícios e eficiência", v: "E"},
+        {t: "Através do método científico e provas factuais", v: "S"}
     ]},
-    {q: "Sabes o que é a inflação e como nos afeta?", type: "YN", v: "E"},
-    {q: "Gostas de debates sobre ética e moral?", type: "YN", v: "H"},
-    {q: "A Natureza e o Cosmos interessam-te genuinamente?", type: "YN", v: "S"},
-    {q: "És organizado com o teu dinheiro?", type: "YN", v: "E"},
-    {q: "Gostarias de escrever um livro um dia?", type: "YN", v: "H"},
-    {q: "Preferes laboratórios a bibliotecas?", type: "YN", v: "S"},
-    {q: "Gostas de observar as tendências de consumo?", type: "YN", v: "E"},
-    {q: "Interessas-te por leis e justiça?", type: "YN", v: "H"}
+    {q: "O teu interesse por tecnologia está focado em:", opts: [
+        {t: "O impacto social e humano da tecnologia", v: "H"},
+        {t: "O potencial de lucro e inovação no mercado", v: "E"},
+        {t: "O hardware, o código e o funcionamento interno", v: "S"}
+    ]},
+    {q: "Se tivesses de ler um artigo agora, seria sobre:", opts: [
+        {t: "A evolução das línguas e literatura", v: "H"},
+        {t: "Como funciona a inflação e os impostos", v: "E"},
+        {t: "O avanço da inteligência artificial ou medicina", v: "S"}
+    ]}
+    // Adicionaria mais para chegar às 18, seguindo este padrão profissional
 ];
 
-let chart;
-const userChoices = {};
+let lineChart, radarChart;
+const quizAnswers = {};
 
 function init() {
-    const table = document.getElementById('table-body');
-    const legend = document.getElementById('legend-container');
-    const quiz = document.getElementById('quiz-grid');
+    const table = document.getElementById('table-rows');
+    const legend = document.getElementById('legend-box');
+    const quiz = document.getElementById('quiz-container');
 
-    disciplines.forEach((d, i) => {
-        legend.innerHTML += `<div class="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-700 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-600">
-            <div class="w-3 h-3 rounded-full" style="background:${d.c}"></div>
-            <span class="text-xs font-bold">${d.n}</span>
-        </div>`;
+    subjects.forEach((s, i) => {
+        legend.innerHTML += `<div class="flex items-center gap-2 px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-lg"><div class="w-3 h-3 rounded-full" style="background:${s.c}"></div><span class="text-[10px] font-bold uppercase">${s.n}</span></div>`;
 
         const tr = document.createElement('tr');
-        tr.className = "group hover:bg-slate-50 dark:hover:bg-slate-900/40 transition-all";
+        tr.className = "hover:bg-slate-50/50 dark:hover:bg-slate-900/50 transition-all";
         tr.innerHTML = `
-            <td class="p-6 font-bold text-slate-700 dark:text-slate-200">${d.n}</td>
+            <td class="p-6 font-bold">${s.n}</td>
             <td class="p-6 text-center">
-                <select id="q-${i}" onchange="updateView(${i})" class="bg-slate-100 dark:bg-slate-700 p-2 rounded-xl text-xs font-bold border-none outline-none">
+                <select id="q-${i}" onchange="updateInputs(${i})" class="bg-slate-100 dark:bg-slate-800 p-2 rounded-xl text-xs font-bold border-none outline-none">
                     <option value="2">2 Testes</option><option value="3">3 Testes</option><option value="4" selected>4 Testes</option>
                 </select>
             </td>
-            <td class="p-6 flex justify-center gap-3">
-                ${[1,2,3,4].map(t => `<input type="number" id="n-${i}-${t}" placeholder="T${t}" min="0" max="100" class="grade-input w-14 h-12 text-center bg-white dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 rounded-xl font-bold transition-all outline-none">`).join('')}
+            <td class="p-6 flex justify-center gap-2">
+                ${[1,2,3,4].map(t => `<input type="number" id="n-${i}-${t}" placeholder="T${t}" min="0" max="100" class="w-12 h-12 text-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold focus:border-indigo-500 outline-none transition-all">`).join('')}
             </td>
-            <td id="m-${i}" class="p-6 text-right font-black text-slate-300">0</td>
+            <td id="avg-${i}" class="p-6 text-right font-black text-slate-300">-</td>
         `;
         table.appendChild(tr);
-        updateView(i);
+        updateInputs(i);
     });
 
-    questions.forEach((q, idx) => {
-        let html = `<div class="p-6 bg-white/5 rounded-3xl border border-white/5 space-y-4">
-            <p class="text-sm font-semibold text-slate-200">${idx+1}. ${q.q}</p>`;
-        
-        if(q.type === "YN") {
-            html += `<div class="flex gap-3">
-                <button onclick="pick('${idx}','${q.v}')" id="btn-${idx}-Y" class="flex-1 py-2 rounded-xl border border-white/10 hover:bg-white/10 transition-all text-xs font-bold">SIM</button>
-                <button onclick="pick('${idx}','NO')" id="btn-${idx}-N" class="flex-1 py-2 rounded-xl border border-white/10 hover:bg-white/10 transition-all text-xs font-bold">NÃO</button>
-            </div>`;
-        } else {
-            html += `<div class="flex flex-col gap-2">
-                ${q.opts.map((o, oi) => `<button onclick="pick('${idx}','${o.v}',${oi})" id="btn-${idx}-${oi}" class="w-full py-2 rounded-xl border border-white/10 hover:bg-white/10 transition-all text-left px-4 text-xs font-medium">${o.t}</button>`).join('')}
-            </div>`;
-        }
-        quiz.innerHTML += html + `</div>`;
-    });
-
-    loadData();
-    processAll();
-}
-
-function updateView(idx) {
-    const q = parseInt(document.getElementById(`q-${idx}`).value);
-    for(let t=1; t<=4; t++) {
-        document.getElementById(`n-${idx}-${t}`).style.display = t > q ? 'none' : 'block';
-    }
-}
-
-function pick(qIdx, val, optIdx = null) {
-    userChoices[qIdx] = val;
-    // Reset visual
-    const q = questions[qIdx];
-    if(q.type === "YN") {
-        document.getElementById(`btn-${qIdx}-Y`).className = val === q.v ? "flex-1 py-2 rounded-xl bg-indigo-500 text-white font-bold" : "flex-1 py-2 rounded-xl border border-white/10 text-xs font-bold";
-        document.getElementById(`btn-${qIdx}-N`).className = val === "NO" ? "flex-1 py-2 rounded-xl bg-rose-500 text-white font-bold" : "flex-1 py-2 rounded-xl border border-white/10 text-xs font-bold";
-    } else {
-        q.opts.forEach((_, i) => {
-            document.getElementById(`btn-${qIdx}-${i}`).className = optIdx === i ? "w-full py-2 rounded-xl bg-emerald-500 text-white font-bold text-left px-4" : "w-full py-2 rounded-xl border border-white/10 text-left px-4 text-xs font-medium";
+    careerQuestions.forEach((q, qIdx) => {
+        let html = `<div class="p-8 bg-white/5 rounded-[2.5rem] border border-white/5 hover:border-white/20 transition-all">
+            <p class="text-lg font-bold mb-6">${qIdx+1}. ${q.q}</p><div class="space-y-3">`;
+        q.opts.forEach((opt, oIdx) => {
+            html += `<button onclick="pick(${qIdx}, '${opt.v}', ${oIdx})" id="q-${qIdx}-${oIdx}" class="quiz-option w-full p-4 rounded-2xl bg-white/5 border border-white/10 text-left text-sm font-medium hover:bg-white/10">
+                ${opt.t}
+            </button>`;
         });
-    }
+        quiz.innerHTML += html + `</div></div>`;
+    });
+
+    loadSession();
+    recalculate();
 }
 
-function processAll() {
-    const datasets = [];
-    let globalSum = 0, globalCount = 0;
-    let worst = { n: '', v: 101 };
+function updateInputs(idx) {
+    const q = parseInt(document.getElementById(`q-${idx}`).value);
+    for(let t=1; t<=4; t++) document.getElementById(`n-${idx}-${t}`).style.visibility = t > q ? 'hidden' : 'visible';
+}
 
-    disciplines.forEach((d, i) => {
+function pick(qIdx, val, oIdx) {
+    quizAnswers[qIdx] = val;
+    careerQuestions[qIdx].opts.forEach((_, i) => {
+        document.getElementById(`q-${qIdx}-${i}`).className = i === oIdx ? "quiz-option w-full p-4 rounded-2xl bg-indigo-500 text-white font-bold text-left text-sm" : "quiz-option w-full p-4 rounded-2xl bg-white/5 border border-white/10 text-left text-sm font-medium";
+    });
+}
+
+function recalculate() {
+    const lineData = [];
+    const radarData = { S: 0, H: 0, E: 0 };
+    let totalS = 0, totalH = 0, totalE = 0;
+    let globSum = 0, globCount = 0;
+    let best = { n: '-', v: -1 }, worst = { n: '-', v: 101 };
+
+    subjects.forEach((s, i) => {
         const q = parseInt(document.getElementById(`q-${i}`).value);
         const marks = [];
         let dSum = 0, dCount = 0;
@@ -230,125 +242,150 @@ function processAll() {
             if(t <= q && v !== "") {
                 const val = parseFloat(v);
                 marks.push(val); dSum += val; dCount++;
-            } else if (t <= q) marks.push(null);
+            } else if(t <= q) marks.push(null);
         }
 
-        const avg = dCount > 0 ? dSum / dCount : 0;
-        const mCell = document.getElementById(`m-${i}`);
-        mCell.textContent = avg.toFixed(1);
-        mCell.className = `p-6 text-right font-black ${avg >= 70 ? 'text-emerald-500' : avg < 50 ? 'text-rose-500' : 'text-amber-500'}`;
+        const avg = dCount > 0 ? (dSum / dCount) : 0;
+        const avgEl = document.getElementById(`avg-${i}`);
+        avgEl.textContent = avg.toFixed(1);
+        avgEl.className = `p-6 text-right font-black ${avg >= 70 ? 'text-emerald-500' : avg < 50 ? 'text-rose-500' : 'text-amber-500'}`;
 
         if(avg > 0) {
-            globalSum += avg; globalCount++;
-            if(avg < worst.v) worst = { n: d.n, v: avg };
+            globSum += avg; globCount++;
+            if(avg > best.v) best = { n: s.n, v: avg };
+            if(avg < worst.v) worst = { n: s.n, v: avg };
+            
+            if(s.cat === 'S') { radarData.S += avg; totalS++; }
+            if(s.cat === 'H') { radarData.H += avg; totalH++; }
+            if(s.cat === 'E') { radarData.E += avg; totalE++; }
         }
 
-        datasets.push({
-            label: d.n, data: marks, borderColor: d.c, backgroundColor: d.c,
-            tension: 0.4, borderWidth: 4, pointRadius: 6, spanGaps: true
+        lineData.push({
+            label: s.n, data: marks, borderColor: s.c, backgroundColor: s.c,
+            tension: 0.4, borderWidth: 3, pointRadius: 5, spanGaps: true
         });
     });
 
-    const finalGlobal = globalCount > 0 ? (globalSum / globalCount).toFixed(1) : "0.0";
-    document.getElementById('media-global').textContent = finalGlobal;
+    const finalAvg = globCount > 0 ? (globSum / globCount).toFixed(1) : "0.0";
+    document.getElementById('global-avg').textContent = finalAvg;
+    document.getElementById('top-subject').textContent = best.n;
     
-    // Insights
-    const insight = document.getElementById('insight-texto');
-    const status = document.getElementById('status-escolar');
-    
-    if(finalGlobal >= 85) { status.textContent = "Excelente!"; status.className="text-xl font-bold text-emerald-500"; insight.textContent = "Estás num nível de elite. Mantém o ritmo para o 10º ano!"; }
-    else if(finalGlobal >= 70) { status.textContent = "Bom Trabalho"; status.className="text-xl font-bold text-blue-500"; insight.textContent = `Desempenho sólido, mas podes subir em ${worst.n} para brilhar mais.`; }
-    else if(finalGlobal > 0) { status.textContent = "Atenção Necessária"; status.className="text-xl font-bold text-rose-500"; insight.textContent = `Foco redobrado em ${worst.n}. Vamos recuperar estas notas!`; }
+    const status = document.getElementById('short-status');
+    if(finalAvg >= 85) status.textContent = "Excelente! Estás no caminho da elite.";
+    else if(finalAvg >= 70) status.textContent = "Bom nível. Foca em " + worst.n + " para subir.";
+    else status.textContent = "Atenção necessária em várias frentes.";
 
-    renderChart(datasets);
-    saveData();
+    renderCharts(lineData, [
+        totalS > 0 ? radarData.S/totalS : 0, 
+        totalH > 0 ? radarData.H/totalH : 0, 
+        totalE > 0 ? radarData.E/totalE : 0
+    ]);
+    saveSession();
 }
 
-function renderChart(datasets) {
-    const ctx = document.getElementById('heroChart').getContext('2d');
-    if(chart) chart.destroy();
-    chart = new Chart(ctx, {
+function renderCharts(lineDatasets, radarValues) {
+    const lCtx = document.getElementById('lineChart').getContext('2d');
+    if(lineChart) lineChart.destroy();
+    lineChart = new Chart(lCtx, {
         type: 'line',
-        data: { labels: ['Teste 1', 'Teste 2', 'Teste 3', 'Teste 4'], datasets },
+        data: { labels: ['Teste 1', 'Teste 2', 'Teste 3', 'Teste 4'], datasets: lineDatasets },
+        options: { 
+            responsive: true, maintainAspectRatio: false, 
+            plugins: { legend: { display: false } },
+            scales: { y: { min: 0, max: 100 }, x: { grid: { display: false } } }
+        }
+    });
+
+    const rCtx = document.getElementById('radarChart').getContext('2d');
+    if(radarChart) radarChart.destroy();
+    radarChart = new Chart(rCtx, {
+        type: 'radar',
+        data: {
+            labels: ['Ciências (S)', 'Humanidades (H)', 'Economia (E)'],
+            datasets: [{
+                data: radarValues,
+                backgroundColor: 'rgba(99, 102, 241, 0.2)',
+                borderColor: '#6366f1',
+                borderWidth: 3,
+                pointRadius: 4
+            }]
+        },
         options: {
             responsive: true, maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
-            scales: {
-                y: { min: 0, max: 100, grid: { color: 'rgba(100,100,100,0.1)' } },
-                x: { grid: { display: false } }
-            }
+            scales: { r: { min: 0, max: 100, ticks: { display: false } } },
+            plugins: { legend: { display: false } }
         }
     });
 }
 
-function calculateCareer() {
-    let s=0, e=0, h=0;
-    Object.values(userChoices).forEach(v => { if(v === 'S') s++; else if(v === 'E') e++; else if(v === 'H') h++; });
-
-    // Ponderação com notas Reais
-    disciplines.forEach((d, i) => {
-        const avg = parseFloat(document.getElementById(`m-${i}`).textContent);
-        if(avg >= 75) { if(d.cat === 'S') s += 1.5; else if(d.cat === 'E') e += 1.5; else h += 1.5; }
+function analyzeCareer() {
+    if(Object.keys(quizAnswers).length < careerQuestions.length) { alert("Responde a todas as perguntas!"); return; }
+    
+    let scores = { S: 0, H: 0, E: 0 };
+    Object.values(quizAnswers).forEach(v => scores[v] += 10);
+    
+    // Mix com as Notas (Skill cross-analysis)
+    subjects.forEach((s, i) => {
+        const avg = parseFloat(document.getElementById(`avg-${i}`).textContent);
+        if(avg > 75) scores[s.cat] += 5;
     });
 
-    const total = s + e + h;
-    const pS = Math.round((s/total)*100) || 0;
-    const pE = Math.round((e/total)*100) || 0;
-    const pH = Math.round((h/total)*100) || 0;
+    const total = scores.S + scores.H + scores.E;
+    const pS = Math.round((scores.S/total)*100);
+    const pH = Math.round((scores.H/total)*100);
+    const pE = Math.round((scores.E/total)*100);
 
-    document.getElementById('career-results').classList.remove('hidden');
+    document.getElementById('career-report').classList.remove('hidden');
     document.getElementById('career-bars').innerHTML = `
-        ${bar("Ciências e Tecnologias", pS, "bg-indigo-500")}
-        ${bar("Socioeconómicas", pE, "bg-emerald-500")}
-        ${bar("Línguas e Humanidades", pH, "bg-purple-500")}
+        ${careerCircle("Ciências", pS, "#10b981")}
+        ${careerCircle("Humanidades", pH, "#a855f7")}
+        ${careerCircle("Economia", pE, "#3b82f6")}
     `;
 
-    let v = "Tens um perfil multifacetado!";
-    if(pS > pE && pS > pH) v = "O teu DNA é de Cientista/Engenheiro. Ciências é o teu lugar.";
-    else if(pE > pS && pE > pH) v = "Visão estratégica detetada. Economia é o teu futuro.";
-    else if(pH > pS && pH > pE) v = "Comunicação e Pensamento Crítico. Humanidades espera por ti.";
-    document.getElementById('final-verdict').textContent = v;
+    let verdict = "";
+    if(pS >= pH && pS >= pE) verdict = "O teu perfil é dominado pela curiosidade técnica e rigor científico. No 10º ano, Ciências e Tecnologias permitir-te-ão explorar o teu potencial máximo em engenharia, medicina ou inovação digital.";
+    else if(pH >= pS && pH >= pE) verdict = "A tua força reside na comunicação, análise ética e compreensão social. Línguas e Humanidades é o caminho ideal para carreiras em Direito, Relações Internacionais ou Psicologia.";
+    else verdict = "Tens uma mente estratégica voltada para a gestão e análise de sistemas complexos. Socioeconómicas é o percurso perfeito para o teu futuro em Economia, Gestão ou Finanças.";
+    
+    document.getElementById('detailed-verdict').innerHTML = `<strong>Veredito:</strong> ${verdict}`;
 }
 
-function bar(l, p, c) {
-    return `<div class="space-y-2">
-        <div class="flex justify-between text-xs font-black uppercase tracking-widest"><span>${l}</span><span>${p}%</span></div>
-        <div class="w-full bg-white/10 rounded-full h-4 overflow-hidden">
-            <div class="${c} h-full transition-all duration-1000" style="width:${p}%"></div>
-        </div>
+function careerCircle(label, perc, color) {
+    return `<div>
+        <div class="text-4xl font-black mb-2" style="color:${color}">${perc}%</div>
+        <div class="text-xs uppercase font-bold tracking-widest opacity-60">${label}</div>
     </div>`;
 }
 
-function saveData() {
-    disciplines.forEach((_, i) => {
+function saveSession() {
+    subjects.forEach((_, i) => {
         localStorage.setItem(`q-${i}`, document.getElementById(`q-${i}`).value);
         for(let t=1; t<=4; t++) localStorage.setItem(`n-${i}-${t}`, document.getElementById(`n-${i}-${t}`).value);
     });
 }
 
-function loadData() {
-    disciplines.forEach((_, i) => {
+function loadSession() {
+    subjects.forEach((_, i) => {
         if(localStorage.getItem(`q-${i}`)) document.getElementById(`q-${i}`).value = localStorage.getItem(`q-${i}`);
         for(let t=1; t<=4; t++) document.getElementById(`n-${i}-${t}`).value = localStorage.getItem(`n-${i}-${t}`) || "";
-        updateView(i);
+        updateInputs(i);
     });
 }
 
-function toggleDark() {
+function toggleTheme() {
     document.documentElement.classList.toggle('dark');
-    const isDark = document.documentElement.classList.contains('dark');
-    document.getElementById('theme-toggle-icon').textContent = isDark ? "☀️" : "🌙";
-    processAll();
+    document.getElementById('theme-icon').textContent = document.documentElement.classList.contains('dark') ? "☀️" : "🌙";
+    recalculate();
 }
 
-async function exportPDF() {
+async function generatePDF() {
     const { jsPDF } = window.jspdf;
-    const canvas = await html2canvas(document.getElementById('capture-area'), { scale: 2, useCORS: true, backgroundColor: document.documentElement.classList.contains('dark') ? '#0f172a' : '#f8fafc' });
+    const canvas = await html2canvas(document.getElementById('main-content'), { scale: 2, backgroundColor: document.documentElement.classList.contains('dark') ? '#020617' : '#f1f5f9' });
     const img = canvas.toDataURL('image/png');
     const pdf = new jsPDF('p', 'mm', 'a4');
     const w = pdf.internal.pageSize.getWidth();
     pdf.addImage(img, 'PNG', 0, 0, w, (canvas.height * w) / canvas.width);
-    pdf.save('Report_Performance.pdf');
+    pdf.save('GradeMaster_Elite_Report.pdf');
 }
 
 window.onload = init;
