@@ -1,431 +1,209 @@
 <!DOCTYPE html>
-<html lang="pt-PT" class="light">
+<html lang="pt">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GradeMaster Quantum | Intelligence Hub</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: { extend: { fontSans: { 'jakarta': ['Plus Jakarta Sans', 'sans-serif'] } } }
-        }
-    </script>
+    <title>BloxFinder — O teu próximo vício no Roblox</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800;900&display=swap" rel="stylesheet">
+
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; transition: background-color 0.4s ease, color 0.4s ease; scroll-behavior: smooth; }
-        .card-neo { 
-            background: white; 
-            border-radius: 1.5rem; 
-            box-shadow: 0 20px 40px -15px rgba(99, 102, 241, 0.1); 
-            border: 1px solid rgba(255,255,255,0.8); 
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        /* =========================================
+           UI GAMER MODERNA (DARK MODE)
+           ========================================= */
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --accent: #00b0f0; /* Azul Roblox */
+            --accent-hover: #008ecc;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
         }
-        .dark .card-neo { 
-            background: #0f172a; 
-            border: 1px solid rgba(255,255,255,0.05); 
-            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5); 
-        }
-        .card-neo:hover { transform: translateY(-3px); box-shadow: 0 25px 50px -15px rgba(99, 102, 241, 0.2); }
-        .device-pc { max-width: 1400px; margin: auto; }
-        .device-mobile { max-width: 480px; margin: auto; }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
+        body { background: var(--bg); color: var(--text-main); min-height: 100vh; padding-bottom: 50px; }
+
+        /* CABEÇALHO */
+        header { text-align: center; padding: 60px 20px 40px; background: linear-gradient(180deg, rgba(0,176,240,0.05) 0%, var(--bg) 100%); }
+        header h1 { font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 900; letter-spacing: -1px; margin-bottom: 10px; }
+        header h1 span { color: var(--accent); }
+        header p { color: var(--text-muted); font-size: 1.1rem; }
+
+        /* PESQUISA E FILTROS */
+        .controls-container { max-width: 900px; margin: 0 auto 40px; padding: 0 20px; }
         
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        .dark ::-webkit-scrollbar-thumb { background: #334155; }
+        .search-bar { 
+            display: flex; background: var(--card-bg); border: 2px solid #334155; 
+            border-radius: 16px; padding: 12px 25px; margin-bottom: 25px; transition: 0.3s;
+        }
+        .search-bar:focus-within { border-color: var(--accent); box-shadow: 0 0 20px rgba(0,176,240,0.15); }
+        .search-bar i { color: var(--text-muted); font-size: 20px; margin-top: 5px; margin-right: 15px; }
+        .search-bar input { flex: 1; background: transparent; border: none; color: white; font-size: 16px; outline: none; }
+
+        .filters { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+        .btn-filter { 
+            background: var(--card-bg); color: var(--text-main); border: 1px solid #334155; 
+            padding: 8px 20px; border-radius: 50px; font-weight: 600; font-size: 14px; cursor: pointer; transition: 0.3s;
+        }
+        .btn-filter:hover { border-color: var(--accent); }
+        .btn-filter.active { background: var(--accent); color: white; border-color: var(--accent); box-shadow: 0 5px 15px rgba(0,176,240,0.3); }
+
+        /* GRELHA DE JOGOS */
+        .games-grid { 
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
+            gap: 25px; max-width: 1200px; margin: 0 auto; padding: 0 20px;
+        }
+        
+        .game-card { 
+            background: var(--card-bg); border-radius: 20px; overflow: hidden; 
+            border: 1px solid #334155; transition: 0.3s; display: flex; flex-direction: column;
+        }
+        .game-card:hover { transform: translateY(-8px); border-color: var(--accent); box-shadow: 0 15px 30px rgba(0,0,0,0.4); }
+        
+        .game-img { width: 100%; height: 160px; object-fit: cover; background: #000; border-bottom: 1px solid #334155; }
+        .game-info { padding: 20px; flex: 1; display: flex; flex-direction: column; }
+        .game-title { font-size: 20px; font-weight: 800; margin-bottom: 8px; }
+        .game-desc { font-size: 14px; color: var(--text-muted); margin-bottom: 20px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+        
+        .game-meta { display: flex; justify-content: space-between; align-items: center; margin-top: auto; }
+        .tag { background: rgba(0,176,240,0.1); color: var(--accent); padding: 5px 12px; border-radius: 8px; font-size: 11px; font-weight: 800; text-transform: uppercase; }
+        .play-btn { background: white; color: var(--bg); padding: 8px 15px; border-radius: 10px; font-size: 13px; font-weight: 800; transition: 0.3s; text-decoration: none; }
+        .game-card:hover .play-btn { background: var(--accent); color: white; }
+
+        /* ESTADO VAZIO */
+        .no-results { text-align: center; grid-column: 1 / -1; padding: 50px; color: var(--text-muted); font-size: 1.2rem; }
     </style>
 </head>
-<body class="bg-slate-50 dark:bg-[#020617] text-slate-900 dark:text-slate-100 min-h-screen">
+<body>
 
-<div id="device-overlay" class="fixed inset-0 z-[100] bg-slate-900 flex items-center justify-center p-6 text-white bg-gradient-to-br from-slate-900 to-indigo-950">
-    <div class="text-center space-y-8 max-w-md">
-        <div class="w-20 h-20 bg-indigo-600 rounded-2xl mx-auto flex items-center justify-center shadow-2xl shadow-indigo-500/50 mb-6">
-            <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-        </div>
-        <h2 class="text-4xl font-black tracking-tighter">QUANTUM OS</h2>
-        <p class="text-slate-400 font-medium text-lg">Escolha a otimização da interface para começar:</p>
-        <div class="grid grid-cols-2 gap-4">
-            <button onclick="setDevice('pc')" class="p-6 bg-indigo-600 rounded-3xl font-bold hover:bg-indigo-500 transition-all shadow-xl hover:scale-105">💻 PC</button>
-            <button onclick="setDevice('mobile')" class="p-6 bg-slate-800 border border-slate-700 rounded-3xl font-bold hover:bg-slate-700 transition-all shadow-xl hover:scale-105">📱 MOBILE</button>
-        </div>
-    </div>
-</div>
-
-<div id="app-container" class="hidden pb-20 pt-10 px-4 md:px-10">
-    <header class="flex flex-col md:flex-row justify-between items-center mb-12 gap-6 bg-white dark:bg-slate-900 p-8 rounded-[2rem] shadow-sm border border-slate-100 dark:border-slate-800">
-        <div>
-            <span class="text-indigo-600 dark:text-indigo-400 font-extrabold tracking-widest text-xs uppercase bg-indigo-50 dark:bg-indigo-900/30 px-3 py-1 rounded-full">Dashboard Premium</span>
-            <h1 class="text-4xl md:text-5xl font-black tracking-tight mt-3">GradeMaster <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">Quantum</span></h1>
-        </div>
-        <div class="flex gap-4">
-            <button onclick="toggleTheme()" class="w-14 h-14 flex items-center justify-center bg-slate-100 dark:bg-slate-800 rounded-2xl text-xl hover:scale-110 transition-all">🌓</button>
-            <button onclick="exportFullReport()" class="px-8 py-4 bg-gradient-to-r from-slate-900 to-slate-800 dark:from-indigo-600 dark:to-purple-600 text-white rounded-2xl font-black shadow-lg hover:opacity-90 transition-all hover:scale-105">EXPORTAR PDF</button>
-        </div>
+    <header>
+        <h1>Blox<span>Finder</span></h1>
+        <p>A maior base de dados de recomendações Roblox. O que queres jogar hoje?</p>
     </header>
 
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-        <div class="card-neo p-8">
-            <h3 class="text-xl font-bold mb-2 flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-indigo-500"></span> Equilíbrio Vocacional</h3>
-            <div class="h-[300px] flex justify-center">
-                <canvas id="radarAreas"></canvas>
-            </div>
+    <div class="controls-container">
+        <div class="search-bar">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchInput" placeholder="Pesquisa por nome do jogo (ex: Blox Fruits)..." onkeyup="filterGames()">
         </div>
-        <div class="card-neo p-8">
-            <h3 class="text-xl font-bold mb-2 flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-emerald-500"></span> Perfil Multidisciplinar</h3>
-            <div class="h-[300px] flex justify-center">
-                <canvas id="radarDisciplines"></canvas>
-            </div>
-        </div>
-    </div>
 
-    <div class="card-neo p-8 mb-8">
-        <h3 class="text-xl font-bold mb-2 flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-indigo-600"></span> Evolução Temporal (Todas as Disciplinas)</h3>
-        <p class="text-sm text-slate-500 mb-6">Visualização de tendências cruzadas entre todos os testes efetuados.</p>
-        <div class="h-[400px] w-full">
-            <canvas id="lineChartGlobal"></canvas>
+        <div class="filters" id="filterButtons">
+            <button class="btn-filter active" onclick="setCategory('Todos', this)">Todos</button>
+            <button class="btn-filter" onclick="setCategory('Ação', this)">Ação & Luta</button>
+            <button class="btn-filter" onclick="setCategory('Tycoon', this)">Tycoon</button>
+            <button class="btn-filter" onclick="setCategory('Terror', this)">Terror</button>
+            <button class="btn-filter" onclick="setCategory('RPG', this)">Roleplay (RPG)</button>
+            <button class="btn-filter" onclick="setCategory('Simulador', this)">Simulador</button>
+            <button class="btn-filter" onclick="setCategory('Anime', this)">Anime</button>
         </div>
     </div>
 
-    <div class="card-neo p-8 mb-12">
-        <h3 class="text-xl font-bold mb-2 flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-rose-500"></span> Desempenho por Disciplina</h3>
-        <div class="h-[350px] w-full">
-            <canvas id="barDisciplines"></canvas>
-        </div>
-    </div>
+    <div class="games-grid" id="gamesContainer"></div>
 
-    <section class="card-neo p-10 mb-12 bg-gradient-to-br from-indigo-50 to-white dark:from-slate-800 dark:to-slate-900 border-indigo-100 dark:border-slate-700">
-        <div class="flex flex-col md:flex-row gap-10 items-center">
-            <div class="text-center md:text-left space-y-2 min-w-[200px]">
-                <p class="text-xs font-black uppercase text-indigo-500 tracking-widest">Score Académico Global</p>
-                <div id="media-global" class="text-8xl font-black leading-none text-transparent bg-clip-text bg-gradient-to-br from-slate-900 to-indigo-600 dark:from-white dark:to-indigo-400">0.0</div>
-            </div>
-            <div class="flex-1 space-y-4">
-                <h3 class="text-2xl font-bold">Diagnóstico da Inteligência Artificial</h3>
-                <div id="parecer-longo" class="text-slate-600 dark:text-slate-300 leading-relaxed text-lg bg-white/50 dark:bg-slate-900/50 p-6 rounded-2xl border border-white/20">
-                    Insere os teus dados abaixo para que a nossa IA processe o teu perfil académico.
-                </div>
-            </div>
-        </div>
-    </section>
+    <script>
+        // A TUA BASE DE DADOS GIGANTE!
+        // Podes copiar os blocos { } e adicionar os teus 500 jogos aqui dentro.
+        const robloxGames = [
+            // --- AÇÃO E LUTA ---
+            { title: "Arsenal", category: "Ação", desc: "Um jogo de tiros FPS super rápido. Ganha assistências, sobe de nível e usa armas malucas para vencer.", img: "https://tr.rbxcdn.com/153a81f3e7ed2cdab31ba7dc1ed406ff/768/432/Image/Png" },
+            { title: "Phantom Forces", category: "Ação", desc: "Um dos FPS táticos mais avançados do Roblox. Dezenas de armas, mapas e modos de jogo.", img: "https://tr.rbxcdn.com/5df6b53995f7ef57d9f78ea2252a12aa/768/432/Image/Png" },
+            { title: "BedWars", category: "Ação", desc: "Protege a tua cama e destrói as dos inimigos num jogo de estratégia e combate acelerado.", img: "https://tr.rbxcdn.com/f0ee3e8e1da4ecf3da3b48f6c58cf312/768/432/Image/Png" },
+            { title: "Blade Ball", category: "Ação", desc: "Usa o timing perfeito para rebater uma bola teleguiada que fica cada vez mais rápida. Muito viciante!", img: "https://tr.rbxcdn.com/00ddbd62f23ec08d098a586821d3f99d/768/432/Image/Png" },
+            { title: "Da Hood", category: "Ação", desc: "Um jogo de sobrevivência e combate nas ruas. Sê um polícia ou junta-te ao crime.", img: "https://tr.rbxcdn.com/068a73a6e9dc7da3fce19f201e74f4b2/768/432/Image/Png" },
 
-    <section class="card-neo overflow-hidden mb-12">
-        <div class="p-8 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-white dark:bg-slate-900">
-            <h2 class="text-2xl font-bold">Base de Dados de Avaliações</h2>
-            <button onclick="syncAll()" class="px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl font-bold shadow-lg shadow-emerald-500/30 transition-all flex items-center gap-2">
-                SINCRONIZAR DADOS
-            </button>
-        </div>
-        <div class="overflow-x-auto">
-            <table class="w-full text-left">
-                <thead class="bg-slate-50 dark:bg-slate-800/50">
-                    <tr class="text-[11px] font-black uppercase text-slate-500 dark:text-slate-400 tracking-wider">
-                        <th class="p-6">Disciplina</th>
-                        <th class="p-6 text-center">Configuração</th>
-                        <th class="p-6 text-center">Resultados Individualizados</th>
-                        <th class="p-6 text-right">Média Final</th>
-                    </tr>
-                </thead>
-                <tbody id="disciplinas-body" class="divide-y divide-slate-100 dark:divide-slate-800/50 bg-white dark:bg-slate-900"></tbody>
-            </table>
-        </div>
-    </section>
+            // --- ANIME ---
+            { title: "Blox Fruits", category: "Anime", desc: "Torna-te um mestre espadachim ou usa frutas mágicas. O jogo mais famoso da plataforma!", img: "https://tr.rbxcdn.com/83917812cd892b15e3b624ea80cb6dc1/768/432/Image/Png" },
+            { title: "Anime Defenders", category: "Anime", desc: "Um Tower Defense incrível com as tuas personagens de anime favoritas.", img: "https://tr.rbxcdn.com/12e84c98e2183c500ab435cebc61d15c/768/432/Image/Png" },
+            { title: "All Star Tower Defense", category: "Anime", desc: "Usa lutadores de anime para defender a tua base contra hordas de inimigos.", img: "https://tr.rbxcdn.com/c6f7b1dfdf8de3b53f6da64b971a938c/768/432/Image/Png" },
+            { title: "Shindo Life", category: "Anime", desc: "Mundo aberto focado em ninjas. Aprende jutsus, explora aldeias e luta com amigos.", img: "https://tr.rbxcdn.com/71d184a44b9d0ab080dd6d8ebda3b593/768/432/Image/Png" },
+            { title: "Anime Dimensions", category: "Anime", desc: "Viaja por diferentes dimensões de animes e derrota bosses épicos para ganhares personagens.", img: "https://tr.rbxcdn.com/2ce2f96cf9efab6ebdf7f0559648c66e/768/432/Image/Png" },
 
-    <section id="quiz-section" class="bg-gradient-to-br from-indigo-700 to-purple-800 dark:from-indigo-900 dark:to-slate-900 rounded-[3rem] p-8 md:p-16 text-white shadow-2xl relative overflow-hidden">
-        <div class="max-w-4xl mx-auto relative z-10">
-            <div class="text-center mb-16">
-                <span class="bg-white/10 border border-white/20 px-5 py-2 rounded-full text-xs font-black uppercase tracking-widest backdrop-blur-sm">Quantum Vocational Engine 3.0</span>
-                <h2 class="text-4xl md:text-5xl font-black mt-6 leading-tight">Mapeamento de Carreira</h2>
-            </div>
+            // --- TERROR ---
+            { title: "DOORS", category: "Terror", desc: "Avança por 100 portas de um hotel amaldiçoado. Cada monstro tem mecânicas diferentes.", img: "https://tr.rbxcdn.com/39e99a224f2b0bb62b0e68e0d4bb272a/768/432/Image/Png" },
+            { title: "Piggy", category: "Terror", desc: "Sobrevive a monstros assustadores enquanto tentas resolver puzzles para escapar do mapa.", img: "https://tr.rbxcdn.com/2d5db0df2b77c5ff0dded5a230f5ecb8/768/432/Image/Png" },
+            { title: "Evade", category: "Terror", desc: "Corre pelas tuas vidas de 'Nextbots' gigantes que te perseguem implacavelmente.", img: "https://tr.rbxcdn.com/a42cd9a6de0a876ce37c0ebec91f6bb6/768/432/Image/Png" },
+            { title: "Apeirophobia", category: "Terror", desc: "Preso nas Backrooms. Explora salas infinitas e foge de entidades misteriosas. Puzzle e terror.", img: "https://tr.rbxcdn.com/d5b5465d64a2a1b9d40b0ce1952e50cf/768/432/Image/Png" },
+            { title: "The Mimic", category: "Terror", desc: "Criado com base em lendas urbanas japonesas. Gráficos incríveis e muitos sustos.", img: "https://tr.rbxcdn.com/0c4a4f808f921d7bcf054199c23af23b/768/432/Image/Png" },
 
-            <div id="quiz-flow" class="space-y-8"></div>
+            // --- RPG / ROLEPLAY ---
+            { title: "Brookhaven 🏡RP", category: "RPG", desc: "Constrói a tua casa, escolhe carros e vive a tua vida ideal. O rei do Roleplay no Roblox.", img: "https://tr.rbxcdn.com/1ce0be2bc0c210416b08e2858b90cbf3/768/432/Image/Png" },
+            { title: "Adopt Me!", category: "RPG", desc: "Adota pets raros, decora a tua casa e faz trocas (trades) com outros jogadores.", img: "https://tr.rbxcdn.com/8cb372c3dff5b4f620bd3c59a60e0cc1/768/432/Image/Png" },
+            { title: "Welcome to Bloxburg", category: "RPG", desc: "Trabalha, ganha dinheiro e constrói mansões épicas detalhe a detalhe.", img: "https://tr.rbxcdn.com/9dc0d5b7dc490e54d6fb26fbfabeb642/768/432/Image/Png" },
+            { title: "Livetopia", category: "RPG", desc: "Explora uma cidade gigante com comboios, aeroportos, trabalhos fantásticos e segredos escondidos.", img: "https://tr.rbxcdn.com/c6c39179d67efbbbcda4483a90100d2d/768/432/Image/Png" },
+            { title: "MeepCity", category: "RPG", desc: "Socializa, personaliza a tua casa e adota Meeps super divertidos.", img: "https://tr.rbxcdn.com/1be0ecff06e6ed4dd17e9b0d1e5ec600/768/432/Image/Png" },
 
-            <div class="mt-16 text-center">
-                <button onclick="calculateFinalCareer()" class="px-12 py-5 bg-white text-indigo-900 rounded-2xl font-black text-xl hover:scale-105 transition-all shadow-xl shadow-white/10">
-                    GERAR DIAGNÓSTICO FINAL
-                </button>
-            </div>
+            // --- SIMULADORES ---
+            { title: "Pet Simulator 99!", category: "Simulador", desc: "Coleciona milhares de pets incríveis, desbloqueia mundos gigantes e quebra moedas.", img: "https://tr.rbxcdn.com/97486e92110c7bf26f1c4df1ecbdde71/768/432/Image/Png" },
+            { title: "Bee Swarm Simulator", category: "Simulador", desc: "Cria um enxame de abelhas único, recolhe pólen e faz missões de ursos gigantes.", img: "https://tr.rbxcdn.com/182a3d0ed1501c5cc15d9cc03dc15e8d/768/432/Image/Png" },
+            { title: "Driving Empire", category: "Simulador", desc: "Conduz hipercarros realistas, participa em corridas e explora um mapa imenso.", img: "https://tr.rbxcdn.com/cf66cc6dfa9c4e20ef935825206ab450/768/432/Image/Png" },
+            { title: "Weapon Fighting Simulator", category: "Simulador", desc: "Usa feitiços e armas espirituais para derrotar bosses e subir de rank.", img: "https://tr.rbxcdn.com/5df4696fb32ed24b81c4e9f74075f8f5/768/432/Image/Png" },
+            { title: "Strongman Simulator", category: "Simulador", desc: "Puxa objetos super pesados para ficares cada vez maior e mais forte.", img: "https://tr.rbxcdn.com/b4b574164bba55db29a3a7f80db721eb/768/432/Image/Png" },
 
-            <div id="career-result-box" class="hidden mt-16 p-10 md:p-12 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-[2.5rem] shadow-2xl transition-all">
-                <h4 class="text-3xl font-black text-center mb-10">O Teu Perfil Ideal</h4>
-                <div id="result-bars" class="space-y-8 mb-10"></div>
-                <div id="result-text" class="p-8 bg-indigo-50 dark:bg-slate-900/50 rounded-2xl text-lg font-medium leading-relaxed border border-indigo-100 dark:border-slate-700"></div>
-            </div>
-        </div>
-    </section>
-</div>
+            // --- TYCOON ---
+            { title: "Theme Park Tycoon 2", category: "Tycoon", desc: "Constrói o teu próprio parque de diversões. Cria montanhas russas incrivelmente detalhadas.", img: "https://tr.rbxcdn.com/391c53ce20dff0c5268c1f016bd9860b/768/432/Image/Png" },
+            { title: "Restaurant Tycoon 2", category: "Tycoon", desc: "Gere o teu restaurante, cozinha pratos de todo o mundo e contrata empregados.", img: "https://tr.rbxcdn.com/7936a267d6056ceafde52f01f0545f1b/768/432/Image/Png" },
+            { title: "My Restaurant!", category: "Tycoon", desc: "Atende clientes VIP num restaurante focado na gestão rápida e design eficiente.", img: "https://tr.rbxcdn.com/12bd1d0337c7674ed4a96b3d16279f57/768/432/Image/Png" },
+            { title: "Tropical Resort Tycoon", category: "Tycoon", desc: "Cria um resort de luxo numa ilha tropical com helicópteros e motas de água.", img: "https://tr.rbxcdn.com/c6f7b1dfdf8de3b53f6da64b971a938c/768/432/Image/Png" },
+            { title: "Lumber Tycoon 2", category: "Tycoon", desc: "Um clássico! Corta árvores, processa a madeira e constrói a tua base.", img: "https://tr.rbxcdn.com/466faebc7eaad12b18c991b1cd896803/768/432/Image/Png" }
+        ];
 
-<script>
-const data = {
-    subjects: [
-        {n: 'Português', c: '#3b82f6', cat: 'H'}, {n: 'Matemática', c: '#ef4444', cat: 'S'},
-        {n: 'História', c: '#f59e0b', cat: 'H'}, {n: 'Biologia', c: '#10b981', cat: 'S'},
-        {n: 'Físico-Química', c: '#8b5cf6', cat: 'S'}, {n: 'Economia', c: '#f43f5e', cat: 'E'},
-        {n: 'Inglês', c: '#06b6d4', cat: 'H'}, {n: 'Geografia', c: '#64748b', cat: 'E'}
-    ],
-    questions: [
-        {q: "Como preferes abordar um problema desconhecido?", o: [{t:"Analisando o contexto histórico e social", v:"H"}, {t:"Usando lógica matemática e dados puros", v:"S"}, {t:"Avaliando o impacto financeiro", v:"E"}, {t:"Organizando uma equipa de soluções", v:"M"}]},
-        {q: "Qual seria o teu projeto escolar ideal?", o: [{t:"Escrever um romance ou peça de teatro", v:"H"}, {t:"Construir um robot ou protótipo", v:"S"}, {t:"Criar um modelo de negócio", v:"E"}, {t:"Produzir um documentário multimédia", v:"M"}]},
-        {q: "O que mais te prende a atenção nas notícias?", o: [{t:"Direitos humanos e política", v:"H"}, {t:"Avanços na ciência e IA", v:"S"}, {t:"Bolsa de valores e inflação", v:"E"}, {t:"Tendências de comportamento social", v:"M"}]},
-        {q: "Qual destas competências valorizas mais?", o: [{t:"Empatia e comunicação", v:"H"}, {t:"Rigor e observação técnica", v:"S"}, {t:"Estratégia e eficiência", v:"E"}, {t:"Adaptabilidade e criatividade", v:"M"}]},
-        {q: "Em que lugar te sentes mais estimulado?", o: [{t:"Biblioteca ou museu", v:"H"}, {t:"Laboratório ou estúdio tech", v:"S"}, {t:"Escritório ou banco", v:"E"}, {t:"Espaço de coworking criativo", v:"M"}]},
-        {q: "O teu passatempo favorito envolve:", o: [{t:"Ler ou ver cinema de autor", v:"H"}, {t:"Videojogos de estratégia ou tech", v:"S"}, {t:"Gerir poupanças ou planear eventos", v:"E"}, {t:"Criar conteúdos para redes sociais", v:"M"}]},
-        {q: "Como vês o futuro da humanidade?", o: [{t:"Ditado pela evolução da ética", v:"H"}, {t:"Moldado pela inovação tecnológica", v:"S"}, {t:"Regido pelo comércio e economia", v:"E"}, {t:"Uma fusão entre tech e natureza", v:"M"}]},
-        {q: "Qual figura admiras mais?", o: [{t:"Escritor ou Filósofo", v:"H"}, {t:"Cientista ou Inventor", v:"S"}, {t:"Empreendedor ou CEO", v:"E"}, {t:"Diplomata ou Ativista", v:"M"}]},
-        {q: "Se viajasses no tempo, irias para:", o: [{t:"Grécia Antiga", v:"H"}, {t:"Futuro longínquo", v:"S"}, {t:"Revolução Industrial", v:"E"}, {t:"Renascimento", v:"M"}]},
-        {q: "Relação com números:", o: [{t:"Evito sempre que posso", v:"H"}, {t:"Adoro, são a base de tudo", v:"S"}, {t:"Uso-os para analisar lucros", v:"E"}, {t:"Uso apenas como ferramenta", v:"M"}]},
-        {q: "O que te irrita em grupos?", o: [{t:"Falta de comunicação humana", v:"H"}, {t:"Erros de lógica e factos", v:"S"}, {t:"Perda de tempo e recursos", v:"E"}, {t:"Falta de criatividade", v:"M"}]},
-        {q: "Departamento numa empresa:", o: [{t:"Recursos Humanos", v:"H"}, {t:"Investigação e IT", v:"S"}, {t:"Financeiro ou Vendas", v:"E"}, {t:"Marketing ou Gestão Geral", v:"M"}]},
-        {q: "Interesse pela Justiça:", o: [{t:"Ética e Direito Social", v:"H"}, {t:"Criminologia e Forense", v:"S"}, {t:"Leis comerciais e impostos", v:"E"}, {t:"Justiça Ambiental", v:"M"}]},
-        {q: "Uso do telemóvel:", o: [{t:"Consumir cultura e ler", v:"H"}, {t:"Tech reviews e automação", v:"S"}, {t:"Organização e compras", v:"E"}, {t:"Edição de imagem e vídeo", v:"M"}]},
-        {q: "Debates na aula:", o: [{t:"Amo defender ideais", v:"H"}, {t:"Só com factos científicos", v:"S"}, {t:"Só para resolver problemas", v:"E"}, {t:"Gosto de mediar partes", v:"M"}]},
-        {q: "Motivação para estudar:", o: [{t:"Compreender a cultura", v:"H"}, {t:"Descobrir como funciona o sistema", v:"S"}, {t:"Garantir sucesso financeiro", v:"E"}, {t:"Superação pessoal constante", v:"M"}]},
-        {q: "Relação com a escrita:", o: [{t:"Profunda e expressiva", v:"H"}, {t:"Direta e técnica", v:"S"}, {t:"Persuasiva e comercial", v:"E"}, {t:"Visual e criativa", v:"M"}]}
-    ]
-};
+        let currentCategory = 'Todos';
 
-let charts = {};
-const quizData = {};
+        // Função para Renderizar os Jogos no Ecrã
+        function renderGames(games) {
+            const container = document.getElementById('gamesContainer');
+            container.innerHTML = ''; // Limpa antes de colocar os novos
 
-function setDevice(type) {
-    document.getElementById('device-overlay').classList.add('hidden');
-    const container = document.getElementById('app-container');
-    container.classList.remove('hidden');
-    container.className = type === 'pc' ? 'device-pc pb-20 pt-10 px-10' : 'device-mobile pb-20 pt-10 px-4';
-    init();
-}
-
-function init() {
-    const body = document.getElementById('disciplinas-body');
-    const quizFlow = document.getElementById('quiz-flow');
-
-    data.subjects.forEach((s, i) => {
-        const tr = document.createElement('tr');
-        tr.className = "hover:bg-slate-50 dark:hover:bg-slate-800/80 transition-all border-b border-slate-50 dark:border-slate-800/50";
-        tr.innerHTML = `
-            <td class="p-6 font-bold flex items-center gap-4">
-                <div class="w-4 h-4 rounded-md shadow-sm" style="background:${s.c}"></div>
-                <span class="text-sm md:text-base">${s.n}</span>
-            </td>
-            <td class="p-6 text-center">
-                <select id="q-${i}" onchange="updateRow(${i})" class="bg-slate-100 dark:bg-slate-800 p-2.5 rounded-xl text-xs font-black uppercase border-none focus:ring-2 focus:ring-indigo-500 outline-none cursor-pointer">
-                    <option value="2">2 Testes</option><option value="3">3 Testes</option><option value="4" selected>4 Testes</option>
-                </select>
-            </td>
-            <td class="p-6 flex justify-center gap-2">
-                ${[1,2,3,4].map(t => `<input type="number" id="n-${i}-${t}" placeholder="T${t}" min="0" max="100" class="w-12 h-12 md:w-14 md:h-14 text-center bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 rounded-xl font-bold text-sm focus:border-indigo-500 outline-none transition-all shadow-sm">`).join('')}
-            </td>
-            <td id="m-${i}" class="p-6 text-right font-black text-slate-300 text-xl">0.0</td>
-        `;
-        body.appendChild(tr);
-        updateRow(i);
-    });
-
-    data.questions.forEach((q, qi) => {
-        let h = `<div class="bg-white/10 dark:bg-slate-800/40 p-6 md:p-8 rounded-[2rem] border border-white/20 backdrop-blur-md">
-            <p class="text-xl md:text-2xl font-bold mb-6 flex gap-3"><span class="text-indigo-300">${qi+1}.</span> ${q.q}</p>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">`;
-        q.o.forEach((opt, oi) => {
-            h += `<button onclick="ans(${qi}, '${opt.v}', ${oi})" id="opt-${qi}-${oi}" class="p-5 rounded-2xl bg-white/5 border border-white/10 text-left hover:bg-white/20 hover:scale-[1.02] transition-all text-sm font-medium leading-relaxed">${opt.t}</button>`;
-        });
-        quizFlow.innerHTML += h + `</div></div>`;
-    });
-
-    loadData();
-    syncAll();
-}
-
-function updateRow(i) {
-    const q = parseInt(document.getElementById(`q-${i}`).value);
-    for(let t=1; t<=4; t++) {
-        const el = document.getElementById(`n-${i}-${t}`);
-        if(t > q) { el.style.display = 'none'; el.value = ""; } 
-        else { el.style.display = 'block'; }
-    }
-}
-
-function ans(qi, v, oi) {
-    quizData[qi] = v;
-    data.questions[qi].o.forEach((_, i) => {
-        const btn = document.getElementById(`opt-${qi}-${i}`);
-        btn.className = (i === oi) ? "p-5 rounded-2xl bg-white text-indigo-900 font-bold text-left text-sm shadow-xl scale-[1.02] transition-all leading-relaxed" : "p-5 rounded-2xl bg-white/5 border border-white/10 text-left hover:bg-white/20 transition-all text-sm font-medium leading-relaxed text-white";
-    });
-}
-
-function syncAll() {
-    let globalSum = 0, count = 0;
-    const areaStats = { S:0, H:0, E:0, Sc:0, Hc:0, Ec:0 };
-    const allMarks = []; 
-    const discLabels = [];
-    const discColors = [];
-    const lineDatasets = [];
-
-    data.subjects.forEach((s, i) => {
-        const q = parseInt(document.getElementById(`q-${i}`).value);
-        let sSum = 0, sC = 0;
-        let marks = [];
-        for(let t=1; t<=4; t++) {
-            const val = document.getElementById(`n-${i}-${t}`).value;
-            if(t <= q && val !== "") {
-                const n = parseFloat(val);
-                sSum += n; sC++;
-                marks.push(n);
-            } else {
-                marks.push(null);
+            if (games.length === 0) {
+                container.innerHTML = `<div class="no-results"><i class="fas fa-ghost" style="font-size: 40px; margin-bottom: 15px;"></i><br>Não encontrámos nenhum jogo com esse nome.</div>`;
+                return;
             }
+
+            games.forEach(game => {
+                const card = document.createElement('div');
+                card.className = 'game-card';
+                card.innerHTML = `
+                    <img src="${game.img}" alt="${game.title}" class="game-img">
+                    <div class="game-info">
+                        <h3 class="game-title">${game.title}</h3>
+                        <p class="game-desc">${game.desc}</p>
+                        <div class="game-meta">
+                            <span class="tag">${game.category}</span>
+                            <a href="https://www.roblox.com/search/experiences?keyword=${encodeURIComponent(game.title)}" target="_blank" class="play-btn">Jogar</a>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
         }
-        const avg = sC > 0 ? sSum / sC : 0;
-        document.getElementById(`m-${i}`).textContent = avg.toFixed(1);
-        
-        if(avg > 0) {
-            globalSum += avg; count++;
-            areaStats[s.cat] += avg;
-            areaStats[s.cat + 'c']++;
+
+        // Função para Mudar a Categoria no Botão
+        function setCategory(category, buttonElement) {
+            currentCategory = category;
+            
+            // Muda a cor do botão ativo
+            document.querySelectorAll('.btn-filter').forEach(btn => btn.classList.remove('active'));
+            buttonElement.classList.add('active');
+            
+            filterGames();
         }
-        allMarks.push(avg);
-        discLabels.push(s.n);
-        discColors.push(s.c);
 
-        // Adicionar ao Gráfico de Linhas Global
-        lineDatasets.push({
-            label: s.n,
-            data: marks,
-            borderColor: s.c,
-            backgroundColor: s.c + '22',
-            tension: 0.3,
-            borderWidth: 3,
-            pointRadius: 5,
-            spanGaps: true
-        });
-    });
+        // Função Mestre de Filtro (Pesquisa de Texto + Categoria)
+        function filterGames() {
+            const searchText = document.getElementById('searchInput').value.toLowerCase();
+            
+            const filtered = robloxGames.filter(game => {
+                const matchName = game.title.toLowerCase().includes(searchText);
+                const matchCategory = (currentCategory === 'Todos' || game.category === currentCategory);
+                return matchName && matchCategory;
+            });
 
-    const finalAvg = count > 0 ? (globalSum / count).toFixed(1) : "0.0";
-    document.getElementById('media-global').textContent = finalAvg;
-
-    renderCharts(
-        [areaStats.Sc > 0 ? areaStats.S/areaStats.Sc : 0, areaStats.Hc > 0 ? areaStats.H/areaStats.Hc : 0, areaStats.Ec > 0 ? areaStats.E/areaStats.Ec : 0],
-        allMarks, discLabels, discColors, lineDatasets
-    );
-    
-    // Gerar Relatório de Texto IA
-    let txt = `Com uma média de <strong>${finalAvg}</strong>, `;
-    if(finalAvg >= 85) txt += "estás no topo da performance académica. A tua consistência em todas as cores de aprendizagem demonstra uma mente altamente flexível.";
-    else if(finalAvg >= 70) txt += "apresentas um rendimento sólido, mas os gráficos de linhas indicam oscilações que devem ser estabilizadas no próximo período.";
-    else txt += "o teu perfil técnico requer um reforço imediato nas áreas assinaladas a vermelho no gráfico de barras.";
-    document.getElementById('parecer-longo').innerHTML = txt;
-
-    saveData();
-}
-
-function renderCharts(areaValues, discValues, discLabels, discColors, lineDatasets) {
-    const isDark = document.documentElement.classList.contains('dark');
-    const colorText = isDark ? '#94a3b8' : '#64748b';
-
-    // Radars
-    if(charts.area) charts.area.destroy();
-    charts.area = new Chart(document.getElementById('radarAreas'), {
-        type: 'radar',
-        data: { labels: ['Ciências', 'Humanidades', 'Economia'], datasets: [{ data: areaValues, backgroundColor: 'rgba(99, 102, 241, 0.2)', borderColor: '#6366f1', borderWidth: 3 }] },
-        options: { responsive: true, maintainAspectRatio: false, scales: { r: { min:0, max:100, ticks:{display:false}, grid:{color:'rgba(128,128,128,0.2)'} } }, plugins:{legend:{display:false}} }
-    });
-
-    if(charts.disc) charts.disc.destroy();
-    charts.disc = new Chart(document.getElementById('radarDisciplines'), {
-        type: 'radar',
-        data: { labels: discLabels, datasets: [{ data: discValues, backgroundColor: 'rgba(16, 185, 129, 0.2)', borderColor: '#10b981', borderWidth: 2 }] },
-        options: { responsive: true, maintainAspectRatio: false, scales: { r: { min:0, max:100, ticks:{display:false}, grid:{color:'rgba(128,128,128,0.2)'} } }, plugins:{legend:{display:false}} }
-    });
-
-    // Bar Chart
-    if(charts.bar) charts.bar.destroy();
-    charts.bar = new Chart(document.getElementById('barDisciplines'), {
-        type: 'bar',
-        data: { labels: discLabels, datasets: [{ data: discValues, backgroundColor: discColors, borderRadius: 8 }] },
-        options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 100 }, x: { grid: { display: false } } }, plugins: { legend: { display: false } } }
-    });
-
-    // Gráfico de Linhas Global
-    if(charts.lineGlobal) charts.lineGlobal.destroy();
-    charts.lineGlobal = new Chart(document.getElementById('lineChartGlobal'), {
-        type: 'line',
-        data: { labels: ['Teste 1', 'Teste 2', 'Teste 3', 'Teste 4'], datasets: lineDatasets },
-        options: {
-            responsive: true, maintainAspectRatio: false,
-            scales: { y: { min: 0, max: 100, grid: { color: 'rgba(128,128,128,0.1)' } }, x: { grid: { display: false } } },
-            plugins: { legend: { position: 'top', labels: { usePointStyle: true, padding: 20 } } }
+            renderGames(filtered);
         }
-    });
-}
 
-function calculateFinalCareer() {
-    if(Object.keys(quizData).length < 17) { alert("Responde a todas as 17 questões!"); return; }
-    let s=0, e=0, h=0;
-    Object.values(quizData).forEach(v => { 
-        if(v==='S') s+=10; else if(v==='E') e+=10; else if(v==='H') h+=10; 
-        else { s+=3.3; e+=3.3; h+=3.3; }
-    });
-    
-    // Mix com notas reais
-    data.subjects.forEach((subj, i) => {
-        const avg = parseFloat(document.getElementById(`m-${i}`).textContent);
-        if(avg > 75) { if(subj.cat==='S') s+=8; else if(subj.cat==='E') e+=8; else h+=8; }
-    });
-
-    const total = s+e+h;
-    const pS=Math.round((s/total)*100), pE=Math.round((e/total)*100), pH=Math.round((h/total)*100);
-
-    const box = document.getElementById('career-result-box');
-    box.classList.remove('hidden');
-    document.getElementById('result-bars').innerHTML = `
-        ${bar("Ciências e Tecnologias", pS, "bg-emerald-500")}
-        ${bar("Socioeconómicas", pE, "bg-blue-500")}
-        ${bar("Línguas e Humanidades", pH, "bg-purple-500")}
-    `;
-
-    document.getElementById('result-text').innerHTML = `<strong>Análise Cruzada:</strong> Tens um perfil dominante em ${pS >= pE && pS >= pH ? 'Ciências' : (pE >= pH ? 'Economia' : 'Humanidades')}. O teu desempenho nos testes corrobora os teus interesses manifestados no quiz.`;
-    window.scrollTo({ top: box.offsetTop - 50, behavior: 'smooth' });
-}
-
-function bar(l, p, c) {
-    return `<div class="space-y-2">
-        <div class="flex justify-between text-xs font-black uppercase"><span>${l}</span><span>${p}%</span></div>
-        <div class="w-full bg-slate-100 dark:bg-slate-700 rounded-full h-4 overflow-hidden shadow-inner">
-            <div class="${c} h-full transition-all duration-1000" style="width:${p}%"></div>
-        </div>
-    </div>`;
-}
-
-function saveData() {
-    data.subjects.forEach((_, i) => {
-        localStorage.setItem(`q-${i}`, document.getElementById(`q-${i}`).value);
-        for(let t=1; t<=4; t++) localStorage.setItem(`n-${i}-${t}`, document.getElementById(`n-${i}-${t}`).value);
-    });
-}
-
-function loadData() {
-    data.subjects.forEach((_, i) => {
-        if(localStorage.getItem(`q-${i}`)) document.getElementById(`q-${i}`).value = localStorage.getItem(`q-${i}`);
-        for(let t=1; t<=4; t++) document.getElementById(`n-${i}-${t}`).value = localStorage.getItem(`n-${i}-${t}`) || "";
-        updateRow(i);
-    });
-}
-
-function toggleTheme() {
-    document.documentElement.classList.toggle('dark');
-    syncAll();
-}
-
-async function exportFullReport() {
-    const { jsPDF } = window.jspdf;
-    const canvas = await html2canvas(document.getElementById('app-container'), { scale: 1.5, useCORS: true, backgroundColor: document.documentElement.classList.contains('dark') ? '#020617' : '#f8fafc' });
-    const img = canvas.toDataURL('image/jpeg', 0.8);
-    const pdf = new jsPDF('p', 'mm', 'a4');
-    pdf.addImage(img, 'JPEG', 0, 0, 210, (canvas.height * 210) / canvas.width);
-    pdf.save('Relatorio_Quantum_Lines.pdf');
-}
-</script>
+        // Arranca o site a mostrar todos os jogos
+        renderGames(robloxGames);
+    </script>
 </body>
 </html>
