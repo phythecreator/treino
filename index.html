@@ -3,7 +3,14 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { motion } from "framer-motion";
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 
 export default function FinanceApp() {
   const [initial, setInitial] = useState(1000);
@@ -26,105 +33,127 @@ export default function FinanceApp() {
   const data = generateData();
 
   return (
-    <div className="p-6 grid gap-6 md:grid-cols-2">
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-        <Card className="rounded-2xl shadow-lg">
-          <CardContent className="p-4">
-            <h2 className="text-xl font-bold mb-4">Simulador de Portfólio</h2>
+    <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 text-white flex">
+      {/* Sidebar */}
+      <div className="w-64 bg-white/5 backdrop-blur-xl border-r border-white/10 p-6 hidden md:flex flex-col gap-6">
+        <h1 className="text-2xl font-bold tracking-tight">FinanceAI</h1>
+        <nav className="flex flex-col gap-3 text-sm">
+          <span className="opacity-70">Dashboard</span>
+          <span className="opacity-70">Portfólio</span>
+          <span className="opacity-70">FIRE</span>
+          <span className="opacity-70">ETFs</span>
+          <span className="opacity-70">Despesas</span>
+        </nav>
+      </div>
 
-            <Input
-              placeholder="Capital inicial"
-              value={initial}
-              onChange={(e) => setInitial(e.target.value)}
-              className="mb-2"
-            />
+      {/* Main */}
+      <div className="flex-1 p-6 md:p-10 space-y-8">
+        <div>
+          <h2 className="text-3xl font-bold mb-2">Dashboard</h2>
+          <p className="text-gray-400">Visão geral das tuas finanças</p>
+        </div>
 
-            <Input
-              placeholder="Investimento mensal"
-              value={monthly}
-              onChange={(e) => setMonthly(e.target.value)}
-              className="mb-2"
-            />
+        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+          {/* Portfolio */}
+          <motion.div whileHover={{ scale: 1.02 }}>
+            <Card className="bg-white/5 border-white/10 backdrop-blur-xl rounded-2xl shadow-xl">
+              <CardContent className="p-5">
+                <h3 className="font-semibold mb-4">📈 Portfólio</h3>
 
-            <Input
-              placeholder="Anos"
-              value={years}
-              onChange={(e) => setYears(e.target.value)}
-              className="mb-4"
-            />
+                <div className="space-y-2">
+                  <Input
+                    placeholder="Capital inicial"
+                    value={initial}
+                    onChange={(e) => setInitial(e.target.value)}
+                  />
+                  <Input
+                    placeholder="Investimento mensal"
+                    value={monthly}
+                    onChange={(e) => setMonthly(e.target.value)}
+                  />
+                  <Input
+                    placeholder="Anos"
+                    value={years}
+                    onChange={(e) => setYears(e.target.value)}
+                  />
+                </div>
 
-            <ResponsiveContainer width="100%" height={250}>
-              <LineChart data={data}>
-                <XAxis dataKey="year" />
-                <YAxis />
-                <Tooltip />
-                <Line type="monotone" dataKey="value" stroke="#8884d8" />
-              </LineChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-      </motion.div>
+                <div className="mt-4 h-56">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={data}>
+                      <XAxis dataKey="year" stroke="#888" />
+                      <YAxis stroke="#888" />
+                      <Tooltip />
+                      <Line
+                        type="monotone"
+                        dataKey="value"
+                        stroke="#4ade80"
+                        strokeWidth={3}
+                        dot={false}
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
 
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-        <Card className="rounded-2xl shadow-lg">
-          <CardContent className="p-4">
-            <h2 className="text-xl font-bold mb-4">Calculadora FIRE</h2>
+          {/* FIRE */}
+          <motion.div whileHover={{ scale: 1.02 }}>
+            <Card className="bg-white/5 border-white/10 backdrop-blur-xl rounded-2xl shadow-xl">
+              <CardContent className="p-5">
+                <h3 className="font-semibold mb-4">🔥 FIRE</h3>
+                <p className="text-gray-400 text-sm mb-2">Regra dos 4%</p>
+                <p className="text-2xl font-bold text-green-400">
+                  €{(monthly * 12 * 25).toLocaleString()}
+                </p>
+              </CardContent>
+            </Card>
+          </motion.div>
 
-            <p className="mb-2">Regra dos 4%:</p>
-            <p className="text-lg font-semibold">
-              Precisas de aproximadamente €{(monthly * 12 * 25).toLocaleString()}
-            </p>
-          </CardContent>
-        </Card>
-      </motion.div>
+          {/* ETFs */}
+          <motion.div whileHover={{ scale: 1.02 }}>
+            <Card className="bg-white/5 border-white/10 backdrop-blur-xl rounded-2xl shadow-xl">
+              <CardContent className="p-5">
+                <h3 className="font-semibold mb-4">📊 ETFs</h3>
+                <div className="text-sm space-y-2">
+                  <div className="flex justify-between">
+                    <span>Vanguard S&P 500</span>
+                    <span className="text-green-400">10%</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>MSCI World</span>
+                    <span className="text-green-400">8%</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
 
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-        <Card className="rounded-2xl shadow-lg">
-          <CardContent className="p-4">
-            <h2 className="text-xl font-bold mb-4">Comparador de ETFs</h2>
-
-            <table className="w-full text-sm">
-              <thead>
-                <tr>
-                  <th>ETF</th>
-                  <th>TER</th>
-                  <th>Retorno</th>
-                  <th>Volatilidade</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Vanguard S&P 500</td>
-                  <td>0.07%</td>
-                  <td>10%</td>
-                  <td>15%</td>
-                </tr>
-                <tr>
-                  <td>iShares MSCI World</td>
-                  <td>0.20%</td>
-                  <td>8%</td>
-                  <td>13%</td>
-                </tr>
-              </tbody>
-            </table>
-          </CardContent>
-        </Card>
-      </motion.div>
-
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-        <Card className="rounded-2xl shadow-lg">
-          <CardContent className="p-4">
-            <h2 className="text-xl font-bold mb-4">Despesas Pessoais</h2>
-
-            <ul>
-              <li>Habitação: €800</li>
-              <li>Comida: €300</li>
-              <li>Transporte: €150</li>
-              <li>Lazer: €200</li>
-            </ul>
-          </CardContent>
-        </Card>
-      </motion.div>
+          {/* Expenses */}
+          <motion.div whileHover={{ scale: 1.02 }}>
+            <Card className="bg-white/5 border-white/10 backdrop-blur-xl rounded-2xl shadow-xl">
+              <CardContent className="p-5">
+                <h3 className="font-semibold mb-4">💸 Despesas</h3>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span>Habitação</span>
+                    <span>€800</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Comida</span>
+                    <span>€300</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Transporte</span>
+                    <span>€150</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        </div>
+      </div>
     </div>
   );
 }
