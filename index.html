@@ -4,1849 +4,546 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BUILDFORGE — PC Builder</title>
-<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Exo+2:ital,wght@0,300;0,400;0,700;0,900;1,900&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
-:root {
-  --bg: #080c10;
-  --bg2: #0d1117;
-  --bg3: #111820;
-  --panel: #0f1822;
-  --border: #1e3048;
-  --accent: #00d4ff;
-  --accent2: #ff6b2b;
-  --accent3: #7fff00;
-  --text: #c8d8e8;
-  --text-dim: #4a6a8a;
-  --text-bright: #e8f4ff;
-  --red: #ff3a3a;
-  --gold: #ffd700;
-  --card-bg: #0c1520;
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Share+Tech+Mono&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#080c10;--bg2:#0d1117;--panel:#0f1822;--border:#1e3048;
+  --accent:#00d4ff;--accent2:#ff6b2b;--green:#7fff00;
+  --text:#c8d8e8;--dim:#4a6a8a;--bright:#e8f4ff;--red:#ff3a3a;--gold:#ffd700;
 }
-* { margin:0; padding:0; box-sizing:border-box; }
-html { scroll-behavior: smooth; }
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'Exo 2', sans-serif;
-  min-height: 100vh;
-  overflow-x: hidden;
-}
-
-/* SCANLINE OVERLAY */
-body::before {
-  content:'';
-  position:fixed;
-  inset:0;
-  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,212,255,0.01) 2px, rgba(0,212,255,0.01) 4px);
-  pointer-events:none;
-  z-index:9999;
-}
-
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif}
+a,button{cursor:pointer}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
 /* HEADER */
-header {
-  position:sticky;
-  top:0;
-  z-index:100;
-  background: rgba(8,12,16,0.92);
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--border);
-  padding: 0 2rem;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  height:64px;
-}
-.logo {
-  font-family:'Rajdhani',sans-serif;
-  font-size:1.8rem;
-  font-weight:700;
-  letter-spacing:0.15em;
-  color:var(--accent);
-  text-transform:uppercase;
-}
-.logo span { color:var(--accent2); }
-nav { display:flex; gap:0.2rem; }
-nav a {
-  color:var(--text-dim);
-  text-decoration:none;
-  font-family:'Rajdhani',sans-serif;
-  font-weight:600;
-  font-size:0.85rem;
-  letter-spacing:0.1em;
-  text-transform:uppercase;
-  padding:0.4rem 0.9rem;
-  border:1px solid transparent;
-  border-radius:3px;
-  transition:all 0.2s;
-}
-nav a:hover, nav a.active {
-  color:var(--accent);
-  border-color:var(--accent);
-  background: rgba(0,212,255,0.07);
-}
-.build-btn {
-  background: linear-gradient(135deg, var(--accent2), #ff9500);
-  color:#000;
-  font-family:'Rajdhani',sans-serif;
-  font-weight:700;
-  font-size:0.9rem;
-  letter-spacing:0.1em;
-  text-transform:uppercase;
-  border:none;
-  padding:0.5rem 1.5rem;
-  border-radius:3px;
-  cursor:pointer;
-  transition:all 0.2s;
-}
-.build-btn:hover { transform:translateY(-1px); box-shadow:0 4px 20px rgba(255,107,43,0.4); }
-
+#header{position:fixed;top:0;left:0;right:0;height:56px;z-index:200;background:rgba(8,12,16,.95);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 1.5rem;gap:1rem}
+#logo{font-size:1.6rem;font-weight:700;color:var(--accent);letter-spacing:.1em;text-transform:uppercase;white-space:nowrap}
+#logo span{color:var(--accent2)}
+.nav-btn{background:none;border:1px solid transparent;color:var(--dim);font-family:'Rajdhani',sans-serif;font-weight:700;font-size:.85rem;letter-spacing:.08em;text-transform:uppercase;padding:.35rem .9rem;border-radius:3px;transition:all .2s;white-space:nowrap}
+.nav-btn:hover,.nav-btn.active{color:var(--accent);border-color:var(--accent);background:rgba(0,212,255,.07)}
+#mybuildBtn{margin-left:auto;background:linear-gradient(135deg,var(--accent2),#ff9500);color:#000;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:.85rem;letter-spacing:.08em;text-transform:uppercase;border:none;padding:.4rem 1.2rem;border-radius:3px;white-space:nowrap;transition:all .2s}
+#mybuildBtn:hover{box-shadow:0 3px 15px rgba(255,107,43,.5)}
+/* LAYOUT */
+#app{margin-top:56px;display:flex;min-height:calc(100vh - 56px)}
+/* SIDEBAR */
+#sidebar{width:340px;min-width:340px;background:var(--bg2);border-right:1px solid var(--border);position:fixed;top:56px;bottom:0;left:-340px;overflow-y:auto;padding:1.2rem;transition:left .3s;z-index:150}
+#sidebar.open{left:0}
+.sb-title{font-size:1rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);margin-bottom:1rem}
+.slot{display:flex;align-items:center;gap:.6rem;padding:.5rem .7rem;background:var(--panel);border:1px solid var(--border);border-radius:4px;margin-bottom:.35rem;min-height:48px}
+.slot-ico{font-size:1.1rem;width:22px;text-align:center}
+.slot-info{flex:1;min-width:0}
+.slot-type{font-family:'Share Tech Mono',monospace;font-size:.6rem;color:var(--dim);text-transform:uppercase;letter-spacing:.05em}
+.slot-name{font-size:.78rem;color:var(--bright);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.slot-price{font-size:.9rem;font-weight:700;color:var(--green);white-space:nowrap}
+.slot-x{background:none;border:none;color:var(--dim);font-size:.9rem;padding:.2rem;transition:color .15s}
+.slot-x:hover{color:var(--red)}
+.slot.empty .slot-name{color:var(--dim);font-style:italic}
+#totalRow{margin-top:.8rem;padding:.8rem 1rem;background:var(--panel);border:1px solid var(--accent);border-radius:4px;display:flex;justify-content:space-between;align-items:center}
+#totalRow .lbl{font-weight:700;font-size:.9rem;text-transform:uppercase;letter-spacing:.08em}
+#totalAmt{font-size:1.8rem;font-weight:700;color:var(--gold)}
+#compatBox{margin-top:.6rem;padding:.6rem .8rem;border-radius:4px;font-size:.75rem;font-family:'Share Tech Mono',monospace;line-height:1.4}
+.ok{background:rgba(127,255,0,.07);border:1px solid rgba(127,255,0,.3);color:var(--green)}
+.warn{background:rgba(255,165,0,.07);border:1px solid rgba(255,165,0,.3);color:orange}
+.err{background:rgba(255,58,58,.07);border:1px solid rgba(255,58,58,.3);color:var(--red)}
+.sb-actions{margin-top:.8rem;display:flex;flex-direction:column;gap:.45rem}
+.btn-p{background:linear-gradient(135deg,var(--accent2),#ff9500);color:#000;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:.9rem;letter-spacing:.08em;text-transform:uppercase;border:none;padding:.65rem;border-radius:4px;width:100%;transition:all .2s}
+.btn-p:hover{box-shadow:0 3px 15px rgba(255,107,43,.4)}
+.btn-s{background:transparent;color:var(--accent);font-family:'Rajdhani',sans-serif;font-weight:700;font-size:.85rem;letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--accent);padding:.55rem;border-radius:4px;width:100%;transition:all .2s}
+.btn-s:hover{background:rgba(0,212,255,.08)}
+.btn-d{background:transparent;color:var(--dim);font-family:'Rajdhani',sans-serif;font-weight:700;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--border);padding:.5rem;border-radius:4px;width:100%;transition:all .2s}
+.btn-d:hover{border-color:var(--red);color:var(--red)}
+/* MAIN */
+#main{flex:1;overflow-y:auto;transition:margin-left .3s}
+#main.shifted{margin-left:340px}
+.page{display:none}
+.page.active{display:block}
 /* HERO */
-.hero {
-  position:relative;
-  min-height:340px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  text-align:center;
-  padding:4rem 2rem;
-  overflow:hidden;
-}
-.hero-grid {
-  position:absolute;
-  inset:0;
-  background-image:
-    linear-gradient(rgba(0,212,255,0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,212,255,0.04) 1px, transparent 1px);
-  background-size:60px 60px;
-  animation:gridMove 20s linear infinite;
-}
-@keyframes gridMove {
-  0%{background-position:0 0}
-  100%{background-position:60px 60px}
-}
-.hero-glow {
-  position:absolute;
-  width:600px; height:600px;
-  background: radial-gradient(ellipse, rgba(0,212,255,0.08) 0%, transparent 70%);
-  border-radius:50%;
-  top:50%; left:50%;
-  transform:translate(-50%,-50%);
-}
-.hero h1 {
-  font-family:'Exo 2',sans-serif;
-  font-size:clamp(2.5rem,6vw,5rem);
-  font-weight:900;
-  font-style:italic;
-  text-transform:uppercase;
-  letter-spacing:0.05em;
-  line-height:1;
-  position:relative;
-  background: linear-gradient(135deg, #fff 30%, var(--accent) 70%);
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-  background-clip:text;
-}
-.hero p {
-  font-size:1.1rem;
-  color:var(--text-dim);
-  margin-top:1rem;
-  position:relative;
-  font-family:'Share Tech Mono',monospace;
-  letter-spacing:0.05em;
-}
-.stats-bar {
-  display:flex;
-  gap:3rem;
-  margin-top:2.5rem;
-  position:relative;
-}
-.stat { text-align:center; }
-.stat-val {
-  font-family:'Rajdhani',sans-serif;
-  font-size:2rem;
-  font-weight:700;
-  color:var(--accent);
-}
-.stat-label {
-  font-family:'Share Tech Mono',monospace;
-  font-size:0.7rem;
-  color:var(--text-dim);
-  text-transform:uppercase;
-  letter-spacing:0.1em;
-}
-
-/* TABS */
-.section-tabs {
-  display:flex;
-  gap:0;
-  padding:0 2rem;
-  border-bottom:1px solid var(--border);
-  background:var(--bg2);
-  overflow-x:auto;
-}
-.tab {
-  font-family:'Rajdhani',sans-serif;
-  font-weight:600;
-  font-size:0.9rem;
-  letter-spacing:0.1em;
-  text-transform:uppercase;
-  padding:1rem 1.5rem;
-  border:none;
-  background:none;
-  color:var(--text-dim);
-  cursor:pointer;
-  border-bottom:2px solid transparent;
-  white-space:nowrap;
-  transition:all 0.2s;
-  display:flex;
-  align-items:center;
-  gap:0.5rem;
-}
-.tab:hover { color:var(--text); }
-.tab.active {
-  color:var(--accent);
-  border-bottom-color:var(--accent);
-  background: rgba(0,212,255,0.05);
-}
-.tab-icon { font-size:1rem; }
-
-/* MAIN LAYOUT */
-main { display:flex; min-height:calc(100vh - 64px); }
-
-/* BUILDER SIDEBAR */
-.builder-sidebar {
-  width:380px;
-  min-width:380px;
-  background:var(--bg2);
-  border-right:1px solid var(--border);
-  padding:1.5rem;
-  position:sticky;
-  top:64px;
-  height:calc(100vh - 64px);
-  overflow-y:auto;
-  display:none;
-}
-.builder-sidebar.active { display:block; }
-
-.build-summary h3 {
-  font-family:'Rajdhani',sans-serif;
-  font-size:1.1rem;
-  font-weight:700;
-  text-transform:uppercase;
-  letter-spacing:0.1em;
-  color:var(--accent);
-  margin-bottom:1rem;
-  display:flex;
-  align-items:center;
-  gap:0.5rem;
-}
-.build-slot {
-  display:flex;
-  align-items:center;
-  gap:0.75rem;
-  padding:0.6rem 0.8rem;
-  background:var(--panel);
-  border:1px solid var(--border);
-  border-radius:4px;
-  margin-bottom:0.4rem;
-  font-size:0.82rem;
-  min-height:52px;
-}
-.slot-icon { font-size:1.2rem; opacity:0.7; width:24px; text-align:center; }
-.slot-info { flex:1; min-width:0; }
-.slot-type {
-  font-family:'Share Tech Mono',monospace;
-  font-size:0.65rem;
-  color:var(--text-dim);
-  text-transform:uppercase;
-  letter-spacing:0.05em;
-}
-.slot-name {
-  font-size:0.8rem;
-  color:var(--text-bright);
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
-.slot-price {
-  font-family:'Rajdhani',sans-serif;
-  font-weight:700;
-  color:var(--accent3);
-  font-size:0.9rem;
-}
-.slot-remove {
-  background:none;
-  border:none;
-  color:var(--text-dim);
-  cursor:pointer;
-  padding:0.2rem;
-  font-size:0.9rem;
-  transition:color 0.2s;
-}
-.slot-remove:hover { color:var(--red); }
-.slot-empty .slot-name { color:var(--text-dim); font-style:italic; }
-
-.total-price {
-  margin-top:1rem;
-  padding:1rem;
-  background:var(--panel);
-  border:1px solid var(--accent);
-  border-radius:4px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-.total-price .label {
-  font-family:'Rajdhani',sans-serif;
-  font-weight:700;
-  text-transform:uppercase;
-  letter-spacing:0.1em;
-  font-size:0.9rem;
-}
-.total-price .amount {
-  font-family:'Rajdhani',sans-serif;
-  font-size:2rem;
-  font-weight:700;
-  color:var(--gold);
-}
-
-.compat-check {
-  margin-top:0.8rem;
-  padding:0.7rem;
-  border-radius:4px;
-  font-size:0.8rem;
-  display:flex;
-  align-items:flex-start;
-  gap:0.5rem;
-}
-.compat-ok { background:rgba(127,255,0,0.08); border:1px solid rgba(127,255,0,0.3); color:var(--accent3); }
-.compat-warn { background:rgba(255,165,0,0.08); border:1px solid rgba(255,165,0,0.3); color:#ffa500; }
-.compat-err { background:rgba(255,58,58,0.08); border:1px solid rgba(255,58,58,0.3); color:var(--red); }
-
-.action-btns {
-  display:flex;
-  flex-direction:column;
-  gap:0.5rem;
-  margin-top:1rem;
-}
-.btn-primary {
-  background: linear-gradient(135deg, var(--accent2), #ff9500);
-  color:#000;
-  font-family:'Rajdhani',sans-serif;
-  font-weight:700;
-  font-size:1rem;
-  letter-spacing:0.1em;
-  text-transform:uppercase;
-  border:none;
-  padding:0.8rem;
-  border-radius:4px;
-  cursor:pointer;
-  transition:all 0.2s;
-  width:100%;
-}
-.btn-primary:hover { box-shadow:0 4px 20px rgba(255,107,43,0.4); transform:translateY(-1px); }
-.btn-secondary {
-  background:transparent;
-  color:var(--accent);
-  font-family:'Rajdhani',sans-serif;
-  font-weight:700;
-  font-size:0.9rem;
-  letter-spacing:0.1em;
-  text-transform:uppercase;
-  border:1px solid var(--accent);
-  padding:0.7rem;
-  border-radius:4px;
-  cursor:pointer;
-  transition:all 0.2s;
-  width:100%;
-}
-.btn-secondary:hover { background:rgba(0,212,255,0.08); }
-
-/* CONTENT AREA */
-.content-area {
-  flex:1;
-  padding:2rem;
-  overflow-y:auto;
-}
-
-/* SECTION */
-.section { display:none; }
-.section.active { display:block; }
-
-.section-header {
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  margin-bottom:1.5rem;
-}
-.section-title {
-  font-family:'Rajdhani',sans-serif;
-  font-size:1.5rem;
-  font-weight:700;
-  text-transform:uppercase;
-  letter-spacing:0.1em;
-  color:var(--text-bright);
-  display:flex;
-  align-items:center;
-  gap:0.7rem;
-}
-.section-title .icon { color:var(--accent); font-size:1.2rem; }
-
+#hero{position:relative;padding:3rem 2rem 2.5rem;text-align:center;overflow:hidden;background:radial-gradient(ellipse at 50% 0%,rgba(0,212,255,.08) 0%,transparent 70%)}
+#hero::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(0,212,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,212,255,.04) 1px,transparent 1px);background-size:50px 50px;animation:gm 20s linear infinite}
+@keyframes gm{to{background-position:50px 50px}}
+#hero h1{position:relative;font-size:clamp(2.2rem,6vw,4.5rem);font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:linear-gradient(135deg,#fff 30%,var(--accent) 70%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+#hero p{position:relative;font-family:'Share Tech Mono',monospace;font-size:.85rem;color:var(--dim);margin-top:.6rem;letter-spacing:.05em}
+.hero-stats{position:relative;display:flex;justify-content:center;gap:3rem;margin-top:1.8rem;flex-wrap:wrap}
+.hv{font-size:1.8rem;font-weight:700;color:var(--accent)}
+.hl{font-family:'Share Tech Mono',monospace;font-size:.65rem;color:var(--dim);text-transform:uppercase;letter-spacing:.1em;margin-top:.1rem}
+/* CAT TABS */
+#catTabs{display:flex;overflow-x:auto;border-bottom:1px solid var(--border);background:var(--bg2);position:sticky;top:0;z-index:10;scrollbar-width:none}
+#catTabs::-webkit-scrollbar{display:none}
+.cat-btn{flex-shrink:0;background:none;border:none;border-bottom:2px solid transparent;color:var(--dim);font-family:'Rajdhani',sans-serif;font-weight:700;font-size:.82rem;letter-spacing:.08em;text-transform:uppercase;padding:.8rem 1.1rem;white-space:nowrap;transition:all .2s}
+.cat-btn:hover{color:var(--text)}
+.cat-btn.active{color:var(--accent);border-bottom-color:var(--accent);background:rgba(0,212,255,.05)}
 /* FILTERS */
-.filters {
-  display:flex;
-  gap:0.5rem;
-  margin-bottom:1.5rem;
-  flex-wrap:wrap;
-  align-items:center;
-}
-.filter-btn {
-  font-family:'Share Tech Mono',monospace;
-  font-size:0.72rem;
-  text-transform:uppercase;
-  letter-spacing:0.05em;
-  padding:0.35rem 0.8rem;
-  background:var(--panel);
-  border:1px solid var(--border);
-  color:var(--text-dim);
-  border-radius:3px;
-  cursor:pointer;
-  transition:all 0.2s;
-}
-.filter-btn:hover, .filter-btn.active {
-  border-color:var(--accent);
-  color:var(--accent);
-  background:rgba(0,212,255,0.07);
-}
-.search-input {
-  margin-left:auto;
-  background:var(--panel);
-  border:1px solid var(--border);
-  color:var(--text);
-  font-family:'Share Tech Mono',monospace;
-  font-size:0.8rem;
-  padding:0.4rem 0.8rem;
-  border-radius:3px;
-  outline:none;
-  width:220px;
-  transition:border-color 0.2s;
-}
-.search-input:focus { border-color:var(--accent); }
-
-/* PRODUCTS GRID */
-.products-grid {
-  display:grid;
-  grid-template-columns:repeat(auto-fill, minmax(280px, 1fr));
-  gap:1rem;
-}
-
-/* PRODUCT CARD */
-.product-card {
-  background:var(--card-bg);
-  border:1px solid var(--border);
-  border-radius:6px;
-  overflow:hidden;
-  transition:all 0.25s;
-  cursor:pointer;
-  position:relative;
-}
-.product-card:hover {
-  border-color:var(--accent);
-  transform:translateY(-2px);
-  box-shadow:0 8px 30px rgba(0,212,255,0.12);
-}
-.product-card.selected {
-  border-color:var(--accent3);
-  box-shadow:0 0 20px rgba(127,255,0,0.15);
-}
-.card-badge {
-  position:absolute;
-  top:0.5rem;
-  right:0.5rem;
-  font-family:'Share Tech Mono',monospace;
-  font-size:0.6rem;
-  text-transform:uppercase;
-  padding:0.2rem 0.5rem;
-  border-radius:2px;
-  letter-spacing:0.05em;
-}
-.badge-top { background:rgba(255,215,0,0.15); color:var(--gold); border:1px solid rgba(255,215,0,0.3); }
-.badge-hot { background:rgba(255,58,58,0.15); color:var(--red); border:1px solid rgba(255,58,58,0.3); }
-.badge-new { background:rgba(0,212,255,0.15); color:var(--accent); border:1px solid rgba(0,212,255,0.3); }
-.badge-sale { background:rgba(127,255,0,0.15); color:var(--accent3); border:1px solid rgba(127,255,0,0.3); }
-
-.card-img {
-  height:130px;
-  background:linear-gradient(135deg, var(--bg3), var(--panel));
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:3.5rem;
-  position:relative;
-  overflow:hidden;
-}
-.card-img::after {
-  content:'';
-  position:absolute;
-  inset:0;
-  background:linear-gradient(180deg, transparent 50%, rgba(12,21,32,0.8));
-}
-.card-body { padding:0.9rem; }
-.card-brand {
-  font-family:'Share Tech Mono',monospace;
-  font-size:0.65rem;
-  color:var(--accent);
-  text-transform:uppercase;
-  letter-spacing:0.1em;
-}
-.card-name {
-  font-family:'Rajdhani',sans-serif;
-  font-size:0.95rem;
-  font-weight:700;
-  color:var(--text-bright);
-  line-height:1.3;
-  margin:0.2rem 0;
-}
-.card-specs {
-  font-family:'Share Tech Mono',monospace;
-  font-size:0.65rem;
-  color:var(--text-dim);
-  line-height:1.6;
-  margin:0.4rem 0;
-}
-.card-footer {
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:0.7rem 0.9rem;
-  background:rgba(0,0,0,0.2);
-  border-top:1px solid var(--border);
-}
-.card-price {
-  font-family:'Rajdhani',sans-serif;
-  font-size:1.3rem;
-  font-weight:700;
-  color:var(--text-bright);
-}
-.card-price .currency { font-size:0.9rem; color:var(--text-dim); }
-.card-price-change {
-  font-family:'Share Tech Mono',monospace;
-  font-size:0.65rem;
-}
-.price-up { color:var(--red); }
-.price-down { color:var(--accent3); }
-.add-btn {
-  background: var(--accent);
-  color:#000;
-  font-family:'Rajdhani',sans-serif;
-  font-weight:700;
-  font-size:0.8rem;
-  letter-spacing:0.05em;
-  border:none;
-  padding:0.4rem 0.9rem;
-  border-radius:3px;
-  cursor:pointer;
-  transition:all 0.2s;
-  text-transform:uppercase;
-}
-.add-btn:hover { background:#33e0ff; box-shadow:0 2px 12px rgba(0,212,255,0.4); }
-.add-btn.added { background:var(--accent3); color:#000; }
-
-/* PRICE CHART MODAL */
-.modal-overlay {
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,0.85);
-  backdrop-filter:blur(10px);
-  z-index:1000;
-  display:none;
-  align-items:center;
-  justify-content:center;
-  padding:2rem;
-}
-.modal-overlay.open { display:flex; }
-.modal {
-  background:var(--bg2);
-  border:1px solid var(--border);
-  border-radius:8px;
-  width:100%;
-  max-width:780px;
-  max-height:90vh;
-  overflow-y:auto;
-  position:relative;
-}
-.modal-header {
-  padding:1.5rem;
-  border-bottom:1px solid var(--border);
-  display:flex;
-  justify-content:space-between;
-  align-items:flex-start;
-}
-.modal-title {
-  font-family:'Rajdhani',sans-serif;
-  font-size:1.3rem;
-  font-weight:700;
-  color:var(--text-bright);
-}
-.modal-subtitle {
-  font-family:'Share Tech Mono',monospace;
-  font-size:0.7rem;
-  color:var(--accent);
-  margin-top:0.2rem;
-}
-.modal-close {
-  background:none;
-  border:1px solid var(--border);
-  color:var(--text-dim);
-  width:32px;
-  height:32px;
-  border-radius:4px;
-  cursor:pointer;
-  font-size:1.1rem;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  transition:all 0.2s;
-  flex-shrink:0;
-}
-.modal-close:hover { border-color:var(--red); color:var(--red); }
-.modal-body { padding:1.5rem; }
-
-.price-tabs {
-  display:flex;
-  gap:0.3rem;
-  margin-bottom:1rem;
-}
-.price-tab {
-  font-family:'Share Tech Mono',monospace;
-  font-size:0.72rem;
-  padding:0.35rem 0.8rem;
-  background:var(--panel);
-  border:1px solid var(--border);
-  color:var(--text-dim);
-  border-radius:3px;
-  cursor:pointer;
-  transition:all 0.2s;
-  text-transform:uppercase;
-}
-.price-tab.active { border-color:var(--accent); color:var(--accent); background:rgba(0,212,255,0.07); }
-
-.chart-container { position:relative; height:240px; margin-bottom:1rem; }
-
-.price-stats {
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:0.7rem;
-  margin-top:1rem;
-}
-.pstat {
-  background:var(--panel);
-  border:1px solid var(--border);
-  border-radius:4px;
-  padding:0.7rem;
-  text-align:center;
-}
-.pstat-label {
-  font-family:'Share Tech Mono',monospace;
-  font-size:0.6rem;
-  color:var(--text-dim);
-  text-transform:uppercase;
-  letter-spacing:0.05em;
-}
-.pstat-val {
-  font-family:'Rajdhani',sans-serif;
-  font-size:1.1rem;
-  font-weight:700;
-  color:var(--text-bright);
-  margin-top:0.2rem;
-}
-
-/* 3D VIEWER */
-.viewer-3d {
-  background: var(--panel);
-  border:1px solid var(--border);
-  border-radius:8px;
-  padding:2rem;
-  text-align:center;
-  min-height:400px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  position:relative;
-  overflow:hidden;
-}
-.viewer-3d-canvas {
-  width:100%;
-  height:400px;
-  position:relative;
-}
-.pc-3d {
-  width:280px;
-  height:360px;
-  position:relative;
-  margin:0 auto;
-  transform-style:preserve-3d;
-  animation:rotatePc 12s linear infinite;
-  perspective:1000px;
-}
-@keyframes rotatePc {
-  0%{transform:rotateY(0deg) rotateX(15deg)}
-  100%{transform:rotateY(360deg) rotateX(15deg)}
-}
-.pc-case {
-  width:280px;
-  height:360px;
-  position:relative;
-  transform-style:preserve-3d;
-}
-.case-face {
-  position:absolute;
-  background:linear-gradient(135deg,#1a2535,#0f1822);
-  border:1px solid rgba(0,212,255,0.2);
-}
-.case-front {
-  width:280px;
-  height:360px;
-  top:0; left:0;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:flex-start;
-  padding:20px;
-  gap:10px;
-}
-.case-glass {
-  width:180px;
-  height:240px;
-  background:linear-gradient(135deg,rgba(0,212,255,0.05),rgba(127,255,0,0.03));
-  border:1px solid rgba(0,212,255,0.3);
-  border-radius:4px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  position:relative;
-  overflow:hidden;
-}
-.rgb-glow {
-  position:absolute;
-  inset:0;
-  background:conic-gradient(
-    rgba(255,0,0,0.3) 0deg,
-    rgba(255,165,0,0.3) 45deg,
-    rgba(255,255,0,0.3) 90deg,
-    rgba(0,255,0,0.3) 135deg,
-    rgba(0,212,255,0.3) 180deg,
-    rgba(0,0,255,0.3) 225deg,
-    rgba(255,0,255,0.3) 270deg,
-    rgba(255,0,0,0.3) 315deg
-  );
-  opacity:0.4;
-  animation:rgbSpin 4s linear infinite;
-  border-radius:4px;
-}
-@keyframes rgbSpin {
-  from{transform:rotate(0deg) scale(2)}
-  to{transform:rotate(360deg) scale(2)}
-}
-.components-inside {
-  position:relative;
-  z-index:2;
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-  align-items:center;
-}
-.comp-board {
-  width:130px;
-  height:90px;
-  background:rgba(20,60,20,0.8);
-  border:1px solid rgba(0,255,0,0.3);
-  border-radius:3px;
-  position:relative;
-}
-.comp-gpu {
-  width:120px;
-  height:40px;
-  background:rgba(20,20,60,0.8);
-  border:1px solid rgba(100,100,255,0.4);
-  border-radius:3px;
-}
-.comp-ram {
-  display:flex;
-  gap:4px;
-}
-.comp-ram-stick {
-  width:16px;
-  height:50px;
-  background:rgba(60,20,60,0.8);
-  border:1px solid rgba(200,100,200,0.4);
-  border-radius:2px;
-}
-.fan {
-  width:60px;
-  height:60px;
-  position:absolute;
-  top:10px;
-  right:10px;
-}
-.fan-circle {
-  width:60px;
-  height:60px;
-  border-radius:50%;
-  border:2px solid rgba(0,212,255,0.3);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  animation:fanSpin 0.3s linear infinite;
-}
-@keyframes fanSpin {
-  from{transform:rotate(0deg)}
-  to{transform:rotate(360deg)}
-}
-.fan-blade {
-  position:absolute;
-  width:6px;
-  height:22px;
-  background:rgba(0,212,255,0.5);
-  border-radius:3px;
-  transform-origin:bottom center;
-}
-.leds {
-  display:flex;
-  gap:8px;
-  margin-top:8px;
-}
-.led {
-  width:8px;
-  height:8px;
-  border-radius:50%;
-  animation:ledPulse 2s ease-in-out infinite;
-}
+#filterBar{display:flex;gap:.4rem;padding:.9rem 1.5rem;flex-wrap:wrap;align-items:center;border-bottom:1px solid var(--border);background:var(--bg)}
+.fbtn{background:var(--panel);border:1px solid var(--border);color:var(--dim);font-family:'Share Tech Mono',monospace;font-size:.68rem;text-transform:uppercase;letter-spacing:.04em;padding:.3rem .7rem;border-radius:3px;transition:all .15s}
+.fbtn:hover,.fbtn.active{border-color:var(--accent);color:var(--accent);background:rgba(0,212,255,.07)}
+#searchBox{margin-left:auto;background:var(--panel);border:1px solid var(--border);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:.75rem;padding:.35rem .7rem;border-radius:3px;outline:none;width:200px;transition:border-color .2s}
+#searchBox:focus{border-color:var(--accent)}
+/* PRODUCT GRID */
+#productGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:.9rem;padding:1.2rem 1.5rem}
+.pcard{background:#0c1520;border:1px solid var(--border);border-radius:6px;overflow:hidden;transition:all .2s;position:relative}
+.pcard:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 6px 25px rgba(0,212,255,.1)}
+.pcard.selected{border-color:var(--green);box-shadow:0 0 18px rgba(127,255,0,.12)}
+.pbadge{position:absolute;top:.5rem;right:.5rem;font-family:'Share Tech Mono',monospace;font-size:.58rem;text-transform:uppercase;padding:.15rem .45rem;border-radius:2px;letter-spacing:.04em;z-index:1}
+.badge-top{background:rgba(255,215,0,.12);color:var(--gold);border:1px solid rgba(255,215,0,.3)}
+.badge-hot{background:rgba(255,58,58,.12);color:var(--red);border:1px solid rgba(255,58,58,.3)}
+.badge-new{background:rgba(0,212,255,.12);color:var(--accent);border:1px solid rgba(0,212,255,.3)}
+.badge-sale{background:rgba(127,255,0,.12);color:var(--green);border:1px solid rgba(127,255,0,.3)}
+.pimg{height:110px;background:linear-gradient(135deg,#111820,var(--panel));display:flex;align-items:center;justify-content:center;font-size:3rem}
+.pbody{padding:.75rem .9rem}
+.pbrand{font-family:'Share Tech Mono',monospace;font-size:.62rem;color:var(--accent);text-transform:uppercase;letter-spacing:.08em}
+.pname{font-size:.9rem;font-weight:700;color:var(--bright);line-height:1.3;margin:.15rem 0 .3rem}
+.pspecs{font-family:'Share Tech Mono',monospace;font-size:.62rem;color:var(--dim);line-height:1.65}
+.pfoot{display:flex;align-items:center;justify-content:space-between;padding:.6rem .9rem;background:rgba(0,0,0,.2);border-top:1px solid var(--border)}
+.pprice{font-size:1.2rem;font-weight:700;color:var(--bright)}
+.pprice .cur{font-size:.85rem;color:var(--dim)}
+.pchange{font-family:'Share Tech Mono',monospace;font-size:.62rem;margin-top:.1rem}
+.up{color:var(--red)}.dn{color:var(--green)}
+.pbtns{display:flex;flex-direction:column;gap:.3rem;align-items:flex-end}
+.addbtn{background:var(--accent);color:#000;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:.75rem;letter-spacing:.05em;text-transform:uppercase;border:none;padding:.35rem .8rem;border-radius:3px;transition:all .15s}
+.addbtn:hover{background:#33e0ff}
+.addbtn.added{background:var(--green)}
+.chartbtn{background:none;border:1px solid var(--border);color:var(--dim);font-family:'Share Tech Mono',monospace;font-size:.6rem;padding:.2rem .5rem;border-radius:3px;transition:all .15s}
+.chartbtn:hover{border-color:var(--accent);color:var(--accent)}
+/* VIEWER */
+#viewerPage{padding:2rem 1.5rem}
+.viewer-box{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:2rem;display:flex;flex-direction:column;align-items:center;min-height:420px;position:relative;overflow:hidden}
+.viewer-box::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 30%,rgba(0,212,255,.05) 0%,transparent 70%);pointer-events:none}
+.pc-wrap{position:relative;width:240px;height:320px;perspective:800px;margin-bottom:1rem}
+.pc-body{width:240px;height:320px;position:relative;transform-style:preserve-3d;animation:rotpc 10s linear infinite}
+@keyframes rotpc{0%{transform:rotateY(0deg) rotateX(8deg)}100%{transform:rotateY(360deg) rotateX(8deg)}}
+.pc-front{position:absolute;inset:0;background:linear-gradient(160deg,#1a2535,#0c1520);border:1px solid rgba(0,212,255,.25);border-radius:6px;display:flex;flex-direction:column;align-items:center;padding:16px;gap:10px}
+.glass-panel{width:160px;height:210px;background:linear-gradient(135deg,rgba(0,212,255,.04),rgba(127,255,0,.02));border:1px solid rgba(0,212,255,.25);border-radius:4px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.rgb-wheel{position:absolute;inset:-30%;background:conic-gradient(rgba(255,0,0,.25) 0deg,rgba(255,165,0,.25) 60deg,rgba(255,255,0,.25) 120deg,rgba(0,255,0,.25) 180deg,rgba(0,212,255,.25) 240deg,rgba(0,0,255,.25) 300deg,rgba(255,0,255,.25) 360deg);animation:rgbs 4s linear infinite;border-radius:50%}
+@keyframes rgbs{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+.internals{position:relative;z-index:2;display:flex;flex-direction:column;gap:6px;align-items:center}
+.mb{width:120px;height:80px;background:rgba(10,40,10,.85);border:1px solid rgba(0,200,50,.3);border-radius:3px}
+.gpu-bar{width:110px;height:34px;background:rgba(10,10,50,.85);border:1px solid rgba(80,80,255,.35);border-radius:3px}
+.ram-row{display:flex;gap:3px}
+.ram-s{width:14px;height:44px;background:rgba(40,10,40,.85);border:1px solid rgba(180,80,180,.35);border-radius:2px}
+.case-fan{position:absolute;top:8px;right:8px;width:50px;height:50px}
+.fan-ring{width:50px;height:50px;border:2px solid rgba(0,212,255,.3);border-radius:50%;display:flex;align-items:center;justify-content:center;animation:fs .25s linear infinite}
+@keyframes fs{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+.fblade{position:absolute;width:5px;height:18px;background:rgba(0,212,255,.5);border-radius:2px;transform-origin:bottom center}
+.leds{display:flex;gap:6px;margin-top:6px}
+.led{width:7px;height:7px;border-radius:50%;animation:lp 2s ease-in-out infinite}
 .led:nth-child(1){background:var(--accent);animation-delay:0s}
-.led:nth-child(2){background:var(--accent2);animation-delay:0.3s}
-.led:nth-child(3){background:var(--accent3);animation-delay:0.6s}
-@keyframes ledPulse {
-  0%,100%{opacity:0.4}
-  50%{opacity:1;box-shadow:0 0 8px currentColor}
-}
-.viewer-note {
-  font-family:'Share Tech Mono',monospace;
-  font-size:0.7rem;
-  color:var(--text-dim);
-  margin-top:1rem;
-  text-align:center;
-}
-
-/* GAMING PERF */
-.games-grid {
-  display:grid;
-  grid-template-columns:repeat(auto-fill, minmax(320px, 1fr));
-  gap:1rem;
-}
-.game-card {
-  background:var(--card-bg);
-  border:1px solid var(--border);
-  border-radius:6px;
-  overflow:hidden;
-  transition:all 0.2s;
-}
-.game-card:hover { border-color:var(--accent); }
-.game-header {
-  display:flex;
-  align-items:center;
-  gap:1rem;
-  padding:1rem;
-  border-bottom:1px solid var(--border);
-}
-.game-icon { font-size:2rem; }
-.game-title-area { flex:1; }
-.game-name {
-  font-family:'Rajdhani',sans-serif;
-  font-weight:700;
-  color:var(--text-bright);
-  font-size:0.95rem;
-}
-.game-genre {
-  font-family:'Share Tech Mono',monospace;
-  font-size:0.6rem;
-  color:var(--text-dim);
-  text-transform:uppercase;
-  letter-spacing:0.05em;
-}
-.game-rank {
-  font-family:'Rajdhani',sans-serif;
-  font-size:1.5rem;
-  font-weight:700;
-  color:var(--text-dim);
-}
-.game-rank.top3 { color:var(--gold); }
-.fps-bars {
-  padding:0.8rem 1rem;
-}
-.fps-row {
-  display:flex;
-  align-items:center;
-  gap:0.5rem;
-  margin-bottom:0.5rem;
-}
-.fps-label {
-  font-family:'Share Tech Mono',monospace;
-  font-size:0.65rem;
-  text-transform:uppercase;
-  width:50px;
-  color:var(--text-dim);
-  text-align:right;
-  flex-shrink:0;
-}
-.fps-bar-wrap {
-  flex:1;
-  height:14px;
-  background:var(--panel);
-  border-radius:2px;
-  overflow:hidden;
-}
-.fps-bar {
-  height:100%;
-  border-radius:2px;
-  transition:width 1s ease;
-  display:flex;
-  align-items:center;
-  padding-right:6px;
-  justify-content:flex-end;
-}
-.fps-value {
-  font-family:'Share Tech Mono',monospace;
-  font-size:0.6rem;
-  color:rgba(0,0,0,0.8);
-  font-weight:bold;
-}
-.fps-1080 { background:linear-gradient(90deg, var(--accent3), #5aad00); }
-.fps-1440 { background:linear-gradient(90deg, var(--accent), #0099cc); }
-.fps-4k { background:linear-gradient(90deg, var(--accent2), #cc4400); }
-.no-build-msg {
-  padding:2rem;
-  text-align:center;
-  font-family:'Share Tech Mono',monospace;
-  font-size:0.8rem;
-  color:var(--text-dim);
-  border:1px dashed var(--border);
-  border-radius:6px;
-}
-.no-build-msg .icon { font-size:2rem; margin-bottom:0.5rem; }
-
-/* RESPONSIVE LAYOUT */
-.page-wrapper {
-  display:flex;
-  flex-direction:column;
-  min-height:calc(100vh - 64px - 56px);
-}
-.page-inner {
-  display:flex;
-  flex:1;
-}
-
-/* SCROLLBAR */
-::-webkit-scrollbar { width:6px; height:6px; }
-::-webkit-scrollbar-track { background:var(--bg); }
-::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
-::-webkit-scrollbar-thumb:hover { background:var(--accent); }
-
-/* LOADING OVERLAY */
-.loading {
-  position:fixed;
-  inset:0;
-  background:var(--bg);
-  z-index:9998;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  gap:1rem;
-}
-.loading-logo {
-  font-family:'Rajdhani',sans-serif;
-  font-size:3rem;
-  font-weight:700;
-  letter-spacing:0.2em;
-  color:var(--accent);
-  animation:pulse 1s ease-in-out infinite;
-}
-@keyframes pulse { 0%,100%{opacity:0.5} 50%{opacity:1} }
-.loading-bar {
-  width:200px;
-  height:2px;
-  background:var(--border);
-  border-radius:2px;
-  overflow:hidden;
-}
-.loading-fill {
-  height:100%;
-  background:var(--accent);
-  border-radius:2px;
-  animation:loadFill 1.5s ease forwards;
-}
-@keyframes loadFill { from{width:0} to{width:100%} }
-.loading-text {
-  font-family:'Share Tech Mono',monospace;
-  font-size:0.75rem;
-  color:var(--text-dim);
-  letter-spacing:0.1em;
-}
+.led:nth-child(2){background:var(--accent2);animation-delay:.3s}
+.led:nth-child(3){background:var(--green);animation-delay:.6s}
+@keyframes lp{0%,100%{opacity:.3;transform:scale(.8)}50%{opacity:1;transform:scale(1.1);box-shadow:0 0 6px currentColor}}
+.viewer-label{font-family:'Share Tech Mono',monospace;font-size:.72rem;color:var(--dim);text-align:center;margin-top:.5rem}
+#buildSpecTable{margin-top:1.5rem;background:var(--bg2);border:1px solid var(--border);border-radius:6px;overflow:hidden;width:100%;max-width:700px}
+.bst-head{padding:.75rem 1.2rem;border-bottom:1px solid var(--border);font-size:.9rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--accent)}
+.bst-row{display:flex;border-bottom:1px solid rgba(30,48,72,.4);align-items:center}
+.bst-type{width:130px;flex-shrink:0;padding:.55rem 1.2rem;font-family:'Share Tech Mono',monospace;font-size:.65rem;color:var(--dim);text-transform:uppercase}
+.bst-name{flex:1;padding:.55rem .8rem;font-size:.82rem;color:var(--bright)}
+.bst-price{width:90px;flex-shrink:0;padding:.55rem 1.2rem;font-weight:700;color:var(--green);text-align:right;font-size:.88rem}
+.bst-total{background:rgba(0,212,255,.05);display:flex;justify-content:space-between;padding:.8rem 1.2rem}
+.bst-total .lbl{font-weight:700;text-transform:uppercase;letter-spacing:.08em;font-size:.9rem}
+.bst-total .val{font-size:1.4rem;font-weight:700;color:var(--gold)}
+/* GAMING */
+#gamingPage{padding:2rem 1.5rem}
+.game-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:.9rem}
+.gcard{background:#0c1520;border:1px solid var(--border);border-radius:6px;overflow:hidden;transition:border-color .2s}
+.gcard:hover{border-color:rgba(0,212,255,.3)}
+.gcard-head{display:flex;align-items:center;gap:.9rem;padding:.9rem 1rem;border-bottom:1px solid var(--border)}
+.gico{font-size:1.8rem}
+.gtitle{flex:1}
+.gname{font-size:.9rem;font-weight:700;color:var(--bright)}
+.ggenre{font-family:'Share Tech Mono',monospace;font-size:.6rem;color:var(--dim);text-transform:uppercase;letter-spacing:.05em;margin-top:.1rem}
+.grank{font-size:1.4rem;font-weight:700;color:var(--dim)}
+.grank.g3{color:var(--gold)}
+.fps-section{padding:.7rem 1rem .9rem}
+.fps-row{display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem}
+.fps-lbl{font-family:'Share Tech Mono',monospace;font-size:.62rem;color:var(--dim);text-align:right;width:45px;flex-shrink:0}
+.fps-track{flex:1;height:13px;background:var(--panel);border-radius:2px;overflow:hidden}
+.fps-fill{height:100%;border-radius:2px;display:flex;align-items:center;padding-right:5px;justify-content:flex-end;min-width:30px}
+.fps-fill.f1{background:linear-gradient(90deg,var(--green),#5aad00)}
+.fps-fill.f2{background:linear-gradient(90deg,var(--accent),#0099cc)}
+.fps-fill.f3{background:linear-gradient(90deg,var(--accent2),#cc4400)}
+.fps-num{font-family:'Share Tech Mono',monospace;font-size:.58rem;color:rgba(0,0,0,.85);font-weight:bold}
+.no-build{padding:2.5rem;text-align:center;border:1px dashed var(--border);border-radius:6px}
+.no-build .ico{font-size:2.5rem;margin-bottom:.7rem}
+.no-build p{font-family:'Share Tech Mono',monospace;font-size:.78rem;color:var(--dim);line-height:1.7}
+/* MODAL */
+#modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(12px);z-index:500;align-items:center;justify-content:center;padding:1.5rem}
+#modal.open{display:flex}
+.modal-box{background:var(--bg2);border:1px solid var(--border);border-radius:8px;width:100%;max-width:720px;max-height:90vh;overflow-y:auto}
+.modal-head{padding:1.3rem 1.5rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start}
+.modal-title{font-size:1.1rem;font-weight:700;color:var(--bright)}
+.modal-sub{font-family:'Share Tech Mono',monospace;font-size:.68rem;color:var(--accent);margin-top:.2rem}
+.modal-x{background:none;border:1px solid var(--border);color:var(--dim);width:30px;height:30px;border-radius:4px;font-size:1rem;flex-shrink:0;transition:all .15s}
+.modal-x:hover{border-color:var(--red);color:var(--red)}
+.modal-body{padding:1.3rem 1.5rem}
+.ptabs{display:flex;gap:.3rem;margin-bottom:1rem}
+.ptab{background:var(--panel);border:1px solid var(--border);color:var(--dim);font-family:'Share Tech Mono',monospace;font-size:.7rem;text-transform:uppercase;padding:.3rem .75rem;border-radius:3px;transition:all .15s}
+.ptab.active{border-color:var(--accent);color:var(--accent);background:rgba(0,212,255,.07)}
+#chartWrap{position:relative;height:220px;margin-bottom:.8rem;background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:.8rem}
+#chartSvg{width:100%;height:100%}
+.pstats{display:grid;grid-template-columns:repeat(4,1fr);gap:.6rem;margin-top:.8rem}
+.ps{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:.6rem;text-align:center}
+.ps-l{font-family:'Share Tech Mono',monospace;font-size:.58rem;color:var(--dim);text-transform:uppercase;letter-spacing:.04em}
+.ps-v{font-size:1rem;font-weight:700;color:var(--bright);margin-top:.2rem}
+.modal-actions{display:flex;gap:.5rem;margin-top:1.3rem}
+.modal-actions .btn-p{flex:1}
+.modal-actions .btn-s{width:140px}
 </style>
 </head>
 <body>
 
-<!-- LOADING -->
-<div class="loading" id="loadingOverlay">
-  <div class="loading-logo">BUILDFORGE</div>
-  <div class="loading-bar"><div class="loading-fill"></div></div>
-  <div class="loading-text">INITIALIZING SYSTEMS...</div>
+<div id="header">
+  <div id="logo">BUILD<span>FORGE</span></div>
+  <button class="nav-btn active" onclick="showPage('builder',this)">🔧 Builder</button>
+  <button class="nav-btn" onclick="showPage('viewer',this)">🖥️ 3D View</button>
+  <button class="nav-btn" onclick="showPage('gaming',this)">🎮 Gaming</button>
+  <button id="mybuildBtn" onclick="toggleSidebar()">⚡ MY BUILD</button>
 </div>
 
-<!-- HEADER -->
-<header>
-  <div class="logo">BUILD<span>FORGE</span></div>
-  <nav>
-    <a href="#" class="active" onclick="showSection('builder',this)">🔧 Builder</a>
-    <a href="#" onclick="showSection('viewer',this)">🖥️ 3D View</a>
-    <a href="#" onclick="showSection('gaming',this)">🎮 Gaming</a>
-  </nav>
-  <button class="build-btn" onclick="toggleSidebar()">⚡ MY BUILD</button>
-</header>
-
-<!-- PAGE WRAPPER -->
-<div class="page-inner">
-
-<!-- BUILDER SIDEBAR -->
-<div class="builder-sidebar" id="buildSidebar">
-  <div class="build-summary">
-    <h3>⚡ Current Build</h3>
-    <div id="buildSlots"></div>
-    <div class="total-price">
-      <span class="label">Total</span>
-      <span class="amount" id="totalPrice">€0</span>
-    </div>
-    <div class="compat-check compat-ok" id="compatCheck">
-      <span>✓</span> <span id="compatMsg">Add components to check compatibility</span>
-    </div>
-    <div class="action-btns">
-      <button class="btn-primary" onclick="viewBuild()">🖥️ VIEW 3D BUILD</button>
-      <button class="btn-secondary" onclick="checkGaming()">🎮 TEST GAMING PERF</button>
-      <button class="btn-secondary" onclick="clearBuild()">🗑️ CLEAR BUILD</button>
+<div id="app">
+  <div id="sidebar">
+    <div class="sb-title">⚡ My Build</div>
+    <div id="slotList"></div>
+    <div id="totalRow"><span class="lbl">Total</span><span id="totalAmt">€0</span></div>
+    <div id="compatBox" class="ok">✓ Add components to begin</div>
+    <div class="sb-actions">
+      <button class="btn-p" onclick="doViewBuild()">🖥️ VIEW 3D BUILD</button>
+      <button class="btn-s" onclick="doGaming()">🎮 TEST GAMING PERF</button>
+      <button class="btn-d" onclick="clearAll()">🗑️ CLEAR ALL</button>
     </div>
   </div>
-</div>
 
-<!-- CONTENT -->
-<div class="content-area" id="contentArea">
-
-<!-- HERO -->
-<div class="hero">
-  <div class="hero-grid"></div>
-  <div class="hero-glow"></div>
-  <h1>PC BUILDER</h1>
-  <p>// SELECT COMPONENTS · COMPARE PRICES · VISUALIZE YOUR RIG</p>
-  <div class="stats-bar">
-    <div class="stat"><div class="stat-val">160+</div><div class="stat-label">Components</div></div>
-    <div class="stat"><div class="stat-val">21</div><div class="stat-label">Games Tested</div></div>
-    <div class="stat"><div class="stat-val">365</div><div class="stat-label">Days Price Data</div></div>
-    <div class="stat"><div class="stat-val">3D</div><div class="stat-label">Live Viewer</div></div>
-  </div>
-</div>
-
-<!-- BUILDER SECTION -->
-<div class="section active" id="section-builder">
-  <!-- CATEGORY TABS -->
-  <div class="section-tabs" id="categoryTabs">
-    <button class="tab active" onclick="showCategory('cpu',this)"><span class="tab-icon">⚡</span>CPU</button>
-    <button class="tab" onclick="showCategory('gpu',this)"><span class="tab-icon">🎮</span>GPU</button>
-    <button class="tab" onclick="showCategory('motherboard',this)"><span class="tab-icon">🔌</span>Motherboard</button>
-    <button class="tab" onclick="showCategory('ram',this)"><span class="tab-icon">💾</span>RAM</button>
-    <button class="tab" onclick="showCategory('storage',this)"><span class="tab-icon">💿</span>Storage</button>
-    <button class="tab" onclick="showCategory('cooler',this)"><span class="tab-icon">❄️</span>Cooler</button>
-    <button class="tab" onclick="showCategory('psu',this)"><span class="tab-icon">⚡</span>PSU</button>
-    <button class="tab" onclick="showCategory('case',this)"><span class="tab-icon">🖥️</span>Case</button>
-  </div>
-  <div style="padding:1.5rem 0 0;">
-    <div id="categoryContent"></div>
-  </div>
-</div>
-
-<!-- 3D VIEWER SECTION -->
-<div class="section" id="section-viewer">
-  <div class="section-header">
-    <div class="section-title"><span class="icon">🖥️</span> 3D PC Viewer</div>
-  </div>
-  <div class="viewer-3d" id="viewer3d">
-    <div class="pc-3d" id="pc3d">
-      <div class="pc-case">
-        <div class="case-face case-front">
-          <div class="case-glass">
-            <div class="rgb-glow"></div>
-            <div class="components-inside">
-              <div class="comp-board"></div>
-              <div class="comp-gpu"></div>
-              <div class="comp-ram">
-                <div class="comp-ram-stick"></div>
-                <div class="comp-ram-stick"></div>
-                <div class="comp-ram-stick"></div>
-                <div class="comp-ram-stick"></div>
-              </div>
-            </div>
-            <div class="fan" style="position:absolute;top:8px;right:8px;">
-              <div class="fan-circle">
-                <div class="fan-blade"></div>
-                <div class="fan-blade" style="transform:rotate(72deg) translateY(-50%)"></div>
-                <div class="fan-blade" style="transform:rotate(144deg) translateY(-50%)"></div>
-                <div class="fan-blade" style="transform:rotate(216deg) translateY(-50%)"></div>
-                <div class="fan-blade" style="transform:rotate(288deg) translateY(-50%)"></div>
-              </div>
-            </div>
-          </div>
-          <div class="leds">
-            <div class="led"></div>
-            <div class="led"></div>
-            <div class="led"></div>
-          </div>
+  <div id="main">
+    <div id="builderPage" class="page active">
+      <div id="hero">
+        <h1>PC BUILDER</h1>
+        <p>// SELECT COMPONENTS · COMPARE PRICES · VISUALIZE YOUR RIG</p>
+        <div class="hero-stats">
+          <div><div class="hv">176+</div><div class="hl">Components</div></div>
+          <div><div class="hv">21</div><div class="hl">Games</div></div>
+          <div><div class="hv">365D</div><div class="hl">Price Data</div></div>
+          <div><div class="hv">3D</div><div class="hl">Live Viewer</div></div>
         </div>
       </div>
-    </div>
-    <div class="viewer-note" id="viewerNote">
-      // NO BUILD CONFIGURED — Add components to visualize your PC<br>
-      Use the Builder tab to select your components, then click "VIEW 3D BUILD"
-    </div>
-  </div>
-  <div id="buildSpecsPanel" style="margin-top:1.5rem;"></div>
-</div>
-
-<!-- GAMING SECTION -->
-<div class="section" id="section-gaming">
-  <div class="section-header">
-    <div class="section-title"><span class="icon">🎮</span> Gaming Performance</div>
-  </div>
-  <div id="gamingContent">
-    <div class="no-build-msg">
-      <div class="icon">🎮</div>
-      <div>Configure a build first to see FPS estimates</div>
-      <div style="margin-top:0.5rem;">Go to the Builder tab → add CPU + GPU → click "TEST GAMING PERF"</div>
-    </div>
-  </div>
-</div>
-
-</div><!-- /content-area -->
-</div><!-- /page-inner -->
-
-<!-- PRICE CHART MODAL -->
-<div class="modal-overlay" id="priceModal">
-  <div class="modal">
-    <div class="modal-header">
-      <div>
-        <div class="modal-title" id="modalTitle">Product Name</div>
-        <div class="modal-subtitle" id="modalSubtitle">PRICE HISTORY</div>
+      <div id="catTabs">
+        <button class="cat-btn active" onclick="showCat('cpu',this)">⚡ CPU</button>
+        <button class="cat-btn" onclick="showCat('gpu',this)">🎮 GPU</button>
+        <button class="cat-btn" onclick="showCat('motherboard',this)">🔌 Motherboard</button>
+        <button class="cat-btn" onclick="showCat('ram',this)">💾 RAM</button>
+        <button class="cat-btn" onclick="showCat('storage',this)">💿 Storage</button>
+        <button class="cat-btn" onclick="showCat('cooler',this)">❄️ Cooler</button>
+        <button class="cat-btn" onclick="showCat('psu',this)">🔋 PSU</button>
+        <button class="cat-btn" onclick="showCat('case',this)">🖥️ Case</button>
       </div>
-      <button class="modal-close" onclick="closeModal()">✕</button>
+      <div id="filterBar">
+        <button class="fbtn active" onclick="setFilter('',this)">All</button>
+        <button class="fbtn" onclick="setFilter('top',this)">⭐ Top</button>
+        <button class="fbtn" onclick="setFilter('hot',this)">🔥 Hot</button>
+        <button class="fbtn" onclick="setFilter('sale',this)">💰 Sale</button>
+        <button class="fbtn" onclick="setFilter('new',this)">🆕 New</button>
+        <input id="searchBox" type="text" placeholder="Search..." oninput="doSearch(this.value)">
+      </div>
+      <div id="productGrid"></div>
+    </div>
+
+    <div id="viewerPage" class="page">
+      <div class="viewer-box">
+        <div class="pc-wrap">
+          <div class="pc-body">
+            <div class="pc-front">
+              <div class="glass-panel">
+                <div class="rgb-wheel"></div>
+                <div class="internals">
+                  <div class="mb"></div>
+                  <div class="gpu-bar"></div>
+                  <div class="ram-row">
+                    <div class="ram-s"></div><div class="ram-s"></div>
+                    <div class="ram-s"></div><div class="ram-s"></div>
+                  </div>
+                </div>
+                <div class="case-fan">
+                  <div class="fan-ring">
+                    <div class="fblade" style="transform:rotate(0deg) translateY(-9px)"></div>
+                    <div class="fblade" style="transform:rotate(72deg) translateY(-9px)"></div>
+                    <div class="fblade" style="transform:rotate(144deg) translateY(-9px)"></div>
+                    <div class="fblade" style="transform:rotate(216deg) translateY(-9px)"></div>
+                    <div class="fblade" style="transform:rotate(288deg) translateY(-9px)"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="leds"><div class="led"></div><div class="led"></div><div class="led"></div></div>
+            </div>
+          </div>
+        </div>
+        <div id="viewerLabel" class="viewer-label">// Adiciona componentes e clica em "VIEW 3D BUILD"</div>
+      </div>
+      <div id="buildSpecTable"></div>
+    </div>
+
+    <div id="gamingPage" class="page">
+      <div id="gamingContent"></div>
+    </div>
+  </div>
+</div>
+
+<div id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal-box">
+    <div class="modal-head">
+      <div>
+        <div id="modalTitle" class="modal-title"></div>
+        <div id="modalSub" class="modal-sub"></div>
+      </div>
+      <button class="modal-x" onclick="closeModal()">✕</button>
     </div>
     <div class="modal-body">
-      <div class="price-tabs">
-        <button class="price-tab active" onclick="updateChart(30,this)">30D</button>
-        <button class="price-tab" onclick="updateChart(60,this)">60D</button>
-        <button class="price-tab" onclick="updateChart(90,this)">90D</button>
-        <button class="price-tab" onclick="updateChart(365,this)">365D</button>
+      <div class="ptabs">
+        <button class="ptab active" onclick="setPeriod(30,this)">30D</button>
+        <button class="ptab" onclick="setPeriod(60,this)">60D</button>
+        <button class="ptab" onclick="setPeriod(90,this)">90D</button>
+        <button class="ptab" onclick="setPeriod(365,this)">365D</button>
       </div>
-      <div class="chart-container">
-        <canvas id="priceChart"></canvas>
-      </div>
-      <div class="price-stats" id="priceStats"></div>
-      <div style="margin-top:1.5rem;display:flex;gap:0.5rem;">
-        <button class="btn-primary" id="modalAddBtn" style="flex:1;" onclick="addFromModal()">+ ADD TO BUILD</button>
-        <button class="btn-secondary" style="width:160px;" onclick="closeModal()">CLOSE</button>
+      <div id="chartWrap"><svg id="chartSvg" viewBox="0 0 640 180" preserveAspectRatio="none"></svg></div>
+      <div class="pstats" id="pstats"></div>
+      <div class="modal-actions">
+        <button class="btn-p" id="modalAddBtn">+ ADD TO BUILD</button>
+        <button class="btn-s" onclick="closeModal()">CLOSE</button>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-// ========== DATA ==========
-const components = {
-  cpu: [
-    {id:'cpu1',brand:'Intel',name:'Core i9-14900K',specs:'24C/32T · 6.0GHz Boost · LGA1700 · 253W TDP',price:589,badge:'top',emoji:'⚡'},
-    {id:'cpu2',brand:'AMD',name:'Ryzen 9 7950X',specs:'16C/32T · 5.7GHz Boost · AM5 · 170W TDP',price:549,badge:'top',emoji:'🔴'},
-    {id:'cpu3',brand:'AMD',name:'Ryzen 9 7900X',specs:'12C/24T · 5.6GHz Boost · AM5 · 170W TDP',price:399,badge:'',emoji:'🔴'},
-    {id:'cpu4',brand:'Intel',name:'Core i7-14700K',specs:'20C/28T · 5.6GHz Boost · LGA1700 · 125W TDP',price:409,badge:'hot',emoji:'⚡'},
-    {id:'cpu5',brand:'AMD',name:'Ryzen 7 7700X',specs:'8C/16T · 5.4GHz Boost · AM5 · 105W TDP',price:249,badge:'',emoji:'🔴'},
-    {id:'cpu6',brand:'Intel',name:'Core i5-14600K',specs:'14C/20T · 5.3GHz Boost · LGA1700 · 125W TDP',price:319,badge:'sale',emoji:'⚡'},
-    {id:'cpu7',brand:'AMD',name:'Ryzen 5 7600X',specs:'6C/12T · 5.3GHz Boost · AM5 · 105W TDP',price:199,badge:'',emoji:'🔴'},
-    {id:'cpu8',brand:'Intel',name:'Core i9-13900KS',specs:'24C/32T · 6.0GHz Boost · LGA1700 · 253W TDP',price:479,badge:'',emoji:'⚡'},
-    {id:'cpu9',brand:'AMD',name:'Ryzen 9 7900X3D',specs:'12C/24T · 5.6GHz + 3D V-Cache · AM5',price:429,badge:'new',emoji:'🔴'},
-    {id:'cpu10',brand:'AMD',name:'Ryzen 9 7950X3D',specs:'16C/32T · 5.7GHz + 3D V-Cache · AM5',price:699,badge:'top',emoji:'🔴'},
-    {id:'cpu11',brand:'Intel',name:'Core i5-13600K',specs:'14C/20T · 5.1GHz Boost · LGA1700',price:269,badge:'',emoji:'⚡'},
-    {id:'cpu12',brand:'AMD',name:'Ryzen 5 7600',specs:'6C/12T · 5.1GHz Boost · AM5 · 65W TDP',price:159,badge:'sale',emoji:'🔴'},
-    {id:'cpu13',brand:'Intel',name:'Core i3-14100',specs:'4C/8T · 4.7GHz Boost · LGA1700 · 60W TDP',price:109,badge:'',emoji:'⚡'},
-    {id:'cpu14',brand:'AMD',name:'Ryzen 7 7800X3D',specs:'8C/16T · 5.0GHz + 3D V-Cache · AM5 · Best Gaming',price:369,badge:'top',emoji:'🔴'},
-    {id:'cpu15',brand:'Intel',name:'Core i7-13700K',specs:'16C/24T · 5.4GHz Boost · LGA1700 · 125W TDP',price:359,badge:'',emoji:'⚡'},
-    {id:'cpu16',brand:'AMD',name:'Ryzen 5 5600X',specs:'6C/12T · 4.6GHz Boost · AM4 · 65W TDP',price:129,badge:'sale',emoji:'🔴'},
-    {id:'cpu17',brand:'Intel',name:'Core i9-14900KF',specs:'24C/32T · 6.0GHz Boost · No iGPU',price:559,badge:'',emoji:'⚡'},
-    {id:'cpu18',brand:'AMD',name:'Ryzen 7 5800X3D',specs:'8C/16T · 4.5GHz + 3D V-Cache · AM4',price:249,badge:'hot',emoji:'🔴'},
-    {id:'cpu19',brand:'Intel',name:'Core i5-14400F',specs:'10C/16T · 4.7GHz Boost · No iGPU · Budget',price:169,badge:'',emoji:'⚡'},
-    {id:'cpu20',brand:'AMD',name:'Ryzen 9 5950X',specs:'16C/32T · 4.9GHz Boost · AM4 · 105W TDP',price:319,badge:'',emoji:'🔴'},
-    {id:'cpu21',brand:'Intel',name:'Core i9-12900K',specs:'16C/24T · 5.2GHz Boost · LGA1700',price:259,badge:'',emoji:'⚡'},
-    {id:'cpu22',brand:'AMD',name:'Ryzen 5 7500F',specs:'6C/12T · 5.0GHz Boost · AM5 · No iGPU',price:149,badge:'new',emoji:'🔴'},
-  ],
-  gpu: [
-    {id:'gpu1',brand:'NVIDIA',name:'RTX 4090',specs:'16384 Cores · 24GB GDDR6X · 450W · PCIe 4.0',price:1899,badge:'top',emoji:'🟢'},
-    {id:'gpu2',brand:'NVIDIA',name:'RTX 4080 Super',specs:'10240 Cores · 16GB GDDR6X · 320W',price:1099,badge:'hot',emoji:'🟢'},
-    {id:'gpu3',brand:'AMD',name:'Radeon RX 7900 XTX',specs:'6144 SPs · 24GB GDDR6 · 355W',price:899,badge:'',emoji:'🔴'},
-    {id:'gpu4',brand:'NVIDIA',name:'RTX 4070 Ti Super',specs:'8448 Cores · 16GB GDDR6X · 285W',price:799,badge:'new',emoji:'🟢'},
-    {id:'gpu5',brand:'AMD',name:'Radeon RX 7900 XT',specs:'5376 SPs · 20GB GDDR6 · 315W',price:699,badge:'',emoji:'🔴'},
-    {id:'gpu6',brand:'NVIDIA',name:'RTX 4070 Super',specs:'7168 Cores · 12GB GDDR6X · 220W',price:599,badge:'sale',emoji:'🟢'},
-    {id:'gpu7',brand:'AMD',name:'Radeon RX 7800 XT',specs:'3840 SPs · 16GB GDDR6 · 263W',price:449,badge:'',emoji:'🔴'},
-    {id:'gpu8',brand:'NVIDIA',name:'RTX 4070',specs:'5888 Cores · 12GB GDDR6X · 200W',price:549,badge:'',emoji:'🟢'},
-    {id:'gpu9',brand:'AMD',name:'Radeon RX 7700 XT',specs:'3456 SPs · 12GB GDDR6 · 245W',price:349,badge:'',emoji:'🔴'},
-    {id:'gpu10',brand:'NVIDIA',name:'RTX 4060 Ti 16GB',specs:'4352 Cores · 16GB GDDR6 · 165W',price:449,badge:'',emoji:'🟢'},
-    {id:'gpu11',brand:'NVIDIA',name:'RTX 4060 Ti',specs:'4352 Cores · 8GB GDDR6 · 160W',price:379,badge:'',emoji:'🟢'},
-    {id:'gpu12',brand:'AMD',name:'Radeon RX 7600',specs:'2048 SPs · 8GB GDDR6 · 165W',price:239,badge:'sale',emoji:'🔴'},
-    {id:'gpu13',brand:'NVIDIA',name:'RTX 4060',specs:'3072 Cores · 8GB GDDR6 · 115W',price:299,badge:'hot',emoji:'🟢'},
-    {id:'gpu14',brand:'NVIDIA',name:'RTX 3090 Ti',specs:'10752 Cores · 24GB GDDR6X · 450W',price:799,badge:'',emoji:'🟢'},
-    {id:'gpu15',brand:'AMD',name:'Radeon RX 6800 XT',specs:'4608 SPs · 16GB GDDR6 · 300W',price:349,badge:'sale',emoji:'🔴'},
-    {id:'gpu16',brand:'NVIDIA',name:'RTX 3070 Ti',specs:'6144 Cores · 8GB GDDR6X · 290W',price:349,badge:'',emoji:'🟢'},
-    {id:'gpu17',brand:'Intel',name:'Arc A770 16GB',specs:'4096 XE Cores · 16GB GDDR6 · 225W',price:299,badge:'',emoji:'🔵'},
-    {id:'gpu18',brand:'AMD',name:'Radeon RX 6700 XT',specs:'2560 SPs · 12GB GDDR6 · 230W',price:249,badge:'sale',emoji:'🔴'},
-    {id:'gpu19',brand:'NVIDIA',name:'RTX 4080',specs:'9728 Cores · 16GB GDDR6X · 320W',price:999,badge:'',emoji:'🟢'},
-    {id:'gpu20',brand:'NVIDIA',name:'RTX 4090 Ti (Founders)',specs:'18176 Cores · 48GB GDDR7 · 600W',price:2499,badge:'new',emoji:'🟢'},
-    {id:'gpu21',brand:'AMD',name:'Radeon RX 7900 GRE',specs:'5120 SPs · 16GB GDDR6 · 260W',price:499,badge:'new',emoji:'🔴'},
-    {id:'gpu22',brand:'NVIDIA',name:'RTX 3060 Ti',specs:'4864 Cores · 8GB GDDR6 · 200W',price:249,badge:'sale',emoji:'🟢'},
-  ],
-  motherboard: [
-    {id:'mb1',brand:'ASUS',name:'ROG Maximus Z790 Apex',specs:'LGA1700 · Z790 · ATX · DDR5 · PCIe 5.0',price:699,badge:'top',emoji:'🔌'},
-    {id:'mb2',brand:'MSI',name:'MEG Z790 ACE',specs:'LGA1700 · Z790 · ATX · DDR5 · PCIe 5.0',price:549,badge:'',emoji:'🔌'},
-    {id:'mb3',brand:'Gigabyte',name:'AORUS Master Z790',specs:'LGA1700 · Z790 · ATX · DDR5 · Thunderbolt 4',price:489,badge:'',emoji:'🔌'},
-    {id:'mb4',brand:'ASUS',name:'ProArt Z790-Creator',specs:'LGA1700 · Z790 · ATX · DDR5 · 10G LAN',price:429,badge:'',emoji:'🔌'},
-    {id:'mb5',brand:'MSI',name:'MAG Z790 Tomahawk WiFi',specs:'LGA1700 · Z790 · ATX · DDR5 · WiFi 6E',price:299,badge:'hot',emoji:'🔌'},
-    {id:'mb6',brand:'ASUS',name:'TUF Gaming Z790-Plus',specs:'LGA1700 · Z790 · ATX · DDR5',price:249,badge:'',emoji:'🔌'},
-    {id:'mb7',brand:'ASRock',name:'Z790 Steel Legend WiFi',specs:'LGA1700 · Z790 · ATX · DDR5 · WiFi 6E',price:229,badge:'sale',emoji:'🔌'},
-    {id:'mb8',brand:'Gigabyte',name:'B760M DS3H DDR5',specs:'LGA1700 · B760 · mATX · DDR5 · Budget',price:109,badge:'sale',emoji:'🔌'},
-    {id:'mb9',brand:'ASUS',name:'ROG Crosshair X670E Hero',specs:'AM5 · X670E · ATX · DDR5 · PCIe 5.0',price:599,badge:'top',emoji:'🔌'},
-    {id:'mb10',brand:'MSI',name:'MEG X670E ACE',specs:'AM5 · X670E · ATX · DDR5 · PCIe 5.0',price:499,badge:'',emoji:'🔌'},
-    {id:'mb11',brand:'Gigabyte',name:'AORUS Master X670E',specs:'AM5 · X670E · ATX · DDR5',price:449,badge:'',emoji:'🔌'},
-    {id:'mb12',brand:'ASRock',name:'X670E Taichi',specs:'AM5 · X670E · ATX · DDR5 · 10G LAN',price:399,badge:'',emoji:'🔌'},
-    {id:'mb13',brand:'ASUS',name:'TUF Gaming X670E-Plus WiFi',specs:'AM5 · X670E · ATX · DDR5 · WiFi 6E',price:259,badge:'hot',emoji:'🔌'},
-    {id:'mb14',brand:'MSI',name:'MAG B650 Tomahawk',specs:'AM5 · B650 · ATX · DDR5 · WiFi 6E',price:199,badge:'sale',emoji:'🔌'},
-    {id:'mb15',brand:'Gigabyte',name:'B650M DS3H',specs:'AM5 · B650 · mATX · DDR5 · Budget',price:99,badge:'',emoji:'🔌'},
-    {id:'mb16',brand:'ASUS',name:'ROG Strix B650E-F Gaming',specs:'AM5 · B650E · ATX · DDR5',price:239,badge:'',emoji:'🔌'},
-    {id:'mb17',brand:'MSI',name:'Z690 Carbon WiFi',specs:'LGA1700 · Z690 · ATX · DDR5 · WiFi 6E',price:199,badge:'sale',emoji:'🔌'},
-    {id:'mb18',brand:'ASRock',name:'B650 Pro RS',specs:'AM5 · B650 · ATX · DDR5',price:149,badge:'',emoji:'🔌'},
-    {id:'mb19',brand:'Gigabyte',name:'Z790 AORUS Elite AX',specs:'LGA1700 · Z790 · ATX · DDR5 · WiFi 6E',price:259,badge:'new',emoji:'🔌'},
-    {id:'mb20',brand:'ASUS',name:'Prime X670-P',specs:'AM5 · X670 · ATX · DDR5 · PCIe 4.0',price:179,badge:'',emoji:'🔌'},
-    {id:'mb21',brand:'MSI',name:'MPG Z790 Edge WiFi',specs:'LGA1700 · Z790 · ATX · DDR5',price:319,badge:'',emoji:'🔌'},
-    {id:'mb22',brand:'ASRock',name:'A620M Pro RS',specs:'AM5 · A620 · mATX · DDR5 · Budget',price:89,badge:'sale',emoji:'🔌'},
-  ],
-  ram: [
-    {id:'ram1',brand:'G.Skill',name:'Trident Z5 RGB 32GB DDR5',specs:'2×16GB · DDR5-6400 · CL32 · XMP3.0',price:169,badge:'top',emoji:'💾'},
-    {id:'ram2',brand:'Corsair',name:'Dominator Platinum 64GB DDR5',specs:'2×32GB · DDR5-6000 · CL30 · XMP3.0',price:249,badge:'',emoji:'💾'},
-    {id:'ram3',brand:'Kingston',name:'Fury Beast 32GB DDR5',specs:'2×16GB · DDR5-5600 · CL40 · Intel XMP',price:109,badge:'hot',emoji:'💾'},
-    {id:'ram4',brand:'TeamGroup',name:'T-Force Delta 32GB DDR5',specs:'2×16GB · DDR5-6000 · CL38 · RGB',price:119,badge:'',emoji:'💾'},
-    {id:'ram5',brand:'G.Skill',name:'Flare X5 32GB DDR5',specs:'2×16GB · DDR5-6000 · CL36 · AMD EXPO',price:129,badge:'sale',emoji:'💾'},
-    {id:'ram6',brand:'Corsair',name:'Vengeance 32GB DDR5',specs:'2×16GB · DDR5-5600 · CL36',price:99,badge:'',emoji:'💾'},
-    {id:'ram7',brand:'G.Skill',name:'Trident Z5 RGB 64GB DDR5',specs:'2×32GB · DDR5-6400 · CL32 · RGB',price:299,badge:'',emoji:'💾'},
-    {id:'ram8',brand:'Crucial',name:'Pro 32GB DDR5',specs:'2×16GB · DDR5-5600 · CL46',price:89,badge:'sale',emoji:'💾'},
-    {id:'ram9',brand:'Kingston',name:'Fury Beast 64GB DDR5',specs:'2×32GB · DDR5-5600 · CL40 · RGB',price:189,badge:'',emoji:'💾'},
-    {id:'ram10',brand:'G.Skill',name:'Ripjaws S5 32GB DDR5',specs:'2×16GB · DDR5-5600 · CL28 · No RGB',price:99,badge:'',emoji:'💾'},
-    {id:'ram11',brand:'Corsair',name:'Dominator Titanium 32GB',specs:'2×16GB · DDR5-7200 · CL34 · RGB',price:219,badge:'new',emoji:'💾'},
-    {id:'ram12',brand:'G.Skill',name:'Trident Z5 RGB 96GB DDR5',specs:'2×48GB · DDR5-6400 · CL32',price:349,badge:'new',emoji:'💾'},
-    {id:'ram13',brand:'Crucial',name:'Pro 64GB DDR5',specs:'2×32GB · DDR5-5600 · CL46',price:159,badge:'',emoji:'💾'},
-    {id:'ram14',brand:'Kingston',name:'Fury Renegade 32GB DDR5',specs:'2×16GB · DDR5-7200 · CL38 · RGB',price:189,badge:'hot',emoji:'💾'},
-    {id:'ram15',brand:'TeamGroup',name:'T-Force Xtreem 32GB DDR5',specs:'2×16GB · DDR5-7600 · CL36 · Extreme OC',price:249,badge:'',emoji:'💾'},
-    {id:'ram16',brand:'G.Skill',name:'Trident Z Neo 32GB DDR4',specs:'2×16GB · DDR4-3600 · CL16 · AMD',price:79,badge:'sale',emoji:'💾'},
-    {id:'ram17',brand:'Corsair',name:'Vengeance RGB 32GB DDR4',specs:'2×16GB · DDR4-3200 · CL16',price:59,badge:'sale',emoji:'💾'},
-    {id:'ram18',brand:'Kingston',name:'Fury Beast 16GB DDR4',specs:'2×8GB · DDR4-3200 · CL16',price:39,badge:'',emoji:'💾'},
-    {id:'ram19',brand:'Crucial',name:'Ballistix 32GB DDR4',specs:'2×16GB · DDR4-3600 · CL16 · OC',price:69,badge:'',emoji:'💾'},
-    {id:'ram20',brand:'G.Skill',name:'Trident Z5 RGB 128GB DDR5',specs:'4×32GB · DDR5-6400 · Workstation',price:599,badge:'',emoji:'💾'},
-    {id:'ram21',brand:'Corsair',name:'Vengeance 16GB DDR5',specs:'2×8GB · DDR5-4800 · CL40',price:49,badge:'sale',emoji:'💾'},
-    {id:'ram22',brand:'TeamGroup',name:'Elite 32GB DDR5',specs:'2×16GB · DDR5-4800 · CL40 · Budget',price:69,badge:'',emoji:'💾'},
-  ],
-  storage: [
-    {id:'st1',brand:'Samsung',name:'990 Pro 2TB NVMe',specs:'PCIe 4.0 · 7450/6900 MB/s · M.2 2280',price:159,badge:'top',emoji:'💿'},
-    {id:'st2',brand:'WD',name:'Black SN850X 2TB',specs:'PCIe 4.0 · 7300/6600 MB/s · M.2 2280',price:149,badge:'hot',emoji:'💿'},
-    {id:'st3',brand:'Samsung',name:'990 Pro 4TB NVMe',specs:'PCIe 4.0 · 7450/6900 MB/s · M.2 2280',price:299,badge:'new',emoji:'💿'},
-    {id:'st4',brand:'Seagate',name:'FireCuda 530 2TB',specs:'PCIe 4.0 · 7300/6900 MB/s · M.2 2280',price:169,badge:'',emoji:'💿'},
-    {id:'st5',brand:'Corsair',name:'MP600 Pro XT 2TB',specs:'PCIe 4.0 · 7100/6800 MB/s · M.2 2280',price:139,badge:'sale',emoji:'💿'},
-    {id:'st6',brand:'WD',name:'Black SN850X 4TB',specs:'PCIe 4.0 · 7300/6600 MB/s · M.2 2280',price:299,badge:'new',emoji:'💿'},
-    {id:'st7',brand:'Samsung',name:'980 Pro 1TB NVMe',specs:'PCIe 4.0 · 7000/5000 MB/s · M.2 2280',price:89,badge:'sale',emoji:'💿'},
-    {id:'st8',brand:'Kingston',name:'Fury Renegade 2TB',specs:'PCIe 4.0 · 7300/7000 MB/s · M.2 2280',price:139,badge:'',emoji:'💿'},
-    {id:'st9',brand:'Crucial',name:'T700 2TB PCIe 5.0',specs:'PCIe 5.0 · 12400/11800 MB/s · Heatsink',price:249,badge:'top',emoji:'💿'},
-    {id:'st10',brand:'WD',name:'Black SN770 2TB',specs:'PCIe 4.0 · 5150/4850 MB/s · Budget',price:99,badge:'',emoji:'💿'},
-    {id:'st11',brand:'Samsung',name:'870 EVO 4TB SATA SSD',specs:'SATA III · 560/530 MB/s · 2.5"',price:249,badge:'',emoji:'💿'},
-    {id:'st12',brand:'Seagate',name:'IronWolf 8TB HDD',specs:'SATA 6Gb · 7200RPM · NAS Ready',price:179,badge:'',emoji:'💿'},
-    {id:'st13',brand:'WD',name:'Red Plus 6TB HDD',specs:'SATA 6Gb · 5400RPM · CMR · NAS',price:129,badge:'',emoji:'💿'},
-    {id:'st14',brand:'Samsung',name:'990 Pro 1TB NVMe',specs:'PCIe 4.0 · 7450/6900 MB/s · Best Value',price:89,badge:'hot',emoji:'💿'},
-    {id:'st15',brand:'Corsair',name:'MP600 Elite 1TB PCIe 5.0',specs:'PCIe 5.0 · 10000/9500 MB/s',price:179,badge:'new',emoji:'💿'},
-    {id:'st16',brand:'Sabrent',name:'Rocket 4 Plus 4TB',specs:'PCIe 4.0 · 7100/6600 MB/s · M.2',price:249,badge:'',emoji:'💿'},
-    {id:'st17',brand:'Crucial',name:'T500 2TB NVMe',specs:'PCIe 4.0 · 7400/7000 MB/s · Gen4',price:129,badge:'sale',emoji:'💿'},
-    {id:'st18',brand:'WD',name:'Gold 18TB Enterprise',specs:'SATA 6Gb · 7200RPM · Datacenter',price:449,badge:'',emoji:'💿'},
-    {id:'st19',brand:'Seagate',name:'Barracuda 2TB HDD',specs:'SATA 6Gb · 7200RPM · Desktop',price:49,badge:'sale',emoji:'💿'},
-    {id:'st20',brand:'Kingston',name:'NV2 1TB NVMe',specs:'PCIe 4.0 · 3500/2100 MB/s · Budget',price:55,badge:'',emoji:'💿'},
-    {id:'st21',brand:'Samsung',name:'870 QVO 2TB SATA',specs:'SATA III · 560/530 MB/s · QLC NAND',price:99,badge:'',emoji:'💿'},
-    {id:'st22',brand:'Crucial',name:'P3 Plus 4TB NVMe',specs:'PCIe 4.0 · 5000/4200 MB/s · Value',price:149,badge:'sale',emoji:'💿'},
-  ],
-  cooler: [
-    {id:'co1',brand:'Noctua',name:'NH-D15 Chromax Black',specs:'Dual Tower · 165mm · 2×140mm fans · TDP 250W',price:109,badge:'top',emoji:'❄️'},
-    {id:'co2',brand:'be quiet!',name:'Dark Rock Pro 5',specs:'Dual Tower · 163mm · 2×135mm fans · TDP 250W',price:99,badge:'',emoji:'❄️'},
-    {id:'co3',brand:'Corsair',name:'iCUE H150i Elite LCD',specs:'360mm AIO · 3×120mm · LCD Pump Head',price:229,badge:'top',emoji:'❄️'},
-    {id:'co4',brand:'NZXT',name:'Kraken Z73 360mm',specs:'360mm AIO · 3×120mm · LCD Display',price:269,badge:'hot',emoji:'❄️'},
-    {id:'co5',brand:'Arctic',name:'Liquid Freezer II 360mm',specs:'360mm AIO · 3×120mm · 28 dBA',price:99,badge:'sale',emoji:'❄️'},
-    {id:'co6',brand:'Lian Li',name:'Galahad II Trinity 360',specs:'360mm AIO · 3×120mm Uni Fans · Daisy Chain',price:179,badge:'new',emoji:'❄️'},
-    {id:'co7',brand:'Cooler Master',name:'MasterLiquid ML360R',specs:'360mm AIO · 3×120mm RGB · Dual Chamber',price:149,badge:'',emoji:'❄️'},
-    {id:'co8',brand:'DeepCool',name:'AK620',specs:'Dual Tower · 155mm · 2×120mm · TDP 260W',price:59,badge:'hot',emoji:'❄️'},
-    {id:'co9',brand:'Noctua',name:'NH-U12A Chromax',specs:'Single Tower · 158mm · 2×120mm fans',price:89,badge:'',emoji:'❄️'},
-    {id:'co10',brand:'be quiet!',name:'Pure Rock 2 Black',specs:'Single Tower · 155mm · 120mm · TDP 150W',price:34,badge:'sale',emoji:'❄️'},
-    {id:'co11',brand:'Thermalright',name:'Peerless Assassin 120 SE',specs:'Dual Tower · 155mm · TDP 260W · Best Value',price:35,badge:'hot',emoji:'❄️'},
-    {id:'co12',brand:'NZXT',name:'Kraken Elite 360 RGB',specs:'360mm AIO · 3×120mm · Infinity LCD',price:299,badge:'new',emoji:'❄️'},
-    {id:'co13',brand:'Corsair',name:'iCUE H100i Elite',specs:'240mm AIO · 2×120mm · RGB Pump',price:149,badge:'',emoji:'❄️'},
-    {id:'co14',brand:'Arctic',name:'Liquid Freezer II 420mm',specs:'420mm AIO · 3×140mm · High Performance',price:119,badge:'',emoji:'❄️'},
-    {id:'co15',brand:'DeepCool',name:'AK620 Digital',specs:'Dual Tower · 155mm · LCD Display',price:79,badge:'new',emoji:'❄️'},
-    {id:'co16',brand:'Scythe',name:'Fuma 3',specs:'Dual Tower · 2×120mm · TDP 250W',price:69,badge:'',emoji:'❄️'},
-    {id:'co17',brand:'Cooler Master',name:'Hyper 212 Black Edition',specs:'Single Tower · 4 Heatpipes · Budget',price:29,badge:'sale',emoji:'❄️'},
-    {id:'co18',brand:'NZXT',name:'Kraken 240 RGB',specs:'240mm AIO · 2×120mm F-Series',price:119,badge:'',emoji:'❄️'},
-    {id:'co19',brand:'be quiet!',name:'Silent Loop 2 360mm',specs:'360mm AIO · 3×120mm · Silent',price:159,badge:'',emoji:'❄️'},
-    {id:'co20',brand:'Thermalright',name:'Frozen Notte 360 ARGB',specs:'360mm AIO · 3×120mm · TL-C12C',price:69,badge:'sale',emoji:'❄️'},
-    {id:'co21',brand:'Noctua',name:'NH-P1 (Passively Cooled)',specs:'Passive · 185mm · Silent Zero Fan',price:109,badge:'',emoji:'❄️'},
-    {id:'co22',brand:'Arctic',name:'Freezer 36 A-RGB',specs:'Single Tower · 120mm · TDP 200W · Budget',price:39,badge:'new',emoji:'❄️'},
-  ],
-  psu: [
-    {id:'psu1',brand:'Seasonic',name:'Prime TX-1000',specs:'1000W · 80+ Titanium · Fully Modular',price:249,badge:'top',emoji:'⚡'},
-    {id:'psu2',brand:'Corsair',name:'HX1500i Platinum',specs:'1500W · 80+ Platinum · iCUE',price:349,badge:'top',emoji:'⚡'},
-    {id:'psu3',brand:'be quiet!',name:'Dark Power 13 1000W',specs:'1000W · 80+ Titanium · Fully Modular',price:229,badge:'',emoji:'⚡'},
-    {id:'psu4',brand:'ASUS',name:'ROG THOR 1000P2',specs:'1000W · 80+ Platinum · OLED Display',price:279,badge:'hot',emoji:'⚡'},
-    {id:'psu5',brand:'EVGA',name:'SuperNOVA 1000 G7',specs:'1000W · 80+ Gold · Fully Modular',price:179,badge:'',emoji:'⚡'},
-    {id:'psu6',brand:'Seasonic',name:'Focus GX-850',specs:'850W · 80+ Gold · Fully Modular',price:149,badge:'hot',emoji:'⚡'},
-    {id:'psu7',brand:'Corsair',name:'RM850x',specs:'850W · 80+ Gold · Fully Modular · ATX 3.0',price:139,badge:'sale',emoji:'⚡'},
-    {id:'psu8',brand:'Fractal',name:'Ion+ 2 Platinum 860W',specs:'860W · 80+ Platinum · Fully Modular',price:169,badge:'',emoji:'⚡'},
-    {id:'psu9',brand:'Seasonic',name:'Focus GX-1000',specs:'1000W · 80+ Gold · Fully Modular',price:169,badge:'',emoji:'⚡'},
-    {id:'psu10',brand:'be quiet!',name:'Straight Power 12 850W',specs:'850W · 80+ Platinum · Semi-Modular',price:159,badge:'',emoji:'⚡'},
-    {id:'psu11',brand:'MSI',name:'MPG A1000G PCIE5',specs:'1000W · 80+ Gold · PCIe 5.0 Native',price:149,badge:'new',emoji:'⚡'},
-    {id:'psu12',brand:'Cooler Master',name:'V1300 Platinum',specs:'1300W · 80+ Platinum · Fully Modular',price:299,badge:'',emoji:'⚡'},
-    {id:'psu13',brand:'Corsair',name:'RM1000x Shift',specs:'1000W · 80+ Gold · Side-Mounted Cables',price:199,badge:'new',emoji:'⚡'},
-    {id:'psu14',brand:'Thermaltake',name:'Toughpower GF3 850W',specs:'850W · 80+ Gold · ATX 3.0 PCIe 5.0',price:129,badge:'',emoji:'⚡'},
-    {id:'psu15',brand:'Seasonic',name:'Prime TX-1300',specs:'1300W · 80+ Titanium · Fully Modular',price:349,badge:'',emoji:'⚡'},
-    {id:'psu16',brand:'EVGA',name:'SuperNOVA 750 GA',specs:'750W · 80+ Gold · Fully Modular',price:99,badge:'sale',emoji:'⚡'},
-    {id:'psu17',brand:'Fractal',name:'Pop Air 650W Gold',specs:'650W · 80+ Gold · Semi-Modular',price:89,badge:'',emoji:'⚡'},
-    {id:'psu18',brand:'be quiet!',name:'System Power 10 550W',specs:'550W · 80+ Bronze · Non-Modular',price:59,badge:'sale',emoji:'⚡'},
-    {id:'psu19',brand:'Corsair',name:'CV650 Bronze',specs:'650W · 80+ Bronze · Non-Modular · Budget',price:59,badge:'',emoji:'⚡'},
-    {id:'psu20',brand:'Seasonic',name:'Core GC-550',specs:'550W · 80+ Gold · Semi-Modular',price:79,badge:'',emoji:'⚡'},
-    {id:'psu21',brand:'MSI',name:'MAG A650BN',specs:'650W · 80+ Bronze · Semi-Modular',price:55,badge:'sale',emoji:'⚡'},
-    {id:'psu22',brand:'Cooler Master',name:'MWE 750 V2 White',specs:'750W · 80+ White · Non-Modular',price:65,badge:'',emoji:'⚡'},
-  ],
-  case: [
-    {id:'case1',brand:'Lian Li',name:'PC-O11 Dynamic EVO XL',specs:'Full Tower · EATX · 3x Triple Fan Slots',price:189,badge:'top',emoji:'🖥️'},
-    {id:'case2',brand:'Fractal',name:'Torrent RGB',specs:'Full Tower · ATX · Direct Airflow Path',price:199,badge:'hot',emoji:'🖥️'},
-    {id:'case3',brand:'be quiet!',name:'Silent Base 802 Window',specs:'Mid Tower · ATX · 3×140mm fans',price:169,badge:'',emoji:'🖥️'},
-    {id:'case4',brand:'NZXT',name:'H9 Elite',specs:'Mid Tower · ATX · Panoramic Glass · RGB',price:249,badge:'top',emoji:'🖥️'},
-    {id:'case5',brand:'Corsair',name:'5000D Airflow',specs:'Mid Tower · ATX · Dual Chamber · Mesh',price:149,badge:'',emoji:'🖥️'},
-    {id:'case6',brand:'Lian Li',name:'Lancool III',specs:'Mid Tower · ATX · 5 Fan Slots · Mesh',price:129,badge:'sale',emoji:'🖥️'},
-    {id:'case7',brand:'Phanteks',name:'Enthoo 719 Black',specs:'Full Tower · EATX · Dual System Ready',price:219,badge:'',emoji:'🖥️'},
-    {id:'case8',brand:'Fractal',name:'Define 7 Compact',specs:'Compact ATX · Sound Dampening · mATX',price:109,badge:'',emoji:'🖥️'},
-    {id:'case9',brand:'NZXT',name:'H7 Flow RGB',specs:'Mid Tower · ATX · 3×140mm Fans Included',price:149,badge:'hot',emoji:'🖥️'},
-    {id:'case10',brand:'Corsair',name:'7000D Airflow',specs:'Full Tower · ATX · Dual Chamber',price:219,badge:'',emoji:'🖥️'},
-    {id:'case11',brand:'Cooler Master',name:'HAF 700 EVO',specs:'Full Tower · EATX · 3×200mm Fans · LCD',price:299,badge:'hot',emoji:'🖥️'},
-    {id:'case12',brand:'Thermaltake',name:'The Tower 900',specs:'Super Tower · EATX · Vertical Design',price:349,badge:'',emoji:'🖥️'},
-    {id:'case13',brand:'Lian Li',name:'Strimer Plus V2 Node',specs:'Mid Tower · ATX · Full Addressable RGB',price:159,badge:'new',emoji:'🖥️'},
-    {id:'case14',brand:'Fractal',name:'North XL Charcoal',specs:'Full Tower · ATX · Natural Wood Front',price:179,badge:'new',emoji:'🖥️'},
-    {id:'case15',brand:'NZXT',name:'H510 Flow',specs:'Mid Tower · ATX · Compact · Mesh Front',price:89,badge:'sale',emoji:'🖥️'},
-    {id:'case16',brand:'Phanteks',name:'Eclipse P400A',specs:'Mid Tower · ATX · DRGB · Mesh Front',price:79,badge:'sale',emoji:'🖥️'},
-    {id:'case17',brand:'Corsair',name:'4000D Airflow',specs:'Mid Tower · ATX · Tempered Glass · Budget',price:99,badge:'',emoji:'🖥️'},
-    {id:'case18',brand:'Cooler Master',name:'MasterBox TD500 Mesh',specs:'Mid Tower · ATX · Mesh Front · ARGB',price:89,badge:'',emoji:'🖥️'},
-    {id:'case19',brand:'be quiet!',name:'Pure Base 500DX',specs:'Mid Tower · ATX · 3×120mm Pre-Installed',price:109,badge:'',emoji:'🖥️'},
-    {id:'case20',brand:'Lian Li',name:'Q58 ITX',specs:'ITX · Mini · 3-Slot GPU · 10L',price:119,badge:'hot',emoji:'🖥️'},
-    {id:'case21',brand:'Fractal',name:'Ridge ITX',specs:'ITX · Vertical · 7.5L · PCI-E Riser',price:149,badge:'new',emoji:'🖥️'},
-    {id:'case22',brand:'NZXT',name:'H1 V2 ITX',specs:'ITX · Mini Tower · 280mm AIO Support',price:279,badge:'',emoji:'🖥️'},
-  ],
-};
+var D={cpu:[{id:'cpu1',br:'Intel',nm:'Core i9-14900K',sp:'24C/32T · 6.0GHz · LGA1700 · 253W',pr:589,bg:'top',em:'⚡'},{id:'cpu2',br:'AMD',nm:'Ryzen 9 7950X3D',sp:'16C/32T · 5.7GHz · 3D V-Cache · AM5',pr:699,bg:'top',em:'🔴'},{id:'cpu3',br:'AMD',nm:'Ryzen 7 7800X3D',sp:'8C/16T · 5.0GHz · 3D V-Cache · AM5',pr:369,bg:'top',em:'🔴'},{id:'cpu4',br:'Intel',nm:'Core i7-14700K',sp:'20C/28T · 5.6GHz · LGA1700 · 125W',pr:409,bg:'hot',em:'⚡'},{id:'cpu5',br:'AMD',nm:'Ryzen 9 7900X',sp:'12C/24T · 5.6GHz · AM5 · 170W',pr:399,bg:'',em:'🔴'},{id:'cpu6',br:'Intel',nm:'Core i5-14600K',sp:'14C/20T · 5.3GHz · LGA1700 · 125W',pr:319,bg:'sale',em:'⚡'},{id:'cpu7',br:'AMD',nm:'Ryzen 5 7600X',sp:'6C/12T · 5.3GHz · AM5 · 105W',pr:199,bg:'',em:'🔴'},{id:'cpu8',br:'Intel',nm:'Core i9-13900KS',sp:'24C/32T · 6.0GHz · LGA1700',pr:479,bg:'',em:'⚡'},{id:'cpu9',br:'AMD',nm:'Ryzen 9 7900X3D',sp:'12C/24T · 5.6GHz · 3D V-Cache · AM5',pr:429,bg:'new',em:'🔴'},{id:'cpu10',br:'Intel',nm:'Core i5-13600K',sp:'14C/20T · 5.1GHz · LGA1700',pr:269,bg:'',em:'⚡'},{id:'cpu11',br:'AMD',nm:'Ryzen 5 7600',sp:'6C/12T · 5.1GHz · AM5 · 65W',pr:159,bg:'sale',em:'🔴'},{id:'cpu12',br:'Intel',nm:'Core i3-14100',sp:'4C/8T · 4.7GHz · LGA1700 · 60W',pr:109,bg:'',em:'⚡'},{id:'cpu13',br:'AMD',nm:'Ryzen 7 7700X',sp:'8C/16T · 5.4GHz · AM5 · 105W',pr:249,bg:'',em:'🔴'},{id:'cpu14',br:'Intel',nm:'Core i9-14900KF',sp:'24C/32T · 6.0GHz · No iGPU · LGA1700',pr:559,bg:'',em:'⚡'},{id:'cpu15',br:'AMD',nm:'Ryzen 7 5800X3D',sp:'8C/16T · 4.5GHz · 3D V-Cache · AM4',pr:249,bg:'hot',em:'🔴'},{id:'cpu16',br:'Intel',nm:'Core i7-13700K',sp:'16C/24T · 5.4GHz · LGA1700',pr:359,bg:'',em:'⚡'},{id:'cpu17',br:'AMD',nm:'Ryzen 5 5600X',sp:'6C/12T · 4.6GHz · AM4 · 65W',pr:129,bg:'sale',em:'🔴'},{id:'cpu18',br:'Intel',nm:'Core i5-14400F',sp:'10C/16T · 4.7GHz · No iGPU',pr:169,bg:'',em:'⚡'},{id:'cpu19',br:'AMD',nm:'Ryzen 9 5950X',sp:'16C/32T · 4.9GHz · AM4',pr:319,bg:'',em:'🔴'},{id:'cpu20',br:'Intel',nm:'Core i9-12900K',sp:'16C/24T · 5.2GHz · LGA1700',pr:259,bg:'',em:'⚡'},{id:'cpu21',br:'AMD',nm:'Ryzen 5 7500F',sp:'6C/12T · 5.0GHz · AM5 · No iGPU',pr:149,bg:'new',em:'🔴'},{id:'cpu22',br:'Intel',nm:'Core i5-12600K',sp:'10C/16T · 4.9GHz · LGA1700',pr:189,bg:'sale',em:'⚡'}],gpu:[{id:'gpu1',br:'NVIDIA',nm:'RTX 4090',sp:'16384 Cores · 24GB GDDR6X · 450W',pr:1899,bg:'top',em:'🟢'},{id:'gpu2',br:'NVIDIA',nm:'RTX 4080 Super',sp:'10240 Cores · 16GB GDDR6X · 320W',pr:1099,bg:'hot',em:'🟢'},{id:'gpu3',br:'AMD',nm:'Radeon RX 7900 XTX',sp:'6144 SPs · 24GB GDDR6 · 355W',pr:899,bg:'',em:'🔴'},{id:'gpu4',br:'NVIDIA',nm:'RTX 4070 Ti Super',sp:'8448 Cores · 16GB GDDR6X · 285W',pr:799,bg:'new',em:'🟢'},{id:'gpu5',br:'NVIDIA',nm:'RTX 4070 Super',sp:'7168 Cores · 12GB GDDR6X · 220W',pr:599,bg:'sale',em:'🟢'},{id:'gpu6',br:'AMD',nm:'Radeon RX 7900 XT',sp:'5376 SPs · 20GB GDDR6 · 315W',pr:699,bg:'',em:'🔴'},{id:'gpu7',br:'NVIDIA',nm:'RTX 4070',sp:'5888 Cores · 12GB GDDR6X · 200W',pr:549,bg:'',em:'🟢'},{id:'gpu8',br:'AMD',nm:'Radeon RX 7800 XT',sp:'3840 SPs · 16GB GDDR6 · 263W',pr:449,bg:'',em:'🔴'},{id:'gpu9',br:'NVIDIA',nm:'RTX 4060 Ti 16GB',sp:'4352 Cores · 16GB GDDR6 · 165W',pr:449,bg:'',em:'🟢'},{id:'gpu10',br:'NVIDIA',nm:'RTX 4060 Ti',sp:'4352 Cores · 8GB GDDR6 · 160W',pr:379,bg:'',em:'🟢'},{id:'gpu11',br:'AMD',nm:'Radeon RX 7700 XT',sp:'3456 SPs · 12GB GDDR6 · 245W',pr:349,bg:'',em:'🔴'},{id:'gpu12',br:'NVIDIA',nm:'RTX 4060',sp:'3072 Cores · 8GB GDDR6 · 115W',pr:299,bg:'hot',em:'🟢'},{id:'gpu13',br:'AMD',nm:'Radeon RX 7600',sp:'2048 SPs · 8GB GDDR6 · 165W',pr:239,bg:'sale',em:'🔴'},{id:'gpu14',br:'NVIDIA',nm:'RTX 3090 Ti',sp:'10752 Cores · 24GB GDDR6X · 450W',pr:799,bg:'',em:'🟢'},{id:'gpu15',br:'AMD',nm:'Radeon RX 6800 XT',sp:'4608 SPs · 16GB GDDR6 · 300W',pr:349,bg:'sale',em:'🔴'},{id:'gpu16',br:'NVIDIA',nm:'RTX 3070 Ti',sp:'6144 Cores · 8GB GDDR6X · 290W',pr:349,bg:'',em:'🟢'},{id:'gpu17',br:'Intel',nm:'Arc A770 16GB',sp:'4096 XE Cores · 16GB GDDR6 · 225W',pr:299,bg:'',em:'🔵'},{id:'gpu18',br:'AMD',nm:'Radeon RX 6700 XT',sp:'2560 SPs · 12GB GDDR6 · 230W',pr:249,bg:'sale',em:'🔴'},{id:'gpu19',br:'NVIDIA',nm:'RTX 4080',sp:'9728 Cores · 16GB GDDR6X · 320W',pr:999,bg:'',em:'🟢'},{id:'gpu20',br:'AMD',nm:'Radeon RX 7900 GRE',sp:'5120 SPs · 16GB GDDR6 · 260W',pr:499,bg:'new',em:'🔴'},{id:'gpu21',br:'NVIDIA',nm:'RTX 3060 Ti',sp:'4864 Cores · 8GB GDDR6 · 200W',pr:249,bg:'sale',em:'🟢'},{id:'gpu22',br:'AMD',nm:'Radeon RX 6600 XT',sp:'2048 SPs · 8GB GDDR6 · 160W',pr:199,bg:'sale',em:'🔴'}],motherboard:[{id:'mb1',br:'ASUS',nm:'ROG Maximus Z790 Apex',sp:'LGA1700 · Z790 · ATX · DDR5',pr:699,bg:'top',em:'🔌'},{id:'mb2',br:'MSI',nm:'MEG Z790 ACE',sp:'LGA1700 · Z790 · ATX · DDR5',pr:549,bg:'',em:'🔌'},{id:'mb3',br:'Gigabyte',nm:'AORUS Master Z790',sp:'LGA1700 · Z790 · ATX · DDR5',pr:489,bg:'',em:'🔌'},{id:'mb4',br:'MSI',nm:'MAG Z790 Tomahawk WiFi',sp:'LGA1700 · Z790 · ATX · WiFi6E',pr:299,bg:'hot',em:'🔌'},{id:'mb5',br:'ASUS',nm:'TUF Gaming Z790-Plus',sp:'LGA1700 · Z790 · ATX · DDR5',pr:249,bg:'',em:'🔌'},{id:'mb6',br:'ASRock',nm:'Z790 Steel Legend WiFi',sp:'LGA1700 · Z790 · ATX · DDR5',pr:229,bg:'sale',em:'🔌'},{id:'mb7',br:'Gigabyte',nm:'B760M DS3H DDR5',sp:'LGA1700 · B760 · mATX · DDR5',pr:109,bg:'sale',em:'🔌'},{id:'mb8',br:'ASUS',nm:'ROG Crosshair X670E Hero',sp:'AM5 · X670E · ATX · DDR5',pr:599,bg:'top',em:'🔌'},{id:'mb9',br:'MSI',nm:'MEG X670E ACE',sp:'AM5 · X670E · ATX · DDR5',pr:499,bg:'',em:'🔌'},{id:'mb10',br:'Gigabyte',nm:'AORUS Master X670E',sp:'AM5 · X670E · ATX · DDR5',pr:449,bg:'',em:'🔌'},{id:'mb11',br:'ASRock',nm:'X670E Taichi',sp:'AM5 · X670E · ATX · 10G LAN',pr:399,bg:'',em:'🔌'},{id:'mb12',br:'ASUS',nm:'TUF Gaming X670E-Plus WiFi',sp:'AM5 · X670E · ATX · WiFi6E',pr:259,bg:'hot',em:'🔌'},{id:'mb13',br:'MSI',nm:'MAG B650 Tomahawk',sp:'AM5 · B650 · ATX · WiFi6E',pr:199,bg:'sale',em:'🔌'},{id:'mb14',br:'Gigabyte',nm:'B650M DS3H',sp:'AM5 · B650 · mATX · DDR5',pr:99,bg:'',em:'🔌'},{id:'mb15',br:'ASUS',nm:'ROG Strix B650E-F Gaming',sp:'AM5 · B650E · ATX · DDR5',pr:239,bg:'',em:'🔌'},{id:'mb16',br:'MSI',nm:'Z690 Carbon WiFi',sp:'LGA1700 · Z690 · ATX · WiFi6E',pr:199,bg:'sale',em:'🔌'},{id:'mb17',br:'ASRock',nm:'B650 Pro RS',sp:'AM5 · B650 · ATX · DDR5',pr:149,bg:'',em:'🔌'},{id:'mb18',br:'Gigabyte',nm:'Z790 AORUS Elite AX',sp:'LGA1700 · Z790 · ATX · WiFi6E',pr:259,bg:'new',em:'🔌'},{id:'mb19',br:'ASUS',nm:'Prime X670-P',sp:'AM5 · X670 · ATX · DDR5',pr:179,bg:'',em:'🔌'},{id:'mb20',br:'MSI',nm:'MPG Z790 Edge WiFi',sp:'LGA1700 · Z790 · ATX · DDR5',pr:319,bg:'',em:'🔌'},{id:'mb21',br:'ASRock',nm:'A620M Pro RS',sp:'AM5 · A620 · mATX · DDR5',pr:89,bg:'sale',em:'🔌'},{id:'mb22',br:'ASUS',nm:'ProArt Z790-Creator',sp:'LGA1700 · Z790 · ATX · 10G LAN',pr:429,bg:'',em:'🔌'}],ram:[{id:'r1',br:'G.Skill',nm:'Trident Z5 RGB 32GB',sp:'DDR5-6400 · CL32 · 2×16GB',pr:169,bg:'top',em:'💾'},{id:'r2',br:'Corsair',nm:'Dominator Platinum 64GB',sp:'DDR5-6000 · CL30 · 2×32GB',pr:249,bg:'',em:'💾'},{id:'r3',br:'Kingston',nm:'Fury Beast 32GB DDR5',sp:'DDR5-5600 · CL40 · 2×16GB',pr:109,bg:'hot',em:'💾'},{id:'r4',br:'G.Skill',nm:'Flare X5 32GB DDR5',sp:'DDR5-6000 · CL36 · 2×16GB · EXPO',pr:129,bg:'sale',em:'💾'},{id:'r5',br:'Corsair',nm:'Vengeance 32GB DDR5',sp:'DDR5-5600 · CL36 · 2×16GB',pr:99,bg:'',em:'💾'},{id:'r6',br:'Crucial',nm:'Pro 32GB DDR5',sp:'DDR5-5600 · CL46 · 2×16GB',pr:89,bg:'sale',em:'💾'},{id:'r7',br:'G.Skill',nm:'Trident Z5 RGB 64GB',sp:'DDR5-6400 · CL32 · 2×32GB',pr:299,bg:'',em:'💾'},{id:'r8',br:'Kingston',nm:'Fury Renegade 32GB',sp:'DDR5-7200 · CL38 · 2×16GB',pr:189,bg:'hot',em:'💾'},{id:'r9',br:'Corsair',nm:'Dominator Titanium 32GB',sp:'DDR5-7200 · CL34 · RGB',pr:219,bg:'new',em:'💾'},{id:'r10',br:'TeamGroup',nm:'T-Force Delta 32GB',sp:'DDR5-6000 · CL38 · 2×16GB',pr:119,bg:'',em:'💾'},{id:'r11',br:'G.Skill',nm:'Ripjaws S5 32GB DDR5',sp:'DDR5-5600 · CL28 · No RGB',pr:99,bg:'',em:'💾'},{id:'r12',br:'Crucial',nm:'Pro 64GB DDR5',sp:'DDR5-5600 · CL46 · 2×32GB',pr:159,bg:'',em:'💾'},{id:'r13',br:'G.Skill',nm:'Trident Z5 96GB DDR5',sp:'DDR5-6400 · CL32 · 2×48GB',pr:349,bg:'new',em:'💾'},{id:'r14',br:'TeamGroup',nm:'Xtreem 32GB DDR5',sp:'DDR5-7600 · CL36 · 2×16GB',pr:249,bg:'',em:'💾'},{id:'r15',br:'G.Skill',nm:'Trident Z Neo 32GB DDR4',sp:'DDR4-3600 · CL16 · 2×16GB',pr:79,bg:'sale',em:'💾'},{id:'r16',br:'Corsair',nm:'Vengeance RGB 32GB DDR4',sp:'DDR4-3200 · CL16 · 2×16GB',pr:59,bg:'sale',em:'💾'},{id:'r17',br:'Kingston',nm:'Fury Beast 16GB DDR4',sp:'DDR4-3200 · CL16 · 2×8GB',pr:39,bg:'',em:'💾'},{id:'r18',br:'Crucial',nm:'Ballistix 32GB DDR4',sp:'DDR4-3600 · CL16 · 2×16GB',pr:69,bg:'',em:'💾'},{id:'r19',br:'G.Skill',nm:'Trident Z5 128GB DDR5',sp:'DDR5-6400 · CL32 · 4×32GB',pr:599,bg:'',em:'💾'},{id:'r20',br:'Corsair',nm:'Vengeance 16GB DDR5',sp:'DDR5-4800 · CL40 · 2×8GB',pr:49,bg:'sale',em:'💾'},{id:'r21',br:'TeamGroup',nm:'Elite 32GB DDR5',sp:'DDR5-4800 · CL40 · Budget',pr:69,bg:'',em:'💾'},{id:'r22',br:'Kingston',nm:'Fury Beast 64GB DDR5',sp:'DDR5-5600 · CL40 · 2×32GB',pr:189,bg:'',em:'💾'}],storage:[{id:'s1',br:'Samsung',nm:'990 Pro 2TB NVMe',sp:'PCIe 4.0 · 7450/6900 MB/s · M.2',pr:159,bg:'top',em:'💿'},{id:'s2',br:'WD',nm:'Black SN850X 2TB',sp:'PCIe 4.0 · 7300/6600 MB/s · M.2',pr:149,bg:'hot',em:'💿'},{id:'s3',br:'Samsung',nm:'990 Pro 4TB NVMe',sp:'PCIe 4.0 · 7450/6900 MB/s · M.2',pr:299,bg:'new',em:'💿'},{id:'s4',br:'Seagate',nm:'FireCuda 530 2TB',sp:'PCIe 4.0 · 7300/6900 MB/s · M.2',pr:169,bg:'',em:'💿'},{id:'s5',br:'Crucial',nm:'T700 2TB PCIe 5.0',sp:'PCIe 5.0 · 12400 MB/s · Heatsink',pr:249,bg:'top',em:'💿'},{id:'s6',br:'Corsair',nm:'MP600 Pro XT 2TB',sp:'PCIe 4.0 · 7100/6800 MB/s',pr:139,bg:'sale',em:'💿'},{id:'s7',br:'WD',nm:'Black SN850X 4TB',sp:'PCIe 4.0 · 7300/6600 MB/s',pr:299,bg:'new',em:'💿'},{id:'s8',br:'Samsung',nm:'980 Pro 1TB NVMe',sp:'PCIe 4.0 · 7000/5000 MB/s',pr:89,bg:'sale',em:'💿'},{id:'s9',br:'Kingston',nm:'Fury Renegade 2TB',sp:'PCIe 4.0 · 7300/7000 MB/s',pr:139,bg:'',em:'💿'},{id:'s10',br:'WD',nm:'Black SN770 2TB',sp:'PCIe 4.0 · 5150/4850 MB/s · Budget',pr:99,bg:'',em:'💿'},{id:'s11',br:'Corsair',nm:'MP600 Elite 1TB PCIe 5.0',sp:'PCIe 5.0 · 10000/9500 MB/s',pr:179,bg:'new',em:'💿'},{id:'s12',br:'Crucial',nm:'T500 2TB NVMe',sp:'PCIe 4.0 · 7400/7000 MB/s',pr:129,bg:'sale',em:'💿'},{id:'s13',br:'Sabrent',nm:'Rocket 4 Plus 4TB',sp:'PCIe 4.0 · 7100/6600 MB/s',pr:249,bg:'',em:'💿'},{id:'s14',br:'Samsung',nm:'870 EVO 4TB SATA',sp:'SATA III · 560/530 MB/s · 2.5"',pr:249,bg:'',em:'💿'},{id:'s15',br:'Seagate',nm:'IronWolf 8TB HDD',sp:'SATA · 7200RPM · NAS',pr:179,bg:'',em:'💿'},{id:'s16',br:'WD',nm:'Red Plus 6TB HDD',sp:'SATA · 5400RPM · NAS',pr:129,bg:'',em:'💿'},{id:'s17',br:'Samsung',nm:'990 Pro 1TB NVMe',sp:'PCIe 4.0 · 7450/6900 MB/s',pr:89,bg:'hot',em:'💿'},{id:'s18',br:'Kingston',nm:'NV2 1TB NVMe',sp:'PCIe 4.0 · 3500/2100 MB/s · Budget',pr:55,bg:'',em:'💿'},{id:'s19',br:'Seagate',nm:'Barracuda 2TB HDD',sp:'SATA · 7200RPM',pr:49,bg:'sale',em:'💿'},{id:'s20',br:'Crucial',nm:'P3 Plus 4TB NVMe',sp:'PCIe 4.0 · 5000/4200 MB/s',pr:149,bg:'sale',em:'💿'},{id:'s21',br:'Samsung',nm:'870 QVO 2TB SATA',sp:'SATA III · 560/530 MB/s',pr:99,bg:'',em:'💿'},{id:'s22',br:'WD',nm:'Blue SN580 1TB',sp:'PCIe 4.0 · 4150 MB/s · Budget',pr:69,bg:'sale',em:'💿'}],cooler:[{id:'co1',br:'Noctua',nm:'NH-D15 Chromax Black',sp:'Dual Tower · 165mm · 2×140mm',pr:109,bg:'top',em:'❄️'},{id:'co2',br:'be quiet!',nm:'Dark Rock Pro 5',sp:'Dual Tower · 163mm · 2×135mm',pr:99,bg:'',em:'❄️'},{id:'co3',br:'Corsair',nm:'iCUE H150i Elite LCD',sp:'360mm AIO · 3×120mm · LCD',pr:229,bg:'top',em:'❄️'},{id:'co4',br:'NZXT',nm:'Kraken Z73 360mm',sp:'360mm AIO · 3×120mm · LCD',pr:269,bg:'hot',em:'❄️'},{id:'co5',br:'Arctic',nm:'Liquid Freezer II 360mm',sp:'360mm AIO · 3×120mm · 28dBA',pr:99,bg:'sale',em:'❄️'},{id:'co6',br:'Lian Li',nm:'Galahad II Trinity 360',sp:'360mm AIO · 3×120mm Uni Fans',pr:179,bg:'new',em:'❄️'},{id:'co7',br:'DeepCool',nm:'AK620',sp:'Dual Tower · 155mm · 2×120mm',pr:59,bg:'hot',em:'❄️'},{id:'co8',br:'Thermalright',nm:'Peerless Assassin 120 SE',sp:'Dual Tower · 155mm · Best Value',pr:35,bg:'hot',em:'❄️'},{id:'co9',br:'Noctua',nm:'NH-U12A Chromax',sp:'Single Tower · 158mm · 2×120mm',pr:89,bg:'',em:'❄️'},{id:'co10',br:'be quiet!',nm:'Pure Rock 2 Black',sp:'Single Tower · 155mm · 120mm',pr:34,bg:'sale',em:'❄️'},{id:'co11',br:'NZXT',nm:'Kraken Elite 360 RGB',sp:'360mm AIO · 3×120mm · LCD',pr:299,bg:'new',em:'❄️'},{id:'co12',br:'Corsair',nm:'iCUE H100i Elite',sp:'240mm AIO · 2×120mm · RGB',pr:149,bg:'',em:'❄️'},{id:'co13',br:'Arctic',nm:'Liquid Freezer II 420mm',sp:'420mm AIO · 3×140mm',pr:119,bg:'',em:'❄️'},{id:'co14',br:'DeepCool',nm:'AK620 Digital',sp:'Dual Tower · 155mm · LCD',pr:79,bg:'new',em:'❄️'},{id:'co15',br:'Scythe',nm:'Fuma 3',sp:'Dual Tower · 2×120mm',pr:69,bg:'',em:'❄️'},{id:'co16',br:'Cooler Master',nm:'Hyper 212 Black Edition',sp:'Single Tower · 4 Heatpipes',pr:29,bg:'sale',em:'❄️'},{id:'co17',br:'NZXT',nm:'Kraken 240 RGB',sp:'240mm AIO · 2×120mm',pr:119,bg:'',em:'❄️'},{id:'co18',br:'be quiet!',nm:'Silent Loop 2 360mm',sp:'360mm AIO · 3×120mm · Silent',pr:159,bg:'',em:'❄️'},{id:'co19',br:'Thermalright',nm:'Frozen Notte 360',sp:'360mm AIO · 3×120mm',pr:69,bg:'sale',em:'❄️'},{id:'co20',br:'Arctic',nm:'Freezer 36 A-RGB',sp:'Single Tower · 120mm',pr:39,bg:'new',em:'❄️'},{id:'co21',br:'Noctua',nm:'NH-P1 Passive',sp:'Passive · 185mm · Zero Fan',pr:109,bg:'',em:'❄️'},{id:'co22',br:'Cooler Master',nm:'MasterLiquid ML360R',sp:'360mm AIO · 3×120mm RGB',pr:149,bg:'',em:'❄️'}],psu:[{id:'p1',br:'Seasonic',nm:'Prime TX-1000',sp:'1000W · 80+ Titanium · Modular',pr:249,bg:'top',em:'🔋'},{id:'p2',br:'Corsair',nm:'HX1500i Platinum',sp:'1500W · 80+ Platinum · iCUE',pr:349,bg:'top',em:'🔋'},{id:'p3',br:'be quiet!',nm:'Dark Power 13 1000W',sp:'1000W · 80+ Titanium · Modular',pr:229,bg:'',em:'🔋'},{id:'p4',br:'ASUS',nm:'ROG THOR 1000P2',sp:'1000W · 80+ Platinum · OLED',pr:279,bg:'hot',em:'🔋'},{id:'p5',br:'Seasonic',nm:'Focus GX-850',sp:'850W · 80+ Gold · Modular',pr:149,bg:'hot',em:'🔋'},{id:'p6',br:'Corsair',nm:'RM850x ATX 3.0',sp:'850W · 80+ Gold · Modular',pr:139,bg:'sale',em:'🔋'},{id:'p7',br:'Fractal',nm:'Ion+ 2 Platinum 860W',sp:'860W · 80+ Platinum · Modular',pr:169,bg:'',em:'🔋'},{id:'p8',br:'Seasonic',nm:'Focus GX-1000',sp:'1000W · 80+ Gold · Modular',pr:169,bg:'',em:'🔋'},{id:'p9',br:'MSI',nm:'MPG A1000G PCIe5',sp:'1000W · 80+ Gold · PCIe 5.0',pr:149,bg:'new',em:'🔋'},{id:'p10',br:'Cooler Master',nm:'V1300 Platinum',sp:'1300W · 80+ Platinum · Modular',pr:299,bg:'',em:'🔋'},{id:'p11',br:'Corsair',nm:'RM1000x Shift',sp:'1000W · 80+ Gold · Side Cables',pr:199,bg:'new',em:'🔋'},{id:'p12',br:'Thermaltake',nm:'Toughpower GF3 850W',sp:'850W · 80+ Gold · ATX 3.0',pr:129,bg:'',em:'🔋'},{id:'p13',br:'Seasonic',nm:'Prime TX-1300',sp:'1300W · 80+ Titanium · Modular',pr:349,bg:'',em:'🔋'},{id:'p14',br:'EVGA',nm:'SuperNOVA 750 GA',sp:'750W · 80+ Gold · Modular',pr:99,bg:'sale',em:'🔋'},{id:'p15',br:'Fractal',nm:'Pop Air 650W Gold',sp:'650W · 80+ Gold · Semi-Modular',pr:89,bg:'',em:'🔋'},{id:'p16',br:'be quiet!',nm:'System Power 10 550W',sp:'550W · 80+ Bronze',pr:59,bg:'sale',em:'🔋'},{id:'p17',br:'Corsair',nm:'CV650 Bronze',sp:'650W · 80+ Bronze · Budget',pr:59,bg:'',em:'🔋'},{id:'p18',br:'Seasonic',nm:'Core GC-550',sp:'550W · 80+ Gold · Semi-Modular',pr:79,bg:'',em:'🔋'},{id:'p19',br:'MSI',nm:'MAG A650BN',sp:'650W · 80+ Bronze',pr:55,bg:'sale',em:'🔋'},{id:'p20',br:'Cooler Master',nm:'MWE 750 V2',sp:'750W · 80+ White',pr:65,bg:'',em:'🔋'},{id:'p21',br:'be quiet!',nm:'Straight Power 12 850W',sp:'850W · 80+ Platinum',pr:159,bg:'',em:'🔋'},{id:'p22',br:'EVGA',nm:'SuperNOVA 1000 G7',sp:'1000W · 80+ Gold · Modular',pr:179,bg:'',em:'🔋'}],case:[{id:'ca1',br:'Lian Li',nm:'PC-O11 Dynamic EVO XL',sp:'Full Tower · EATX · Triple Fan Slots',pr:189,bg:'top',em:'🖥️'},{id:'ca2',br:'Fractal',nm:'Torrent RGB',sp:'Full Tower · ATX · Direct Airflow',pr:199,bg:'hot',em:'🖥️'},{id:'ca3',br:'NZXT',nm:'H9 Elite',sp:'Mid Tower · ATX · Panoramic Glass',pr:249,bg:'top',em:'🖥️'},{id:'ca4',br:'be quiet!',nm:'Silent Base 802 Window',sp:'Mid Tower · ATX · 3×140mm fans',pr:169,bg:'',em:'🖥️'},{id:'ca5',br:'Corsair',nm:'5000D Airflow',sp:'Mid Tower · ATX · Dual Chamber',pr:149,bg:'',em:'🖥️'},{id:'ca6',br:'Lian Li',nm:'Lancool III',sp:'Mid Tower · ATX · 5 Fan Slots',pr:129,bg:'sale',em:'🖥️'},{id:'ca7',br:'Phanteks',nm:'Enthoo 719 Black',sp:'Full Tower · EATX · Dual System',pr:219,bg:'',em:'🖥️'},{id:'ca8',br:'NZXT',nm:'H7 Flow RGB',sp:'Mid Tower · ATX · 3×140mm',pr:149,bg:'hot',em:'🖥️'},{id:'ca9',br:'Corsair',nm:'7000D Airflow',sp:'Full Tower · ATX · Dual Chamber',pr:219,bg:'',em:'🖥️'},{id:'ca10',br:'Cooler Master',nm:'HAF 700 EVO',sp:'Full Tower · 3×200mm · LCD',pr:299,bg:'hot',em:'🖥️'},{id:'ca11',br:'Fractal',nm:'North XL Charcoal',sp:'Full Tower · ATX · Wood Front',pr:179,bg:'new',em:'🖥️'},{id:'ca12',br:'Lian Li',nm:'Q58 ITX',sp:'ITX · Mini · 3-Slot GPU · 10L',pr:119,bg:'hot',em:'🖥️'},{id:'ca13',br:'NZXT',nm:'H510 Flow',sp:'Mid Tower · ATX · Mesh Front',pr:89,bg:'sale',em:'🖥️'},{id:'ca14',br:'Phanteks',nm:'Eclipse P400A',sp:'Mid Tower · ATX · DRGB',pr:79,bg:'sale',em:'🖥️'},{id:'ca15',br:'Corsair',nm:'4000D Airflow',sp:'Mid Tower · ATX · Tempered Glass',pr:99,bg:'',em:'🖥️'},{id:'ca16',br:'Cooler Master',nm:'MasterBox TD500 Mesh',sp:'Mid Tower · ATX · ARGB',pr:89,bg:'',em:'🖥️'},{id:'ca17',br:'be quiet!',nm:'Pure Base 500DX',sp:'Mid Tower · ATX · 3×120mm',pr:109,bg:'',em:'🖥️'},{id:'ca18',br:'Fractal',nm:'Define 7 Compact',sp:'Compact ATX · Sound Dampening',pr:109,bg:'',em:'🖥️'},{id:'ca19',br:'Thermaltake',nm:'The Tower 900',sp:'Super Tower · EATX · Vertical',pr:349,bg:'',em:'🖥️'},{id:'ca20',br:'Fractal',nm:'Ridge ITX',sp:'ITX · Vertical · 7.5L',pr:149,bg:'new',em:'🖥️'},{id:'ca21',br:'NZXT',nm:'H1 V2 ITX',sp:'ITX · Mini Tower · 280mm AIO',pr:279,bg:'',em:'🖥️'},{id:'ca22',br:'Lian Li',nm:'PC-O11 Air Mini',sp:'Mid Tower · mATX · Mesh',pr:119,bg:'',em:'🖥️'}]};
 
-const games = [
-  {name:'Counter-Strike 2',genre:'FPS',icon:'🎯',fps1080:[450,320,180],fps1440:[380,260,140],fps4k:[200,140,80]},
-  {name:'Fortnite',genre:'Battle Royale',icon:'🏝️',fps1080:[320,240,160],fps1440:[280,200,130],fps4k:[180,120,75]},
-  {name:'League of Legends',genre:'MOBA',icon:'⚔️',fps1080:[400,320,240],fps1440:[360,280,200],fps4k:[280,220,150]},
-  {name:'Valorant',genre:'Tactical FPS',icon:'💥',fps1080:[380,280,180],fps1440:[320,240,150],fps4k:[190,140,90]},
-  {name:'Minecraft',genre:'Sandbox',icon:'⛏️',fps1080:[300,220,140],fps1440:[260,190,120],fps4k:[180,130,80]},
-  {name:'GTA V',genre:'Action',icon:'🚗',fps1080:[180,130,90],fps1440:[150,110,75],fps4k:[90,65,40]},
-  {name:'Apex Legends',genre:'Battle Royale',icon:'🦁',fps1080:[200,160,110],fps1440:[170,130,90],fps4k:[105,80,55]},
-  {name:'Cyberpunk 2077',genre:'RPG',icon:'🌆',fps1080:[120,95,65],fps1440:[100,75,52],fps4k:[55,42,28]},
-  {name:'Elden Ring',genre:'Action RPG',icon:'🗡️',fps1080:[120,100,75],fps1440:[110,90,65],fps4k:[75,60,42]},
-  {name:'Call of Duty: Warzone',genre:'Battle Royale',icon:'🔫',fps1080:[200,150,100],fps1440:[170,125,85],fps4k:[100,75,50]},
-  {name:'Dota 2',genre:'MOBA',icon:'🧙',fps1080:[300,240,160],fps1440:[260,200,140],fps4k:[180,130,90]},
-  {name:'Overwatch 2',genre:'Hero Shooter',icon:'🦸',fps1080:[300,220,150],fps1440:[250,190,125],fps4k:[160,120,80]},
-  {name:'Baldur\'s Gate 3',genre:'RPG',icon:'🎲',fps1080:[100,80,55],fps1440:[85,65,45],fps4k:[48,37,25]},
-  {name:'Red Dead Redemption 2',genre:'Action',icon:'🤠',fps1080:[130,100,70],fps1440:[110,85,60],fps4k:[65,50,34]},
-  {name:'Hogwarts Legacy',genre:'Action RPG',icon:'🧹',fps1080:[115,90,62],fps1440:[96,75,52],fps4k:[55,43,30]},
-  {name:'Starfield',genre:'Space RPG',icon:'🚀',fps1080:[110,85,58],fps1440:[92,70,48],fps4k:[52,40,27]},
-  {name:'The Witcher 3 Next Gen',genre:'RPG',icon:'🐺',fps1080:[140,110,75],fps1440:[118,92,63],fps4k:[70,55,38]},
-  {name:'Microsoft Flight Simulator',genre:'Simulation',icon:'✈️',fps1080:[90,70,48],fps1440:[75,58,40],fps4k:[42,33,22]},
-  {name:'Alan Wake 2',genre:'Thriller',icon:'🔦',fps1080:[80,62,42],fps1440:[65,50,34],fps4k:[38,29,20]},
-  {name:'Assetto Corsa Competizione',genre:'Racing',icon:'🏎️',fps1080:[200,160,110],fps1440:[170,135,92],fps4k:[105,84,57]},
-  {name:'Assetto Corsa EVO',genre:'Racing Sim',icon:'🏁',fps1080:[220,175,120],fps1440:[185,148,100],fps4k:[115,92,63]},
-];
+var GAMES=[{nm:'Counter-Strike 2',gn:'FPS',ico:'🎯',b:[450,380,200]},{nm:'Fortnite',gn:'Battle Royale',ico:'🏝️',b:[320,280,180]},{nm:'League of Legends',gn:'MOBA',ico:'⚔️',b:[400,360,280]},{nm:'Valorant',gn:'Tactical FPS',ico:'💥',b:[380,320,190]},{nm:'Minecraft',gn:'Sandbox',ico:'⛏️',b:[300,260,180]},{nm:'GTA V',gn:'Action',ico:'🚗',b:[180,150,90]},{nm:'Apex Legends',gn:'Battle Royale',ico:'🦁',b:[200,170,105]},{nm:'Cyberpunk 2077',gn:'RPG',ico:'🌆',b:[120,100,55]},{nm:'Elden Ring',gn:'Action RPG',ico:'🗡️',b:[120,110,75]},{nm:'Call of Duty: Warzone',gn:'Battle Royale',ico:'🔫',b:[200,170,100]},{nm:'Dota 2',gn:'MOBA',ico:'🧙',b:[300,260,180]},{nm:'Overwatch 2',gn:'Hero Shooter',ico:'🦸',b:[300,250,160]},{nm:"Baldur's Gate 3",gn:'RPG',ico:'🎲',b:[100,85,48]},{nm:'Red Dead Redemption 2',gn:'Action',ico:'🤠',b:[130,110,65]},{nm:'Hogwarts Legacy',gn:'Action RPG',ico:'🧹',b:[115,96,55]},{nm:'Starfield',gn:'Space RPG',ico:'🚀',b:[110,92,52]},{nm:'The Witcher 3 Next Gen',gn:'RPG',ico:'🐺',b:[140,118,70]},{nm:'Microsoft Flight Simulator',gn:'Simulation',ico:'✈️',b:[90,75,42]},{nm:'Alan Wake 2',gn:'Thriller',ico:'🔦',b:[80,65,38]},{nm:'Assetto Corsa Competizione',gn:'Racing Sim',ico:'🏎️',b:[200,170,105]},{nm:'Assetto Corsa EVO',gn:'Racing Sim',ico:'🏁',b:[220,185,115]}];
 
-// ========== BUILD STATE ==========
-let build = {cpu:null,gpu:null,motherboard:null,ram:null,storage:null,cooler:null,psu:null,case:null};
-let currentCategory = 'cpu';
-let priceChart = null;
-let currentModalProduct = null;
+var SLOTS=[{k:'cpu',ico:'⚡',lbl:'CPU'},{k:'gpu',ico:'🎮',lbl:'GPU'},{k:'motherboard',ico:'🔌',lbl:'Motherboard'},{k:'ram',ico:'💾',lbl:'RAM'},{k:'storage',ico:'💿',lbl:'Storage'},{k:'cooler',ico:'❄️',lbl:'Cooler'},{k:'psu',ico:'🔋',lbl:'PSU'},{k:'case',ico:'🖥️',lbl:'Case'}];
 
-const slotConfig = [
-  {key:'cpu',icon:'⚡',label:'CPU'},
-  {key:'gpu',icon:'🎮',label:'GPU'},
-  {key:'motherboard',icon:'🔌',label:'Motherboard'},
-  {key:'ram',icon:'💾',label:'RAM'},
-  {key:'storage',icon:'💿',label:'Storage'},
-  {key:'cooler',icon:'❄️',label:'Cooler'},
-  {key:'psu',icon:'⚡',label:'Power Supply'},
-  {key:'case',icon:'🖥️',label:'Case'},
-];
-
-function init(){
-  renderSidebar();
-  showCategory('cpu', document.querySelector('.tab.active'));
-  setTimeout(()=>{
-    document.getElementById('loadingOverlay').style.display='none';
-  },1500);
-}
+var build={cpu:null,gpu:null,motherboard:null,ram:null,storage:null,cooler:null,psu:null,case:null};
+var curCat='cpu',curFilter='',curSearch='',modalProd=null;
 
 function renderSidebar(){
-  const total = Object.values(build).reduce((s,v)=>s+(v?v.price:0),0);
-  document.getElementById('totalPrice').textContent = '€'+total.toLocaleString();
-  
-  let html = '';
-  for(const s of slotConfig){
-    const item = build[s.key];
-    if(item){
-      html += `<div class="build-slot">
-        <div class="slot-icon">${s.icon}</div>
-        <div class="slot-info">
-          <div class="slot-type">${s.label}</div>
-          <div class="slot-name">${item.name}</div>
-        </div>
-        <div class="slot-price">€${item.price}</div>
-        <button class="slot-remove" onclick="removeFromBuild('${s.key}')">✕</button>
-      </div>`;
-    } else {
-      html += `<div class="build-slot slot-empty">
-        <div class="slot-icon">${s.icon}</div>
-        <div class="slot-info">
-          <div class="slot-type">${s.label}</div>
-          <div class="slot-name">Not selected</div>
-        </div>
-      </div>`;
-    }
+  var total=0,h='';
+  for(var i=0;i<SLOTS.length;i++){
+    var s=SLOTS[i],it=build[s.k];
+    if(it)total+=it.pr;
+    h+='<div class="slot'+(it?'':' empty')+'">'+
+      '<span class="slot-ico">'+s.ico+'</span>'+
+      '<div class="slot-info">'+
+        '<div class="slot-type">'+s.lbl+'</div>'+
+        '<div class="slot-name">'+(it?it.nm:'Not selected')+'</div>'+
+      '</div>'+
+      (it?'<span class="slot-price">€'+it.pr+'</span><button class="slot-x" onclick="removePart(\''+s.k+'\')">✕</button>':'')+
+    '</div>';
   }
-  document.getElementById('buildSlots').innerHTML = html;
-  checkCompatibility();
+  document.getElementById('slotList').innerHTML=h;
+  document.getElementById('totalAmt').textContent='€'+total.toLocaleString();
+  checkCompat();
 }
 
-function checkCompatibility(){
-  const el = document.getElementById('compatCheck');
-  const msg = document.getElementById('compatMsg');
-  const filled = Object.values(build).filter(Boolean).length;
-  
-  if(filled === 0){
-    el.className = 'compat-check compat-ok';
-    msg.textContent = 'Add components to check compatibility';
-    return;
+function checkCompat(){
+  var el=document.getElementById('compatBox');
+  var filled=SLOTS.filter(function(s){return build[s.k];}).length;
+  var issues=[];
+  if(build.cpu&&build.motherboard){
+    var isAMD=build.cpu.br==='AMD';
+    var mbAM=build.motherboard.sp.indexOf('AM5')>=0||build.motherboard.sp.indexOf('AM4')>=0;
+    var isIntel=build.cpu.br==='Intel';
+    var mbLGA=build.motherboard.sp.indexOf('LGA17')>=0||build.motherboard.sp.indexOf('LGA12')>=0;
+    if(isAMD&&!mbAM)issues.push('Socket mismatch: AMD CPU needs AM5/AM4 motherboard');
+    if(isIntel&&!mbLGA)issues.push('Socket mismatch: Intel CPU needs LGA1700 motherboard');
   }
-  
-  // Check socket compatibility
-  let issues = [];
-  if(build.cpu && build.motherboard){
-    const cpuIsAMD = build.cpu.brand === 'AMD';
-    const mbIsAMD = build.motherboard.specs.includes('AM5') || build.motherboard.specs.includes('AM4');
-    const cpuIsIntel = build.cpu.brand === 'Intel';
-    const mbIsIntel = build.motherboard.specs.includes('LGA1700') || build.motherboard.specs.includes('LGA1200');
-    if((cpuIsAMD && mbIsIntel) || (cpuIsIntel && mbIsAMD)){
-      issues.push('CPU/Motherboard socket mismatch!');
-    }
+  if(build.gpu&&build.psu){
+    var m=build.psu.sp.match(/(\d+)W/);
+    var pw=m?parseInt(m[1]):0;
+    var gm2=build.gpu.sp.match(/(\d+)W/);
+    var gw=gm2?parseInt(gm2[1]):0;
+    var cw=100;
+    if(build.cpu){var cm=build.cpu.sp.match(/(\d+)W/);if(cm)cw=parseInt(cm[1]);}
+    if(pw&&pw<gw+cw+80)issues.push('PSU may be underpowered ('+pw+'W vs ~'+(gw+cw+80)+'W needed)');
   }
-  
-  if(build.gpu && build.psu){
-    const psuWatts = parseInt(build.psu.specs.match(/(\d+)W/)?.[1]||0);
-    const gpuWatts = parseInt(build.gpu.specs.match(/(\d+)W/)?.[1]||0);
-    const cpuWatts = build.cpu ? parseInt(build.cpu.specs.match(/(\d+)W TDP/)?.[1]||100) : 100;
-    if(psuWatts < gpuWatts + cpuWatts + 100){
-      issues.push(`PSU may be underpowered (${psuWatts}W for ~${gpuWatts+cpuWatts+100}W system)`);
-    }
-  }
-  
-  if(issues.length > 0){
-    el.className = 'compat-check compat-err';
-    msg.textContent = '⚠ ' + issues.join(' | ');
-  } else if(filled < 4){
-    el.className = 'compat-check compat-warn';
-    msg.textContent = `${filled}/8 components selected`;
-  } else {
-    el.className = 'compat-check compat-ok';
-    msg.textContent = `✓ ${filled}/8 components — Build looks good!`;
-  }
+  if(issues.length){el.className='err';el.textContent='⚠ '+issues[0];}
+  else if(filled===0){el.className='ok';el.textContent='✓ Add components to begin';}
+  else if(filled<8){el.className='warn';el.textContent='ℹ '+filled+'/8 components selected';}
+  else{el.className='ok';el.textContent='✓ Full build — looks compatible!';}
 }
 
-function addToBuild(id, category){
-  const items = components[category];
-  const item = items.find(i=>i.id===id);
-  if(!item) return;
-  build[category] = item;
-  renderSidebar();
-  renderCategory(category);
-  
-  // Show sidebar
-  document.getElementById('buildSidebar').classList.add('active');
-}
-
-function removeFromBuild(key){
-  build[key] = null;
-  renderSidebar();
-  renderCategory(currentCategory);
-}
-
-function clearBuild(){
-  Object.keys(build).forEach(k=>build[k]=null);
-  renderSidebar();
-  renderCategory(currentCategory);
-}
-
+function removePart(k){build[k]=null;renderSidebar();renderGrid();}
+function clearAll(){Object.keys(build).forEach(function(k){build[k]=null;});renderSidebar();renderGrid();}
 function toggleSidebar(){
-  document.getElementById('buildSidebar').classList.toggle('active');
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('main').classList.toggle('shifted');
 }
 
-function showSection(name, el){
-  document.querySelectorAll('nav a').forEach(a=>a.classList.remove('active'));
-  if(el) el.classList.add('active');
-  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
-  document.getElementById('section-'+name).classList.add('active');
-  
-  // Show/hide category tabs
-  document.getElementById('categoryTabs').style.display = name==='builder'?'flex':'none';
+function showPage(name,btn){
+  document.querySelectorAll('.nav-btn').forEach(function(b){b.classList.remove('active');});
+  if(btn)btn.classList.add('active');
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
+  document.getElementById(name+'Page').classList.add('active');
 }
 
-function showCategory(cat, btn){
-  currentCategory = cat;
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  if(btn) btn.classList.add('active');
-  renderCategory(cat);
+function showCat(cat,btn){
+  curCat=cat;curFilter='';curSearch='';
+  document.querySelectorAll('.cat-btn').forEach(function(b){b.classList.remove('active');});
+  if(btn)btn.classList.add('active');
+  document.querySelectorAll('.fbtn').forEach(function(b){b.classList.remove('active');});
+  document.querySelector('.fbtn').classList.add('active');
+  document.getElementById('searchBox').value='';
+  renderGrid();
 }
 
-function renderCategory(cat){
-  const items = components[cat];
-  const content = document.getElementById('categoryContent');
-  
-  let filtersHtml = `<div class="filters">
-    <button class="filter-btn active" onclick="filterCards(this,'')">All</button>
-    <button class="filter-btn" onclick="filterCards(this,'top')">⭐ Top Picks</button>
-    <button class="filter-btn" onclick="filterCards(this,'hot')">🔥 Popular</button>
-    <button class="filter-btn" onclick="filterCards(this,'sale')">💰 On Sale</button>
-    <button class="filter-btn" onclick="filterCards(this,'new')">🆕 New</button>
-    <input class="search-input" placeholder="Search..." oninput="searchCards(this.value,'${cat}')">
-  </div>`;
-  
-  let gridHtml = `<div class="products-grid" id="grid-${cat}">`;
-  for(const item of items){
-    const isSelected = build[cat] && build[cat].id === item.id;
-    const change = (Math.random()*10-3).toFixed(1);
-    const changeClass = parseFloat(change)>=0?'price-up':'price-down';
-    const changeSymbol = parseFloat(change)>=0?'▲':'▼';
-    gridHtml += `<div class="product-card ${isSelected?'selected':''}" id="card-${item.id}" data-badge="${item.badge}">
-      ${item.badge ? `<div class="card-badge badge-${item.badge}">${item.badge.toUpperCase()}</div>` : ''}
-      <div class="card-img">${item.emoji}</div>
-      <div class="card-body">
-        <div class="card-brand">${item.brand}</div>
-        <div class="card-name">${item.name}</div>
-        <div class="card-specs">${item.specs}</div>
-      </div>
-      <div class="card-footer">
-        <div>
-          <div class="card-price"><span class="currency">€</span>${item.price}</div>
-          <div class="card-price-change ${changeClass}">${changeSymbol}${Math.abs(change)}% 30d</div>
-        </div>
-        <div style="display:flex;flex-direction:column;gap:0.3rem;align-items:flex-end;">
-          <button class="add-btn ${isSelected?'added':''}" onclick="addToBuild('${item.id}','${cat}')">
-            ${isSelected?'✓ ADDED':'+ ADD'}
-          </button>
-          <button style="background:none;border:1px solid var(--border);color:var(--text-dim);font-size:0.65rem;font-family:Share Tech Mono,monospace;padding:0.25rem 0.5rem;border-radius:3px;cursor:pointer;" onclick="openPriceModal('${item.id}','${cat}')">📈 CHART</button>
-        </div>
-      </div>
-    </div>`;
-  }
-  gridHtml += '</div>';
-  content.innerHTML = filtersHtml + gridHtml;
-}
-
-function filterCards(btn, badge){
-  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+function setFilter(f,btn){
+  curFilter=f;
+  document.querySelectorAll('.fbtn').forEach(function(b){b.classList.remove('active');});
   btn.classList.add('active');
-  const cards = document.querySelectorAll('.product-card');
-  cards.forEach(c=>{
-    if(!badge || c.dataset.badge===badge){
-      c.style.display='';
-    } else {
-      c.style.display='none';
-    }
-  });
+  renderGrid();
 }
 
-function searchCards(val, cat){
-  const items = components[cat];
-  const query = val.toLowerCase();
-  const cards = document.querySelectorAll('.product-card');
-  cards.forEach((c,i)=>{
-    const item = items.find(p=>p.id===c.id.replace('card-',''));
-    if(!item) return;
-    const match = item.name.toLowerCase().includes(query) || item.brand.toLowerCase().includes(query) || item.specs.toLowerCase().includes(query);
-    c.style.display = match?'':'none';
-  });
-}
+function doSearch(v){curSearch=v.toLowerCase();renderGrid();}
 
-// ========== PRICE CHART MODAL ==========
-function generatePriceData(basePrice, days){
-  const data = [];
-  const labels = [];
-  let price = basePrice * 1.08;
-  const now = new Date();
-  for(let i=days;i>=0;i--){
-    const d = new Date(now);
-    d.setDate(d.getDate()-i);
-    labels.push(d.toLocaleDateString('en-GB',{day:'2-digit',month:'short'}));
-    price += (Math.random()-0.48)*basePrice*0.012;
-    price = Math.max(basePrice*0.75, Math.min(basePrice*1.3, price));
-    data.push(parseFloat(price.toFixed(2)));
+function renderGrid(){
+  var items=D[curCat]||[];
+  var h='';
+  for(var i=0;i<items.length;i++){
+    var it=items[i];
+    if(curFilter&&it.bg!==curFilter)continue;
+    if(curSearch&&it.nm.toLowerCase().indexOf(curSearch)<0&&it.br.toLowerCase().indexOf(curSearch)<0&&it.sp.toLowerCase().indexOf(curSearch)<0)continue;
+    var sel=build[curCat]&&build[curCat].id===it.id;
+    var chg=((Math.random()*8)-2).toFixed(1);
+    var isUp=parseFloat(chg)>=0;
+    h+='<div class="pcard'+(sel?' selected':'')+'">'+
+      (it.bg?'<div class="pbadge badge-'+it.bg+'">'+it.bg.toUpperCase()+'</div>':'')+
+      '<div class="pimg">'+it.em+'</div>'+
+      '<div class="pbody">'+
+        '<div class="pbrand">'+it.br+'</div>'+
+        '<div class="pname">'+it.nm+'</div>'+
+        '<div class="pspecs">'+it.sp+'</div>'+
+      '</div>'+
+      '<div class="pfoot">'+
+        '<div>'+
+          '<div class="pprice"><span class="cur">€</span>'+it.pr+'</div>'+
+          '<div class="pchange '+(isUp?'up':'dn')+'">'+(isUp?'▲':'▼')+Math.abs(chg)+'% (30d)</div>'+
+        '</div>'+
+        '<div class="pbtns">'+
+          '<button class="addbtn'+(sel?' added':'')+'" onclick="addPart(\''+it.id+'\',\''+curCat+'\')">'+(sel?'✓ ADDED':'+ ADD')+'</button>'+
+          '<button class="chartbtn" onclick="openModal(\''+it.id+'\',\''+curCat+'\')">📈 PRICE</button>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
   }
-  return {data, labels};
+  if(!h)h='<div style="grid-column:1/-1;padding:2rem;text-align:center;font-family:Share Tech Mono,monospace;font-size:.8rem;color:var(--dim);">No results found</div>';
+  document.getElementById('productGrid').innerHTML=h;
 }
 
-function openPriceModal(id, cat){
-  const item = components[cat].find(i=>i.id===id);
-  if(!item) return;
-  currentModalProduct = {item, cat};
-  document.getElementById('modalTitle').textContent = item.name;
-  document.getElementById('modalSubtitle').textContent = item.brand + ' · ' + item.specs.split(' · ')[0];
-  
-  document.querySelectorAll('.price-tab').forEach(t=>t.classList.remove('active'));
-  document.querySelector('.price-tab').classList.add('active');
-  
-  buildPriceChart(item.price, 30);
-  document.getElementById('priceModal').classList.add('open');
+function addPart(id,cat){
+  var items=D[cat]||[];
+  var it=null;
+  for(var i=0;i<items.length;i++){if(items[i].id===id){it=items[i];break;}}
+  if(!it)return;
+  build[cat]=it;
+  renderSidebar();
+  renderGrid();
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('main').classList.add('shifted');
 }
 
-function buildPriceChart(basePrice, days){
-  const {data,labels} = generatePriceData(basePrice, days);
-  const ctx = document.getElementById('priceChart').getContext('2d');
-  
-  if(priceChart) priceChart.destroy();
-  
-  const min = Math.min(...data);
-  const max = Math.max(...data);
-  const avg = data.reduce((a,b)=>a+b,0)/data.length;
-  
-  priceChart = new Chart(ctx, {
-    type:'line',
-    data:{
-      labels,
-      datasets:[{
-        label:'Price (€)',
-        data,
-        borderColor:'#00d4ff',
-        backgroundColor:'rgba(0,212,255,0.05)',
-        borderWidth:2,
-        pointRadius:0,
-        pointHoverRadius:4,
-        fill:true,
-        tension:0.3,
-      }]
-    },
-    options:{
-      responsive:true,
-      maintainAspectRatio:false,
-      plugins:{
-        legend:{display:false},
-        tooltip:{
-          mode:'index',
-          intersect:false,
-          backgroundColor:'#0d1117',
-          borderColor:'#1e3048',
-          borderWidth:1,
-          titleColor:'#00d4ff',
-          bodyColor:'#c8d8e8',
-          callbacks:{label:c=>'€'+c.raw}
-        }
-      },
-      scales:{
-        x:{
-          grid:{color:'rgba(30,48,72,0.5)'},
-          ticks:{color:'#4a6a8a',maxTicksLimit:8,font:{family:'Share Tech Mono',size:10}},
-          border:{display:false}
-        },
-        y:{
-          grid:{color:'rgba(30,48,72,0.5)'},
-          ticks:{color:'#4a6a8a',font:{family:'Share Tech Mono',size:10},callback:v=>'€'+v},
-          border:{display:false}
-        }
-      }
-    }
-  });
-  
-  document.getElementById('priceStats').innerHTML = `
-    <div class="pstat"><div class="pstat-label">Current</div><div class="pstat-val">€${data[data.length-1]}</div></div>
-    <div class="pstat"><div class="pstat-label">Low ${days}d</div><div class="pstat-val" style="color:var(--accent3)">€${min.toFixed(0)}</div></div>
-    <div class="pstat"><div class="pstat-label">High ${days}d</div><div class="pstat-val" style="color:var(--red)">€${max.toFixed(0)}</div></div>
-    <div class="pstat"><div class="pstat-label">Avg ${days}d</div><div class="pstat-val">€${avg.toFixed(0)}</div></div>
-  `;
+function genPriceData(base,days){
+  var pts=[],labs=[],now=new Date(),p=base*1.06;
+  for(var i=days;i>=0;i--){
+    var d=new Date(now);d.setDate(d.getDate()-i);
+    labs.push(d.toLocaleDateString('en-GB',{day:'2-digit',month:'short'}));
+    p+=((Math.random()-.47)*base*.013);
+    if(p<base*.72)p=base*.72;
+    if(p>base*1.32)p=base*1.32;
+    pts.push(parseFloat(p.toFixed(2)));
+  }
+  return{pts:pts,labs:labs};
 }
 
-function updateChart(days, btn){
-  document.querySelectorAll('.price-tab').forEach(t=>t.classList.remove('active'));
+function drawChart(base,days){
+  var data=genPriceData(base,days),pts=data.pts,labs=data.labs;
+  var W=640,H=180,pl=55,pr2=10,pt=10,pb=30;
+  var cw=W-pl-pr2,ch=H-pt-pb;
+  var mn=pts[0],mx=pts[0];
+  for(var i=1;i<pts.length;i++){if(pts[i]<mn)mn=pts[i];if(pts[i]>mx)mx=pts[i];}
+  var rng=mx-mn||1;
+  function xs(i){return pl+i*(cw/(pts.length-1));}
+  function ys(v){return pt+ch-((v-mn)/rng*ch);}
+  var pathD='',areaD='';
+  for(var i=0;i<pts.length;i++){pathD+=(i?'L':'M')+xs(i).toFixed(1)+','+ys(pts[i]).toFixed(1)+' ';}
+  areaD=pathD+'L'+xs(pts.length-1).toFixed(1)+','+(pt+ch).toFixed(1)+' L'+pl+','+(pt+ch).toFixed(1)+' Z';
+  var ticks='';
+  for(var t=0;t<=4;t++){var v=mn+(rng*t/4);var y=ys(v);ticks+='<line x1="'+pl+'" y1="'+y.toFixed(1)+'" x2="'+(W-pr2)+'" y2="'+y.toFixed(1)+'" stroke="rgba(30,48,72,.6)" stroke-width="1"/><text x="'+(pl-4).toFixed(1)+'" y="'+y.toFixed(1)+'" fill="#4a6a8a" font-size="9" text-anchor="end" dominant-baseline="middle" font-family="monospace">€'+Math.round(v)+'</text>';}
+  var xlabs='',step=Math.max(1,Math.floor(pts.length/6));
+  for(var i=0;i<pts.length;i+=step){xlabs+='<text x="'+xs(i).toFixed(1)+'" y="'+(H-4).toFixed(1)+'" fill="#4a6a8a" font-size="8" text-anchor="middle" font-family="monospace">'+labs[i]+'</text>';}
+  document.getElementById('chartSvg').innerHTML='<defs><linearGradient id="cg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#00d4ff" stop-opacity=".2"/><stop offset="100%" stop-color="#00d4ff" stop-opacity="0"/></linearGradient></defs>'+ticks+xlabs+'<path d="'+areaD+'" fill="url(#cg)"/><path d="'+pathD+'" stroke="#00d4ff" stroke-width="1.8" fill="none"/><circle cx="'+xs(pts.length-1).toFixed(1)+'" cy="'+ys(pts[pts.length-1]).toFixed(1)+'" r="3" fill="#00d4ff"/>';
+  var avg=0;for(var i=0;i<pts.length;i++)avg+=pts[i];avg=(avg/pts.length).toFixed(0);
+  document.getElementById('pstats').innerHTML='<div class="ps"><div class="ps-l">Current</div><div class="ps-v">€'+pts[pts.length-1]+'</div></div><div class="ps"><div class="ps-l">Low '+days+'D</div><div class="ps-v" style="color:var(--green)">€'+Math.round(mn)+'</div></div><div class="ps"><div class="ps-l">High '+days+'D</div><div class="ps-v" style="color:var(--red)">€'+Math.round(mx)+'</div></div><div class="ps"><div class="ps-l">Avg '+days+'D</div><div class="ps-v">€'+avg+'</div></div>';
+}
+
+function openModal(id,cat){
+  var items=D[cat]||[],it=null;
+  for(var i=0;i<items.length;i++){if(items[i].id===id){it=items[i];break;}}
+  if(!it)return;
+  modalProd={it:it,cat:cat};
+  document.getElementById('modalTitle').textContent=it.nm;
+  document.getElementById('modalSub').textContent=it.br+' · '+it.sp.split(' · ')[0];
+  document.querySelectorAll('.ptab').forEach(function(t,i){t.classList.toggle('active',i===0);});
+  document.getElementById('modalAddBtn').onclick=function(){addPart(it.id,cat);closeModal();};
+  drawChart(it.pr,30);
+  document.getElementById('modal').classList.add('open');
+}
+
+function setPeriod(d,btn){
+  document.querySelectorAll('.ptab').forEach(function(t){t.classList.remove('active');});
   btn.classList.add('active');
-  if(currentModalProduct) buildPriceChart(currentModalProduct.item.price, days);
+  if(modalProd)drawChart(modalProd.it.pr,d);
 }
 
-function closeModal(){
-  document.getElementById('priceModal').classList.remove('open');
+function closeModal(){document.getElementById('modal').classList.remove('open');}
+
+function doViewBuild(){
+  showPage('viewer',null);
+  var filled=SLOTS.filter(function(s){return build[s.k];});
+  var lbl=document.getElementById('viewerLabel');
+  var tbl=document.getElementById('buildSpecTable');
+  if(!filled.length){lbl.textContent='// No build configured — add components first';tbl.innerHTML='';return;}
+  lbl.innerHTML='// '+filled.length+'/8 COMPONENTS · RGB: ON · FAN: '+(800+Math.floor(Math.random()*800))+' RPM';
+  var total=0,rows='';
+  for(var i=0;i<SLOTS.length;i++){
+    var s=SLOTS[i],it=build[s.k];
+    if(it)total+=it.pr;
+    rows+='<div class="bst-row"><div class="bst-type">'+s.lbl+'</div><div class="bst-name">'+(it?it.nm:'<span style="color:var(--dim);font-style:italic">Not selected</span>')+'</div><div class="bst-price">'+(it?'€'+it.pr:'—')+'</div></div>';
+  }
+  tbl.innerHTML='<div class="bst-head">⚡ Build Specifications</div>'+rows+'<div class="bst-total"><span class="lbl">Total</span><span class="val">€'+total.toLocaleString()+'</span></div>';
 }
 
-function addFromModal(){
-  if(currentModalProduct){
-    addToBuild(currentModalProduct.item.id, currentModalProduct.cat);
-    closeModal();
+function doGaming(){
+  showPage('gaming',null);
+  var gc=document.getElementById('gamingContent');
+  var cpu=build.cpu,gpu=build.gpu;
+  if(!cpu&&!gpu){gc.innerHTML='<div class="no-build"><div class="ico">🎮</div><p>Add at least a CPU and GPU to estimate gaming performance.<br>Go to Builder → select components → click TEST GAMING PERF</p></div>';return;}
+  var gm=0.5;
+  if(gpu){if(gpu.pr>1500)gm=1.0;else if(gpu.pr>900)gm=0.85;else if(gpu.pr>600)gm=0.75;else if(gpu.pr>400)gm=0.65;else if(gpu.pr>200)gm=0.52;else gm=0.38;}
+  var cm=0.85;
+  if(cpu){if(cpu.pr>500)cm=1.0;else if(cpu.pr>300)cm=0.93;else if(cpu.pr>150)cm=0.86;else cm=0.76;}
+  var pm=gm*.75+cm*.25;
+  var h='<div style="padding:1.2rem 0 1rem;font-family:Share Tech Mono,monospace;font-size:.72rem;color:var(--dim);">ESTIMATED FPS — <span style="color:var(--accent)">'+(gpu?gpu.nm:'No GPU')+'</span> + <span style="color:var(--accent2)">'+(cpu?cpu.nm:'No CPU')+'</span></div>';
+  h+='<div style="display:flex;gap:.8rem;margin-bottom:1.2rem;font-family:Share Tech Mono,monospace;font-size:.62rem;color:var(--dim);"><span><span style="display:inline-block;width:14px;height:5px;background:var(--green);border-radius:2px;vertical-align:middle;margin-right:4px;"></span>1080p</span><span><span style="display:inline-block;width:14px;height:5px;background:var(--accent);border-radius:2px;vertical-align:middle;margin-right:4px;"></span>1440p</span><span><span style="display:inline-block;width:14px;height:5px;background:var(--accent2);border-radius:2px;vertical-align:middle;margin-right:4px;"></span>4K</span></div><div class="game-grid">';
+  for(var i=0;i<GAMES.length;i++){
+    var g=GAMES[i];
+    var f1=Math.round(g.b[0]*pm),f2=Math.round(g.b[1]*pm*.95),f3=Math.round(g.b[2]*pm*.88);
+    var mx=g.b[0];
+    var p1=Math.min(100,f1/mx*100),p2=Math.min(100,f2/mx*100),p3=Math.min(100,f3/mx*100);
+    var rankCls=(i<3?' g3':'');
+    h+='<div class="gcard"><div class="gcard-head"><div class="gico">'+g.ico+'</div><div class="gtitle"><div class="gname">'+g.nm+'</div><div class="ggenre">'+g.gn+'</div></div><div class="grank'+rankCls+'">#'+(i+1)+'</div></div><div class="fps-section"><div class="fps-row"><div class="fps-lbl">1080p</div><div class="fps-track"><div class="fps-fill f1" style="width:'+p1+'%"><span class="fps-num">'+f1+'</span></div></div></div><div class="fps-row"><div class="fps-lbl">1440p</div><div class="fps-track"><div class="fps-fill f2" style="width:'+p2+'%"><span class="fps-num">'+f2+'</span></div></div></div><div class="fps-row"><div class="fps-lbl">4K</div><div class="fps-track"><div class="fps-fill f3" style="width:'+p3+'%"><span class="fps-num">'+f3+'</span></div></div></div></div></div>';
   }
+  h+='</div>';
+  gc.innerHTML=h;
 }
 
-// ========== VIEW BUILD ==========
-function viewBuild(){
-  showSection('viewer', null);
-  document.querySelectorAll('nav a').forEach(a=>a.classList.remove('active'));
-  
-  const filled = Object.values(build).filter(Boolean);
-  const note = document.getElementById('viewerNote');
-  const specsPanel = document.getElementById('buildSpecsPanel');
-  
-  if(filled.length === 0){
-    note.innerHTML = '// NO BUILD CONFIGURED — Add components to visualize your PC<br>Use the Builder tab to select your components';
-    specsPanel.innerHTML='';
-    return;
-  }
-  
-  note.innerHTML = `// ${filled.length}/8 COMPONENTS · RGB MODE: ACTIVE · FAN SPEED: 1247 RPM`;
-  
-  // Build specs table
-  let specsHtml = `<div style="background:var(--panel);border:1px solid var(--border);border-radius:6px;overflow:hidden;">
-    <div style="padding:1rem 1.25rem;border-bottom:1px solid var(--border);font-family:Rajdhani,sans-serif;font-size:1rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--accent);">⚡ Build Specifications</div>
-    <table style="width:100%;border-collapse:collapse;">`;
-  
-  for(const s of slotConfig){
-    const item = build[s.key];
-    specsHtml += `<tr style="border-bottom:1px solid rgba(30,48,72,0.5);">
-      <td style="padding:0.6rem 1.25rem;font-family:Share Tech Mono,monospace;font-size:0.7rem;color:var(--text-dim);text-transform:uppercase;width:120px;">${s.label}</td>
-      <td style="padding:0.6rem 1rem;font-size:0.85rem;color:${item?'var(--text-bright)':'var(--text-dim)'};">${item?item.name:'<em>Not selected</em>'}</td>
-      <td style="padding:0.6rem 1.25rem;font-family:Rajdhani,sans-serif;font-size:0.9rem;font-weight:700;color:${item?'var(--accent3)':'var(--text-dim)'};text-align:right;">${item?'€'+item.price:'—'}</td>
-    </tr>`;
-  }
-  
-  const total = Object.values(build).reduce((s,v)=>s+(v?v.price:0),0);
-  specsHtml += `<tr style="background:rgba(0,212,255,0.05);">
-    <td colspan="2" style="padding:0.8rem 1.25rem;font-family:Rajdhani,sans-serif;font-weight:700;font-size:1rem;text-transform:uppercase;letter-spacing:0.1em;">TOTAL</td>
-    <td style="padding:0.8rem 1.25rem;font-family:Rajdhani,sans-serif;font-size:1.3rem;font-weight:700;color:var(--gold);text-align:right;">€${total.toLocaleString()}</td>
-  </tr></table></div>`;
-  
-  specsPanel.innerHTML = specsHtml;
-}
-
-// ========== GAMING PERFORMANCE ==========
-function checkGaming(){
-  showSection('gaming', null);
-  document.querySelectorAll('nav a').forEach(a=>a.classList.remove('active'));
-  
-  const cpu = build.cpu;
-  const gpu = build.gpu;
-  const content = document.getElementById('gamingContent');
-  
-  if(!cpu && !gpu){
-    content.innerHTML = `<div class="no-build-msg"><div class="icon">🎮</div><div>Add at least a CPU and GPU to estimate gaming performance</div></div>`;
-    return;
-  }
-  
-  // Performance multiplier based on GPU tier
-  let gpuMult = 0.5;
-  if(gpu){
-    if(gpu.price > 1500) gpuMult = 1.0;
-    else if(gpu.price > 900) gpuMult = 0.85;
-    else if(gpu.price > 600) gpuMult = 0.75;
-    else if(gpu.price > 400) gpuMult = 0.65;
-    else if(gpu.price > 200) gpuMult = 0.5;
-    else gpuMult = 0.35;
-  }
-  let cpuMult = 0.85;
-  if(cpu){
-    if(cpu.price > 500) cpuMult = 1.0;
-    else if(cpu.price > 300) cpuMult = 0.92;
-    else if(cpu.price > 150) cpuMult = 0.85;
-    else cpuMult = 0.75;
-  }
-  const perfMult = (gpuMult * 0.75) + (cpuMult * 0.25);
-  
-  let headerHtml = `<div style="padding:1rem 0 1.5rem;font-family:Share Tech Mono,monospace;font-size:0.75rem;color:var(--text-dim);">
-    ESTIMATED PERFORMANCE FOR: <span style="color:var(--accent)">${gpu?gpu.name:'No GPU'}</span> + <span style="color:var(--accent2)">${cpu?cpu.name:'No CPU'}</span>
-    <span style="float:right;color:var(--text-dim)">Note: estimates based on tier benchmarks — actual results vary</span>
-  </div>
-  <div style="display:flex;gap:1rem;margin-bottom:1.5rem;font-family:Share Tech Mono,monospace;font-size:0.65rem;color:var(--text-dim);">
-    <span style="display:flex;align-items:center;gap:0.3rem;"><span style="display:inline-block;width:16px;height:6px;background:linear-gradient(90deg,var(--accent3),#5aad00);border-radius:2px;"></span>1080p</span>
-    <span style="display:flex;align-items:center;gap:0.3rem;"><span style="display:inline-block;width:16px;height:6px;background:linear-gradient(90deg,var(--accent),#0099cc);border-radius:2px;"></span>1440p</span>
-    <span style="display:flex;align-items:center;gap:0.3rem;"><span style="display:inline-block;width:16px;height:6px;background:linear-gradient(90deg,var(--accent2),#cc4400);border-radius:2px;"></span>4K</span>
-  </div>`;
-  
-  let gridHtml = '<div class="games-grid">';
-  games.forEach((g,idx)=>{
-    const fps1080 = Math.round(g.fps1080[1] * perfMult);
-    const fps1440 = Math.round(g.fps1440[1] * perfMult);
-    const fps4k = Math.round(g.fps4k[1] * perfMult);
-    const maxFps = g.fps1080[0];
-    
-    const bar1 = Math.min(100, (fps1080/maxFps)*100);
-    const bar2 = Math.min(100, (fps1440/maxFps)*100);
-    const bar3 = Math.min(100, (fps4k/maxFps)*100);
-    
-    gridHtml += `<div class="game-card">
-      <div class="game-header">
-        <div class="game-icon">${g.icon}</div>
-        <div class="game-title-area">
-          <div class="game-name">${g.name}</div>
-          <div class="game-genre">${g.genre}</div>
-        </div>
-        <div class="game-rank ${idx<3?'top3':'}">#${idx+1}</div>
-      </div>
-      <div class="fps-bars">
-        <div class="fps-row">
-          <div class="fps-label">1080p</div>
-          <div class="fps-bar-wrap"><div class="fps-bar fps-1080" style="width:${bar1}%"><span class="fps-value">${fps1080}</span></div></div>
-        </div>
-        <div class="fps-row">
-          <div class="fps-label">1440p</div>
-          <div class="fps-bar-wrap"><div class="fps-bar fps-1440" style="width:${bar2}%"><span class="fps-value">${fps1440}</span></div></div>
-        </div>
-        <div class="fps-row">
-          <div class="fps-label">4K</div>
-          <div class="fps-bar-wrap"><div class="fps-bar fps-4k" style="width:${bar3}%"><span class="fps-value">${fps4k}</span></div></div>
-        </div>
-      </div>
-    </div>`;
-  });
-  gridHtml += '</div>';
-  content.innerHTML = headerHtml + gridHtml;
-}
-
-// Click outside modal to close
-document.getElementById('priceModal').addEventListener('click', function(e){
-  if(e.target===this) closeModal();
-});
-
-// INIT
-window.addEventListener('load', init);
+renderSidebar();
+renderGrid();
 </script>
 </body>
 </html>
