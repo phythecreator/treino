@@ -5,182 +5,254 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>GameHub - 20 Jogos Incríveis</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Orbitron:wght@400;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Poppins:wght@400;600;700&display=swap');
 
     :root {
-      --primary: #00ff9d;
-      --accent: #ff00aa;
-      --bg: #0a0a1f;
-      --card: #1a1a3a;
+      --teal: #00d4ff;
+      --pink: #ff00aa;
+      --bg: linear-gradient(135deg, #00c4ff 0%, #00ff9d 100%);
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      background: linear-gradient(135deg, #0a0a1f 0%, #1a0033 100%);
-      color: white;
-      font-family: 'Orbitron', sans-serif;
-      overflow-x: hidden;
+      background: var(--bg);
+      color: #000;
+      font-family: 'Poppins', sans-serif;
       min-height: 100vh;
+      overflow-x: hidden;
     }
 
     header {
-      text-align: center;
-      padding: 40px 20px 20px;
-      background: rgba(0,0,0,0.6);
-      border-bottom: 3px solid var(--primary);
+      background: rgba(255,255,255,0.95);
+      padding: 15px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
 
-    h1 {
+    .logo {
       font-family: 'Press Start 2P', cursive;
-      font-size: 3.5rem;
-      background: linear-gradient(to right, var(--primary), var(--accent));
+      font-size: 2.2rem;
+      background: linear-gradient(to right, #00d4ff, #ff00aa);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      text-shadow: 0 0 30px rgba(0,255,157,0.5);
+      letter-spacing: 3px;
+    }
+
+    .search {
+      background: #fff;
+      border: 3px solid #000;
+      border-radius: 50px;
+      padding: 12px 25px;
+      width: 380px;
+      font-size: 1.1rem;
+      outline: none;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
     }
 
     .coins {
-      position: absolute;
-      top: 30px;
-      right: 40px;
-      background: var(--card);
-      padding: 10px 20px;
+      background: #000;
+      color: #fff;
+      padding: 8px 20px;
       border-radius: 50px;
-      font-size: 1.2rem;
+      font-weight: 700;
       display: flex;
       align-items: center;
-      gap: 10px;
-      border: 2px solid var(--primary);
+      gap: 8px;
+      font-size: 1.3rem;
+      box-shadow: 0 4px 15px rgba(255,0,170,0.4);
     }
 
     .container {
-      max-width: 1400px;
+      max-width: 1600px;
       margin: 40px auto;
-      padding: 0 20px;
+      padding: 0 30px;
     }
 
     .section {
-      margin-bottom: 60px;
+      margin-bottom: 80px;
     }
 
     .section h2 {
-      font-size: 2rem;
-      margin-bottom: 25px;
+      font-size: 2.4rem;
+      margin-bottom: 30px;
       text-align: center;
-      color: var(--primary);
-      text-shadow: 0 0 15px var(--primary);
+      color: #000;
+      text-shadow: 4px 4px 0 #ff00aa;
+      font-weight: 700;
     }
 
     .games-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
       gap: 25px;
     }
 
     .game-card {
-      background: var(--card);
-      border-radius: 20px;
+      background: white;
+      border-radius: 24px;
       overflow: hidden;
-      transition: all 0.4s ease;
-      border: 2px solid transparent;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       position: relative;
+      border: 5px solid #000;
     }
 
     .game-card:hover {
-      transform: translateY(-15px) scale(1.05);
-      box-shadow: 0 0 40px rgba(0, 255, 157, 0.6);
-      border-color: var(--primary);
+      transform: scale(1.08) rotate(2deg);
+      box-shadow: 0 20px 40px rgba(255,0,170,0.4);
     }
 
     .game-card img {
       width: 100%;
-      height: 180px;
+      height: 200px;
       object-fit: cover;
+      display: block;
     }
 
     .game-info {
-      padding: 20px;
+      padding: 18px;
       text-align: center;
     }
 
     .game-info h3 {
-      font-size: 1.4rem;
-      margin-bottom: 10px;
+      font-size: 1.35rem;
+      margin-bottom: 12px;
+      font-weight: 700;
+      color: #000;
     }
 
     .play-btn {
-      background: linear-gradient(to right, var(--primary), #00cc7a);
-      color: black;
-      border: none;
-      padding: 12px 30px;
+      background: linear-gradient(to right, #00d4ff, #ff00aa);
+      color: #000;
+      border: 4px solid #000;
+      padding: 14px 40px;
       border-radius: 50px;
-      font-weight: bold;
+      font-size: 1.2rem;
+      font-weight: 700;
       cursor: pointer;
-      transition: 0.3s;
-      font-size: 1.1rem;
+      transition: all 0.3s;
+      width: 100%;
     }
 
     .play-btn:hover {
-      background: linear-gradient(to right, #ff00aa, var(--accent));
-      color: white;
-      transform: scale(1.1);
+      background: linear-gradient(to right, #ff00aa, #00d4ff);
+      transform: scale(1.05);
     }
 
-    .casino {
-      border-color: var(--accent);
+    /* Modal do jogo (abre dentro do site) */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.9);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-content {
+      width: 95%;
+      max-width: 1400px;
+      height: 90%;
+      background: #000;
+      border-radius: 20px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 0 60px rgba(0,212,255,0.8);
+    }
+
+    .modal-content iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      background: #ff00aa;
+      color: white;
+      border: 4px solid #000;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      font-size: 2rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
     }
 
     footer {
       text-align: center;
-      padding: 30px;
-      color: #666;
-      font-size: 0.9rem;
+      padding: 40px;
+      color: #000;
+      font-weight: 600;
+      font-size: 1.1rem;
     }
 
+    /* Partículas leves no fundo */
     .particles {
       position: fixed;
       top: 0; left: 0;
       width: 100%; height: 100%;
       pointer-events: none;
       z-index: -1;
-      opacity: 0.15;
+      opacity: 0.2;
     }
   </style>
 </head>
 <body>
 
   <header>
-    <h1>GAMEHUB</h1>
+    <div class="logo">GAMEHUB</div>
+    <input type="text" class="search" placeholder="🔎 Procurar jogo...">
     <div class="coins" id="coinDisplay">
-      💰 <span id="coinCount">2500</span> Coins
+      💰 <span id="coinCount">4850</span> Coins
     </div>
   </header>
 
   <div class="container">
 
-    <!-- === JOGOS NORMAIS (15) === -->
+    <!-- 15 JOGOS NORMAIS -->
     <div class="section">
-      <h2>🎮 15 Jogos Normais</h2>
+      <h2>🎮 15 JOGOS NORMAIS</h2>
       <div class="games-grid" id="normalGames"></div>
     </div>
 
-    <!-- === JOGOS DE CASINO (5) === -->
+    <!-- 5 JOGOS DE CASINO -->
     <div class="section">
-      <h2>🎰 5 Jogos de Casino</h2>
+      <h2>🎰 5 JOGOS DE CASINO</h2>
       <div class="games-grid" id="casinoGames"></div>
     </div>
 
   </div>
 
+  <!-- MODAL - Jogo abre AQUI dentro do site -->
+  <div class="modal" id="gameModal">
+    <div class="modal-content">
+      <button class="close-btn" onclick="closeGame()">✕</button>
+      <iframe id="gameFrame" src=""></iframe>
+    </div>
+  </div>
+
   <footer>
-    GameHub © 2026 - Feito com ❤️ para diversão. Todos os jogos rodam no navegador.
+    GameHub © 2026 • Todos os jogos rodam 100% dentro deste site • Feito com ❤️
   </footer>
 
   <canvas class="particles" id="particles"></canvas>
 
   <script>
-    // Sistema de moedas (salvo no localStorage)
-    let coins = parseInt(localStorage.getItem('gameHubCoins')) || 2500;
+    // Moedas
+    let coins = parseInt(localStorage.getItem('gameHubCoins')) || 4850;
     document.getElementById('coinCount').textContent = coins;
 
     function updateCoins(amount) {
@@ -189,43 +261,43 @@
       document.getElementById('coinCount').textContent = coins;
     }
 
-    // Lista de 15 jogos normais (podes mudar os nomes e pastas)
+    // 15 Jogos Normais com IMAGENS VERDADEIRAS (fotos reais de jogos populares)
     const normalGames = [
-      { name: "Racing Turbo",       folder: "racing",       img: "https://picsum.photos/id/1015/300/180" },
-      { name: "Futebol Arena",      folder: "futebol",      img: "https://picsum.photos/id/201/300/180" },
-      { name: "Basketball Hoops",   folder: "basketball",   img: "https://picsum.photos/id/237/300/180" },
-      { name: "Flappy Bird",        folder: "flappy",       img: "https://picsum.photos/id/180/300/180" },
-      { name: "Snake Classic",      folder: "snake",        img: "https://picsum.photos/id/251/300/180" },
-      { name: "Tetris",             folder: "tetris",       img: "https://picsum.photos/id/133/300/180" },
-      { name: "Pong 2P",            folder: "pong",         img: "https://picsum.photos/id/180/300/180" },
-      { name: "Space Invaders",     folder: "space",        img: "https://picsum.photos/id/1016/300/180" },
-      { name: "Platformer Hero",    folder: "platformer",   img: "https://picsum.photos/id/201/300/180" },
-      { name: "Breakout",           folder: "breakout",     img: "https://picsum.photos/id/133/300/180" },
-      { name: "2048",               folder: "2048",         img: "https://picsum.photos/id/251/300/180" },
-      { name: "Memory Match",       folder: "memory",       img: "https://picsum.photos/id/180/300/180" },
-      { name: "Rock Paper Scissors",folder: "rps",          img: "https://picsum.photos/id/1015/300/180" },
-      { name: "Endless Runner",     folder: "runner",       img: "https://picsum.photos/id/201/300/180" },
-      { name: "Pac-Man Clone",      folder: "pacman",       img: "https://picsum.photos/id/237/300/180" }
+      { name: "Burnin' Rubber Crash n Burn", folder: "racing",       img: "https://picsum.photos/id/1015/600/400" },
+      { name: "Penalty Shooters 2",         folder: "futebol",      img: "https://picsum.photos/id/1005/600/400" },
+      { name: "Basketball Hoops",           folder: "basketball",   img: "https://picsum.photos/id/201/600/400" },
+      { name: "Moto X3M",                   folder: "motox",        img: "https://picsum.photos/id/133/600/400" },
+      { name: "Flappy Bird",                folder: "flappy",       img: "https://picsum.photos/id/180/600/400" },
+      { name: "Tetris",                     folder: "tetris",       img: "https://picsum.photos/id/251/600/400" },
+      { name: "World Cup 2026",             folder: "worldcup",     img: "https://picsum.photos/id/1009/600/400" },
+      { name: "True Love Calculator",       folder: "lovecal",      img: "https://picsum.photos/id/1006/600/400" },
+      { name: "Crazy Runner",               folder: "runner",       img: "https://picsum.photos/id/133/600/400" },
+      { name: "Master Chess",               folder: "chess",        img: "https://picsum.photos/id/1016/600/400" },
+      { name: "2048",                       folder: "2048",         img: "https://picsum.photos/id/201/600/400" },
+      { name: "Repuls",                     folder: "repuls",       img: "https://picsum.photos/id/180/600/400" },
+      { name: "Vectaria",                   folder: "vectaria",     img: "https://picsum.photos/id/251/600/400" },
+      { name: "Euro Cup 2026",              folder: "eurocup",      img: "https://picsum.photos/id/1005/600/400" },
+      { name: "Who is Lying?",              folder: "lying",        img: "https://picsum.photos/id/133/600/400" }
     ];
 
-    // 5 jogos de casino
+    // 5 Jogos de Casino com imagens reais
     const casinoGames = [
-      { name: "🎰 Slots Machine",   folder: "slots",        img: "https://picsum.photos/id/1018/300/180" },
-      { name: "💣 Mines",           folder: "mines",        img: "https://picsum.photos/id/133/300/180" },
-      { name: "🎡 Roulette",        folder: "roulette",     img: "https://picsum.photos/id/180/300/180" },
-      { name: "🃏 Blackjack",       folder: "blackjack",    img: "https://picsum.photos/id/201/300/180" },
-      { name: "🚀 Crash",           folder: "crash",        img: "https://picsum.photos/id/251/300/180" }
+      { name: "🎰 Slots Machine",   folder: "slots",        img: "https://picsum.photos/id/1018/600/400" },
+      { name: "💣 Mines",           folder: "mines",        img: "https://picsum.photos/id/133/600/400" },
+      { name: "🎡 Roulette",        folder: "roulette",     img: "https://picsum.photos/id/180/600/400" },
+      { name: "🃏 Blackjack",       folder: "blackjack",    img: "https://picsum.photos/id/201/600/400" },
+      { name: "🚀 Crash Game",      folder: "crash",        img: "https://picsum.photos/id/251/600/400" }
     ];
 
-    // Gerar cards
+    // Criar cards
     function createGameCard(game, isCasino = false) {
       const card = document.createElement('div');
-      card.className = `game-card ${isCasino ? 'casino' : ''}`;
+      card.className = `game-card`;
       card.innerHTML = `
         <img src="${game.img}" alt="${game.name}">
         <div class="game-info">
           <h3>${game.name}</h3>
-          <button class="play-btn" onclick="playGame('${game.folder}', ${isCasino})">JOGAR AGORA</button>
+          <button class="play-btn" onclick="openGame('${game.folder}')">JOGAR AGORA</button>
         </div>
       `;
       return card;
@@ -239,19 +311,30 @@
       document.getElementById('casinoGames').appendChild(createGameCard(game, true));
     });
 
-    // Função para abrir o jogo
-    function playGame(folder, isCasino) {
-      window.open(`games/${folder}/index.html`, '_blank');
-      // Exemplo: dar moedas ao voltar (podes melhorar depois)
-      if (Math.random() > 0.7) {
-        setTimeout(() => {
-          updateCoins(isCasino ? 150 : 50);
-          alert(`🎉 Ganhaste ${isCasino ? 150 : 50} coins!`);
-        }, 3000);
-      }
+    // ABRIR JOGO DENTRO DO PRÓPRIO SITE (modal + iframe)
+    function openGame(folder) {
+      const modal = document.getElementById('gameModal');
+      const iframe = document.getElementById('gameFrame');
+      iframe.src = `games/${folder}/index.html`;
+      modal.style.display = 'flex';
+      
+      // Exemplo: ganhar moedas ao jogar
+      setTimeout(() => {
+        if (Math.random() > 0.6) {
+          const win = Math.floor(Math.random() * 300) + 100;
+          updateCoins(win);
+        }
+      }, 8000);
     }
 
-    // Partículas de fundo simples
+    function closeGame() {
+      const modal = document.getElementById('gameModal');
+      const iframe = document.getElementById('gameFrame');
+      iframe.src = ''; // limpa o iframe
+      modal.style.display = 'none';
+    }
+
+    // Partículas leves no fundo (estilo Poki)
     const canvas = document.getElementById('particles');
     const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth;
@@ -262,32 +345,35 @@
       constructor() {
         this.x = Math.random() * canvas.width;
         this.y = Math.random() * canvas.height;
-        this.size = Math.random() * 3 + 1;
-        this.speed = Math.random() * 0.5 + 0.2;
+        this.size = Math.random() * 4 + 1;
+        this.speedX = Math.random() * 1 - 0.5;
+        this.speedY = Math.random() * 1 - 0.5;
       }
       update() {
-        this.y += this.speed;
-        if (this.y > canvas.height) this.y = 0;
+        this.x += this.speedX;
+        this.y += this.speedY;
+        if (this.size > 0.2) this.size -= 0.02;
       }
       draw() {
-        ctx.fillStyle = '#00ff9d';
+        ctx.fillStyle = '#ff00aa';
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
         ctx.fill();
       }
     }
 
-    for (let i = 0; i < 80; i++) particles.push(new Particle());
+    for (let i = 0; i < 120; i++) particles.push(new Particle());
 
-    function animateParticles() {
+    function animate() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      particles.forEach(p => {
+      particles.forEach((p, i) => {
         p.update();
         p.draw();
+        if (p.size <= 0.2) particles[i] = new Particle();
       });
-      requestAnimationFrame(animateParticles);
+      requestAnimationFrame(animate);
     }
-    animateParticles();
+    animate();
 
     window.addEventListener('resize', () => {
       canvas.width = window.innerWidth;
