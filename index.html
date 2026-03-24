@@ -1,888 +1,215 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🦉 Codolingo - Duolingo de Código</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;600;700&display=swap');
-        
-        :root {
-            --primary: #22c55e;
-        }
-        
-        * {
-            font-family: 'Inter', system_ui, sans-serif;
-        }
-        
-        .logo-font {
-            font-family: 'Space Grotesk', sans-serif;
-        }
+import pygame
+import sys
+import time
 
-        .duo-green {
-            background: linear-gradient(135deg, #22c55e, #16a34a);
-        }
-        
-        .card-hover {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .card-hover:hover {
-            transform: translateY(-6px);
-            box-shadow: 25px 25px 50px -12px rgb(16 185 129 / 0.25);
-        }
-        
-        .editor {
-            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-            line-height: 1.6;
-            tab-size: 4;
-            font-size: 15px;
-        }
-        
-        .modal {
-            animation: modalPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-        
-        @keyframes modalPop {
-            0% { transform: scale(0.95) translateY(20px); opacity: 0; }
-            100% { transform: scale(1) translateY(0); opacity: 1; }
-        }
-        
-        .confetti {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            animation: confetti-fall 3s linear forwards;
-        }
-    </style>
-</head>
-<body class="bg-zinc-950 text-white">
-    <!-- NAVBAR SUPER PROFISSIONAL -->
-    <nav class="bg-zinc-900 border-b border-zinc-800 sticky top-0 z-50 shadow-xl">
-        <div class="max-w-screen-2xl mx-auto px-8 py-5 flex items-center justify-between">
-            <div class="flex items-center gap-x-3">
-                <div class="w-11 h-11 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-3xl flex items-center justify-center text-4xl shadow-inner">🦉</div>
-                <h1 class="logo-font text-4xl tracking-[-2px] font-semibold">codolingo</h1>
-                <span class="px-3 py-1 text-xs font-bold bg-emerald-400 text-black rounded-3xl">BETA PRO</span>
-            </div>
+# ======================
+# JOGO: MOTA 2D - PASSA OBSTÁCULOS
+# Versão básica para GitHub
+# 8 níveis com dificuldade crescente
+# Usa apenas pygame (sem imagens externas)
+# ======================
 
-            <div class="flex items-center gap-x-8">
-                <!-- Streak -->
-                <div onclick="showStreakModal()" class="flex items-center gap-x-3 bg-zinc-800 hover:bg-emerald-900/30 px-6 py-3 rounded-3xl cursor-pointer transition-all">
-                    <span class="text-3xl">🔥</span>
-                    <div>
-                        <span id="streak-count" class="font-bold text-3xl">12</span>
-                        <span class="text-emerald-400 text-sm ml-1">dias</span>
-                    </div>
-                </div>
+pygame.init()
 
-                <!-- XP -->
-                <div class="flex items-center gap-x-2 bg-zinc-800 hover:bg-emerald-900/30 px-6 py-3 rounded-3xl cursor-pointer transition-all">
-                    <i class="fa-solid fa-gem text-amber-400 text-3xl"></i>
-                    <span id="xp-count" class="font-bold text-3xl">2840</span>
-                    <span class="text-amber-400 text-sm">XP</span>
-                </div>
+# Configurações da janela
+LARGURA = 800
+ALTURA = 600
+tela = pygame.display.set_mode((LARGURA, ALTURA))
+pygame.display.set_caption("Mota 2D - Passa os Obstáculos!")
+relogio = pygame.time.Clock()
+fonte = pygame.font.SysFont(None, 48)
+fonte_pequena = pygame.font.SysFont(None, 32)
 
-                <!-- Hearts -->
-                <div class="flex items-center gap-x-1 bg-zinc-800 px-4 py-3 rounded-3xl">
-                    <i id="heart-1" onclick="loseHeart()" class="fa-solid fa-heart text-red-500 text-3xl cursor-pointer hover:scale-110"></i>
-                    <i id="heart-2" onclick="loseHeart()" class="fa-solid fa-heart text-red-500 text-3xl cursor-pointer hover:scale-110"></i>
-                    <i id="heart-3" onclick="loseHeart()" class="fa-solid fa-heart text-red-500 text-3xl cursor-pointer hover:scale-110"></i>
-                    <i id="heart-4" onclick="loseHeart()" class="fa-solid fa-heart text-red-500 text-3xl cursor-pointer hover:scale-110"></i>
-                    <i id="heart-5" onclick="loseHeart()" class="fa-solid fa-heart text-red-500 text-3xl cursor-pointer hover:scale-110"></i>
-                </div>
+# Cores
+CEU = (135, 206, 235)
+CHAO_COR = (34, 139, 34)
+PRETO = (0, 0, 0)
+BRANCO = (255, 255, 255)
+VERMELHO = (200, 0, 0)
+CINZA = (100, 100, 100)
 
-                <div class="flex items-center gap-x-4 pl-4 border-l border-zinc-700">
-                    <div class="text-right">
-                        <p class="font-semibold">DevProdigy</p>
-                        <p class="text-emerald-400 text-sm">Nível 18 • 92% streak</p>
-                    </div>
-                    <div class="w-10 h-10 bg-gradient-to-br from-violet-500 to-fuchsia-500 rounded-2xl flex items-center justify-center text-3xl ring-2 ring-offset-2 ring-offset-zinc-900 ring-violet-400">🚀</div>
-                </div>
-            </div>
+# Variáveis do jogo
+CHAO_Y = 480
+VELOCIDADE_BASE = 6
 
-            <div class="flex items-center gap-x-1 text-sm font-medium">
-                <button onclick="navigate('dashboard')" class="nav-btn flex items-center gap-x-2 px-7 py-3.5 rounded-3xl hover:bg-white/10 active:bg-emerald-400 active:text-black transition-all">
-                    <i class="fa-solid fa-house"></i>
-                    <span class="hidden md:inline">Início</span>
-                </button>
-                <button onclick="navigate('js')" class="nav-btn flex items-center gap-x-2 px-7 py-3.5 rounded-3xl hover:bg-white/10 transition-all">
-                    <span class="text-3xl">🟨</span>
-                    <span class="hidden md:inline">JavaScript</span>
-                </button>
-                <button onclick="navigate('python')" class="nav-btn flex items-center gap-x-2 px-7 py-3.5 rounded-3xl hover:bg-white/10 transition-all">
-                    <span class="text-3xl">🐍</span>
-                    <span class="hidden md:inline">Python</span>
-                </button>
-                <button onclick="navigate('quizzes')" class="nav-btn flex items-center gap-x-2 px-7 py-3.5 rounded-3xl hover:bg-white/10 transition-all">
-                    <i class="fa-solid fa-question-circle"></i>
-                    <span class="hidden md:inline">Quizzes</span>
-                </button>
-                <button onclick="navigate('profile')" class="nav-btn flex items-center gap-x-2 px-7 py-3.5 rounded-3xl hover:bg-white/10 transition-all">
-                    <i class="fa-solid fa-user-circle"></i>
-                    <span class="hidden md:inline">Perfil</span>
-                </button>
-            </div>
-        </div>
-    </nav>
+class Mota:
+    def __init__(self):
+        self.x = 150                    # posição fixa (runner style)
+        self.y = CHAO_Y - 60
+        self.largura = 70
+        self.altura = 40
+        self.vel_y = 0
+        self.no_chao = True
 
-    <div class="max-w-screen-2xl mx-auto flex">
-        <!-- SIDEBAR PROFISSIONAL -->
-        <div class="w-72 bg-zinc-900 min-h-[calc(100vh-81px)] border-r border-zinc-800 p-6 hidden xl:flex flex-col">
-            <h2 class="uppercase text-emerald-400 text-xs font-bold tracking-[1px] mb-6">SEUS CURSOS ATIVOS</h2>
-            
-            <div onclick="navigate('js')" class="group mb-4 p-5 rounded-3xl hover:bg-emerald-950 cursor-pointer flex items-center gap-4">
-                <div class="text-5xl">🟨</div>
-                <div class="flex-1">
-                    <p class="font-semibold text-lg group-hover:text-emerald-400">JavaScript Mastery</p>
-                    <div class="flex justify-between text-sm mt-3">
-                        <div class="h-2.5 flex-1 bg-zinc-700 rounded-3xl overflow-hidden">
-                            <div id="progress-js-bar" class="h-2.5 bg-emerald-500 rounded-3xl w-[82%]"></div>
-                        </div>
-                        <span class="ml-4 font-medium text-emerald-400">82%</span>
-                    </div>
-                </div>
-            </div>
+    def pular(self):
+        if self.no_chao:
+            self.vel_y = -18
+            self.no_chao = False
 
-            <div onclick="navigate('python')" class="group p-5 rounded-3xl hover:bg-emerald-950 cursor-pointer flex items-center gap-4">
-                <div class="text-5xl">🐍</div>
-                <div class="flex-1">
-                    <p class="font-semibold text-lg group-hover:text-emerald-400">Python Expert</p>
-                    <div class="flex justify-between text-sm mt-3">
-                        <div class="h-2.5 flex-1 bg-zinc-700 rounded-3xl overflow-hidden">
-                            <div id="progress-py-bar" class="h-2.5 bg-emerald-500 rounded-3xl w-[41%]"></div>
-                        </div>
-                        <span class="ml-4 font-medium text-emerald-400">41%</span>
-                    </div>
-                </div>
-            </div>
+    def atualizar(self):
+        self.vel_y += 1.2          # gravidade
+        self.y += self.vel_y
 
-            <div class="mt-auto">
-                <div class="bg-zinc-800 rounded-3xl p-6 text-center mb-8">
-                    <p class="text-xs uppercase tracking-widest text-amber-400 mb-2">RECOMPENSA DIÁRIA DISPONÍVEL</p>
-                    <button onclick="claimDailyReward()" 
-                            class="w-full py-4 bg-gradient-to-r from-amber-400 to-yellow-400 text-zinc-950 font-bold rounded-3xl flex items-center justify-center gap-3 hover:scale-105 transition-transform">
-                        <span class="text-2xl">🎁</span>
-                        <span>PEGAR 150 XP + GEMAS</span>
-                    </button>
-                </div>
+        # Colisão com o chão
+        if self.y >= CHAO_Y - self.altura:
+            self.y = CHAO_Y - self.altura
+            self.vel_y = 0
+            self.no_chao = True
 
-                <div class="text-xs text-zinc-400 flex items-center gap-x-2">
-                    <i class="fa-solid fa-code-branch"></i>
-                    <span class="font-medium">Próximo desbloqueio em 2 lições</span>
-                </div>
-            </div>
-        </div>
+    def desenhar(self, tela):
+        # Corpo da mota (retângulo cinza)
+        pygame.draw.rect(tela, CINZA, (self.x, self.y + 15, self.largura, 25))
+        # Roda traseira
+        pygame.draw.circle(tela, PRETO, (self.x + 15, self.y + 38), 12)
+        # Roda dianteira
+        pygame.draw.circle(tela, PRETO, (self.x + 55, self.y + 38), 12)
+        # Banco / piloto (triângulo vermelho)
+        pontos = [(self.x + 20, self.y + 15), (self.x + 45, self.y + 10), (self.x + 60, self.y + 25)]
+        pygame.draw.polygon(tela, VERMELHO, pontos)
+        # Guidão
+        pygame.draw.line(tela, PRETO, (self.x + 55, self.y + 18), (self.x + 70, self.y + 8), 6)
 
-        <!-- MAIN CONTENT -->
-        <div id="main-content" class="flex-1 p-8 lg:p-10 overflow-auto"></div>
-    </div>
+class Obstaculo:
+    def __init__(self, x):
+        self.x = x
+        self.y = CHAO_Y - 35
+        self.largura = 45
+        self.altura = 35
 
-    <!-- EXERCISE MODAL -->
-    <div id="exercise-modal" onclick="if(event.target.id === 'exercise-modal') closeExercise()" 
-         class="hidden fixed inset-0 bg-black/80 backdrop-blur-xl flex items-center justify-center z-[100]">
-        <div onclick="event.stopImmediatePropagation()" 
-             class="bg-zinc-900 w-full max-w-5xl mx-4 rounded-3xl overflow-hidden modal shadow-2xl">
-            
-            <div class="px-10 py-6 border-b border-zinc-700 flex items-center justify-between">
-                <div class="flex items-center gap-x-4">
-                    <span id="modal-emoji" class="text-5xl"></span>
-                    <div>
-                        <span id="modal-difficulty" class="text-xs uppercase font-bold px-4 py-1 bg-emerald-400 text-black rounded-3xl"></span>
-                        <h2 id="modal-title" class="text-3xl font-semibold mt-1"></h2>
-                    </div>
-                </div>
-                <button onclick="closeExercise()" class="text-4xl text-zinc-400 hover:text-white">✕</button>
-            </div>
+    def atualizar(self, velocidade):
+        self.x -= velocidade
 
-            <div class="p-10">
-                <div id="modal-desc" class="text-xl text-zinc-300 leading-relaxed mb-10"></div>
-                
-                <div class="mb-8">
-                    <div class="flex justify-between items-baseline text-xs font-medium mb-3">
-                        <span class="text-zinc-400">SEU EDITOR DE CÓDIGO</span>
-                        <span id="modal-lang" class="px-6 py-2 bg-zinc-800 text-emerald-400 rounded-3xl"></span>
-                    </div>
-                    <textarea id="code-editor" rows="14"
-                              class="editor w-full bg-zinc-950 border border-zinc-700 focus:border-emerald-400 rounded-3xl p-8 text-emerald-100 outline-none"></textarea>
-                </div>
+    def desenhar(self, tela):
+        # Caixa de obstáculo (vermelho com "espinhos")
+        pygame.draw.rect(tela, VERMELHO, (self.x, self.y, self.largura, self.altura))
+        # Espinhos simples
+        pygame.draw.line(tela, PRETO, (self.x + 10, self.y), (self.x + 10, self.y - 12), 4)
+        pygame.draw.line(tela, PRETO, (self.x + 22, self.y), (self.x + 22, self.y - 12), 4)
+        pygame.draw.line(tela, PRETO, (self.x + 34, self.y), (self.x + 34, self.y - 12), 4)
 
-                <div class="flex gap-4">
-                    <button onclick="runCodeDemo()" 
-                            class="flex-1 py-6 text-lg font-semibold bg-white text-zinc-900 rounded-3xl flex items-center justify-center gap-4 hover:bg-amber-300">
-                        <i class="fa-solid fa-play"></i>
-                        EXECUTAR TESTE RÁPIDO
-                    </button>
-                    <button onclick="submitToAI()" 
-                            class="flex-1 py-6 text-lg font-semibold bg-emerald-500 hover:bg-emerald-600 rounded-3xl flex items-center justify-center gap-4">
-                        <i class="fa-solid fa-robot"></i>
-                        ENVIAR PARA IA • AVALIAR 0–10
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
+def iniciar_nivel(nivel):
+    """Gera os obstáculos para o nível atual"""
+    global obstaculos, distancia, velocidade
+    obstaculos = []
+    distancia = 0
 
-    <!-- FEEDBACK MODAL -->
-    <div id="feedback-modal" onclick="if(event.target.id === 'feedback-modal') hideFeedback()" 
-         class="hidden fixed inset-0 bg-black/80 backdrop-blur-xl flex items-center justify-center z-[110]">
-        <div class="bg-white text-zinc-900 max-w-xl w-full mx-4 rounded-3xl p-10 modal">
-            <div id="score-container" class="flex justify-center mb-8"></div>
-            
-            <h2 id="feedback-title" class="text-4xl font-semibold text-center"></h2>
-            <p id="feedback-subtitle" class="text-center text-zinc-500 mt-2 mb-8"></p>
-            
-            <div id="feedback-body" class="prose prose-zinc max-w-none text-lg"></div>
-            
-            <div class="flex gap-4 mt-12">
-                <button onclick="retryExercise()" class="flex-1 py-5 border-2 border-zinc-300 rounded-3xl font-semibold">Tentar de novo</button>
-                <button onclick="finishExercise()" class="flex-1 py-5 bg-emerald-500 text-white rounded-3xl font-semibold">Próxima lição →</button>
-            </div>
-        </div>
-    </div>
+    # Dificuldade crescente
+    velocidade = VELOCIDADE_BASE + nivel * 0.8
+    num_obstaculos = 4 + nivel * 2          # nível 1 = 6, nível 8 = 20
+    espacamento = max(220 - nivel * 12, 120)  # ficam mais próximos
 
-    <script>
-        // ===================== CONFIG =====================
-        tailwind.config = { content: [] }
+    x_inicial = LARGURA + 100
+    for i in range(num_obstaculos):
+        x = x_inicial + i * espacamento
+        obstaculos.append(Obstaculo(x))
 
-        let user = {
-            xp: 2840,
-            streak: 12,
-            hearts: 5,
-            level: 18,
-            progressJS: 82,
-            progressPY: 41,
-            achievements: 7,
-            lastDailyClaim: Date.now() - 86400000 * 2
-        }
+    # Distância necessária para completar o nível
+    return 1800 + nivel * 450
 
-        // ===================== 12 EXERCÍCIOS POR LINGUAGEM (MAIS DIFÍCEIS) =====================
-        const courses = {
-            js: {
-                name: "JavaScript",
-                emoji: "🟨",
-                units: [
-                    {
-                        id: 1,
-                        title: "Fundamentos Avançados",
-                        completed: 4,
-                        total: 4,
-                        exercises: [
-                            {
-                                id: 101, title: "Manipulação de Strings Avançada", difficulty: "easy", points: 30,
-                                desc: "Crie uma função que inverta uma string e remova todos os espaços em branco extras.",
-                                template: `function cleanReverse(str) {\n  // Escreva aqui\n}`,
-                                test: `cleanReverse(" Olá   Mundo  ")`,
-                                expected: "odnuMálO",
-                                aiGood: "Código limpo e eficiente! Você usou métodos nativos de forma inteligente.",
-                                aiBad: "Faltou tratar espaços ou usar reverse corretamente."
-                            },
-                            {
-                                id: 102, title: "Palíndromo Checker", difficulty: "medium", points: 50,
-                                desc: "Escreva uma função que verifique se uma string é um palíndromo (ignora maiúsculas e espaços).",
-                                template: `function isPalindrome(s) {\n  // Seu código\n}`,
-                                test: `isPalindrome("A man a plan a canal Panama")`,
-                                expected: true,
-                                aiGood: "Excelente! Lógica impecável e tratamento de case.",
-                                aiBad: "Não funcionou com espaços ou maiúsculas."
-                            },
-                            {
-                                id: 103, title: "Contagem de Vogais com Reduce", difficulty: "hard", points: 70,
-                                desc: "Use .reduce() para contar vogais em uma string.",
-                                template: `function countVowels(str) {\n  // Use reduce aqui\n}`,
-                                test: `countVowels("Codolingo é incrível!")`,
-                                expected: 9,
-                                aiGood: "Você dominou reduce! Código funcional e moderno.",
-                                aiBad: "Reduce não foi usado ou a lógica está incorreta."
-                            },
-                            {
-                                id: 104, title: "Fibonacci até N", difficulty: "hard", points: 80,
-                                desc: "Retorne um array com os primeiros N números de Fibonacci.",
-                                template: `function fib(n) {\n  // Seu algoritmo\n}`,
-                                test: `fib(8)`,
-                                expected: [0,1,1,2,3,5,8,13],
-                                aiGood: "Algoritmo eficiente! Ótima performance.",
-                                aiBad: "Loop incorreto ou array incompleto."
-                            }
-                        ]
-                    },
-                    {
-                        id: 2,
-                        title: "Arrays, Loops e Algoritmos",
-                        completed: 3,
-                        total: 4,
-                        exercises: [
-                            {
-                                id: 201, title: "Ordenação por Bolha (Bubble Sort)", difficulty: "hard", points: 90,
-                                desc: "Implemente o algoritmo Bubble Sort em um array.",
-                                template: `function bubbleSort(arr) {\n  // Escreva o algoritmo\n}`,
-                                test: `bubbleSort([5,3,8,4,2])`,
-                                expected: [2,3,4,5,8],
-                                aiGood: "Você implementou um algoritmo clássico corretamente!",
-                                aiBad: "Algoritmo não ordenou corretamente."
-                            },
-                            {
-                                id: 202, title: "Remover Duplicatas com Set", difficulty: "medium", points: 60,
-                                desc: "Remova duplicatas mantendo a ordem original.",
-                                template: `function unique(arr) {\n  // Use Set ou lógica\n}`,
-                                test: `unique([1,2,2,3,4,4,5])`,
-                                expected: [1,2,3,4,5],
-                                aiGood: "Solução elegante e moderna!",
-                                aiBad: "Ainda existem duplicatas."
-                            },
-                            {
-                                id: 203, title: "Rotacionar Array k vezes", difficulty: "hard", points: 85,
-                                desc: "Rotacione o array k posições para a direita.",
-                                template: `function rotate(arr, k) {\n  // Sua solução\n}`,
-                                test: `rotate([1,2,3,4,5], 2)`,
-                                expected: [4,5,1,2,3],
-                                aiGood: "Rotação perfeita! Código otimizado.",
-                                aiBad: "A rotação não funcionou."
-                            },
-                            {
-                                id: 204, title: "Encontrar o segundo maior número", difficulty: "medium", points: 55,
-                                desc: "Retorne o segundo maior valor do array (sem ordenar).",
-                                template: `function secondLargest(arr) {\n  // Implemente\n}`,
-                                test: `secondLargest([10, 5, 20, 8, 15])`,
-                                expected: 15,
-                                aiGood: "Lógica excelente! Uma única passagem.",
-                                aiBad: "Não encontrou o segundo maior."
-                            }
-                        ]
-                    },
-                    {
-                        id: 3,
-                        title: "Funções Avançadas e Objetos",
-                        completed: 2,
-                        total: 4,
-                        exercises: [
-                            {
-                                id: 301, title: "Debounce Function", difficulty: "hard", points: 100,
-                                desc: "Crie uma função debounce que atrasa a execução.",
-                                template: `function debounce(fn, delay) {\n  // Seu código\n}`,
-                                test: `// Teste simulado`,
-                                expected: "debounce created",
-                                aiGood: "Você entendeu conceitos avançados de performance!",
-                                aiBad: "Faltou limpar timeout anterior."
-                            },
-                            {
-                                id: 302, title: "Deep Clone de Objeto", difficulty: "hard", points: 95,
-                                desc: "Faça um deep clone sem usar JSON.",
-                                template: `function deepClone(obj) {\n  // Recursão ou structuredClone\n}`,
-                                test: `deepClone({a: {b: 1}})`,
-                                expected: "cloned",
-                                aiGood: "Clone profundo perfeito!",
-                                aiBad: "Referências ainda estão compartilhadas."
-                            }
-                        ]
-                    }
-                ]
-            },
-            python: {
-                name: "Python",
-                emoji: "🐍",
-                units: [
-                    {
-                        id: 1,
-                        title: "Fundamentos Avançados",
-                        completed: 3,
-                        total: 4,
-                        exercises: [
-                            {
-                                id: 401, title: "Manipulação de Strings Avançada", difficulty: "easy", points: 30,
-                                desc: "Crie uma função que inverta uma string e remova espaços extras.",
-                                template: `def clean_reverse(s):\n    # Escreva aqui`,
-                                test: `clean_reverse(" Olá   Mundo  ")`,
-                                expected: "odnuMálO",
-                                aiGood: "Código Python limpo e pythonico!",
-                                aiBad: "Faltou strip ou reverse."
-                            },
-                            {
-                                id: 402, title: "Palíndromo com List Comprehension", difficulty: "medium", points: 50,
-                                desc: "Verifique palíndromo ignorando case e espaços.",
-                                template: `def is_palindrome(s):\n    # Use comprehension`,
-                                test: `is_palindrome("A man a plan a canal Panama")`,
-                                expected: True,
-                                aiGood: "Pythonico e eficiente!",
-                                aiBad: "Não ignorou espaços ou case."
-                            },
-                            {
-                                id: 403, title: "Fibonacci com Generator", difficulty: "hard", points: 80,
-                                desc: "Crie um generator que retorne Fibonacci.",
-                                template: `def fib(n):\n    # Generator aqui`,
-                                test: `list(fib(8))`,
-                                expected: [0,1,1,2,3,5,8,13],
-                                aiGood: "Generator perfeito! Economia de memória.",
-                                aiBad: "Não é um generator ou sequência errada."
-                            }
-                        ]
-                    },
-                    {
-                        id: 2,
-                        title: "Listas, Dicionários e Loops",
-                        completed: 3,
-                        total: 4,
-                        exercises: [
-                            {
-                                id: 501, title: "Bubble Sort em Python", difficulty: "hard", points: 90,
-                                desc: "Implemente Bubble Sort.",
-                                template: `def bubble_sort(arr):\n    # Algoritmo`,
-                                test: `bubble_sort([5,3,8,4,2])`,
-                                expected: [2,3,4,5,8],
-                                aiGood: "Algoritmo clássico bem implementado!",
-                                aiBad: "Array não ordenado."
-                            },
-                            {
-                                id: 502, title: "Remover duplicatas mantendo ordem", difficulty: "medium", points: 60,
-                                desc: "Use dict.fromkeys para manter ordem.",
-                                template: `def unique(lst):\n    # Sua solução`,
-                                test: `unique([1,2,2,3,4,4,5])`,
-                                expected: [1,2,3,4,5],
-                                aiGood: "Solução pythonica e elegante!",
-                                aiBad: "Ainda tem duplicatas."
-                            },
-                            {
-                                id: 503, title: "Rotacionar lista k vezes", difficulty: "hard", points: 85,
-                                desc: "Rotacione lista para direita.",
-                                template: `def rotate(lst, k):\n    # Implemente`,
-                                test: `rotate([1,2,3,4,5], 2)`,
-                                expected: [4,5,1,2,3],
-                                aiGood: "Rotação eficiente!",
-                                aiBad: "Rotação incorreta."
-                            }
-                        ]
-                    },
-                    {
-                        id: 3,
-                        title: "Programação Orientada a Objetos",
-                        completed: 2,
-                        total: 4,
-                        exercises: [
-                            {
-                                id: 601, title: "Classe BankAccount", difficulty: "hard", points: 100,
-                                desc: "Crie uma classe com depósito, saque e saldo.",
-                                template: `class BankAccount:\n    def __init__(self):\n        pass`,
-                                test: `acc = BankAccount(); acc.deposit(100); acc.withdraw(30)`,
-                                expected: 70,
-                                aiGood: "POO perfeita! Encapsulamento correto.",
-                                aiBad: "Métodos não funcionam."
-                            },
-                            {
-                                id: 602, title: "Decorador de Timer", difficulty: "hard", points: 110,
-                                desc: "Crie um decorador que mede tempo de execução.",
-                                template: `import time\ndef timer(func):\n    # Decorador`,
-                                test: `timer`,
-                                expected: "decorated",
-                                aiGood: "Decorador avançado! Muito bom!",
-                                aiBad: "Decorador não mede tempo."
-                            }
-                        ]
-                    }
-                ]
-            }
-        }
+# ======================
+# VARIÁVEIS DO JOGO
+# ======================
+mota = Mota()
+obstaculos = []
+distancia = 0
+nivel_atual = 0
+distancia_alvo = iniciar_nivel(0)
+estado = "jogando"          # jogando, game_over, vitoria, nivel_completo
+tempo_mensagem = 0
 
-        // Quizzes de múltipla escolha (8 por linguagem)
-        const quizzes = {
-            js: [
-                { q: "Qual método remove o último elemento de um array?", a: [".pop()", ".push()", ".shift()"], correct: 0 },
-                { q: "O que o operador === faz?", a: ["Comparação estrita", "Atribuição", "Comparação fraca"], correct: 0 },
-                { q: "Como se declara uma arrow function?", a: ["() => {}", "function()", "const fn = ()"], correct: 0 },
-                { q: "O que é closure em JS?", a: ["Função que lembra variáveis do escopo pai", "Um tipo de loop", "Método de array"], correct: 0 },
-                { q: "Qual é o resultado de '2' + 2?", a: ["'22'", "4", "Erro"], correct: 0 },
-                { q: "Para qual finalidade serve o async/await?", a: ["Trabalhar com promessas", "Criar loops", "Declarar variáveis"], correct: 0 },
-                { q: "O que o método .map() retorna?", a: ["Um novo array", "Modifica o original", "Número"], correct: 0 },
-                { q: "Como parar um loop for?", a: ["break", "return", "continue"], correct: 0 }
-            ],
-            python: [
-                { q: "Como se cria um dicionário vazio?", a: ["{}", "[]", "set()"], correct: 0 },
-                { q: "Qual é o resultado de 2 ** 3?", a: ["8", "6", "1"], correct: 0 },
-                { q: "O que significa 'pass'?", a: ["Placeholder", "Quebra loop", "Import"], correct: 0 },
-                { q: "Como se define uma classe?", a: ["class Nome:", "def Nome:", "object Nome"], correct: 0 },
-                { q: "Qual método adiciona em lista?", a: [".append()", ".add()", ".push()"], correct: 0 },
-                { q: "O que faz list comprehension?", a: ["Cria lista de forma concisa", "Loop normal", "Filtro"], correct: 0 },
-                { q: "Como importar módulo?", a: ["import modulo", "from modulo import", "require"], correct: 0 },
-                { q: "O que é lambda?", a: ["Função anônima", "Variável", "Classe"], correct: 0 }
-            ]
-        }
+# Loop principal
+while True:
+    for evento in pygame.event.get():
+        if evento.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
 
-        let currentExercise = null
-        let currentLang = null
-        let currentIsQuiz = false
+        if evento.type == pygame.KEYDOWN:
+            if estado == "jogando" and evento.key == pygame.K_SPACE:
+                mota.pular()
 
-        // ===================== RENDER FUNCTIONS =====================
-        function renderDashboard() {
-            return `
-            <div class="max-w-6xl mx-auto">
-                <div class="flex justify-between items-end mb-10">
-                    <div>
-                        <h1 class="text-6xl font-semibold logo-font tracking-tighter">Bom dia, DevProdigy! 🚀</h1>
-                        <p class="text-2xl text-emerald-300">Vamos codar? Você está a 3 lições de subir de nível!</p>
-                    </div>
-                    <div class="text-right">
-                        <div class="inline-flex items-center gap-2 bg-emerald-900 text-emerald-300 px-6 py-3 rounded-3xl">
-                            <span class="text-4xl">🏆</span>
-                            <div>
-                                <p class="font-bold text-3xl">${user.level}</p>
-                                <p class="text-xs -mt-1">NÍVEL ATUAL</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            # Reiniciar nível com R
+            if estado == "game_over" and evento.key == pygame.K_r:
+                distancia_alvo = iniciar_nivel(nivel_atual)
+                estado = "jogando"
+                mota = Mota()
 
-                <!-- Daily goal -->
-                <div class="bg-gradient-to-r from-emerald-500 to-teal-600 rounded-3xl p-8 text-white mb-12 flex items-center justify-between">
-                    <div class="flex items-center gap-6">
-                        <div class="text-6xl">🎯</div>
-                        <div>
-                            <p class="text-3xl font-semibold">Meta diária: 4 exercícios</p>
-                            <p class="text-xl opacity-90">Você já completou 2 hoje • Falta 2 para +100 XP</p>
-                        </div>
-                    </div>
-                    <button onclick="completeDailyGoal()" class="bg-white text-emerald-600 px-10 py-4 rounded-3xl font-bold text-xl">COMPLETAR META +100 XP</button>
-                </div>
+            # Sair com ESC
+            if evento.key == pygame.K_ESCAPE:
+                pygame.quit()
+                sys.exit()
 
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <div onclick="navigate('js')" class="bg-zinc-900 rounded-3xl p-8 card-hover cursor-pointer">
-                        <div class="flex justify-between">
-                            <span class="text-7xl">🟨</span>
-                            <span class="text-emerald-400 font-bold text-4xl">${user.progressJS}%</span>
-                        </div>
-                        <h3 class="text-4xl font-semibold mt-8">JavaScript Mastery</h3>
-                        <p class="text-zinc-400 mt-2">12 lições • 8 quizzes concluídos</p>
-                        <div class="mt-10 h-3 bg-zinc-800 rounded-full"><div class="h-3 bg-emerald-500 rounded-full" style="width: ${user.progressJS}%"></div></div>
-                    </div>
-                    
-                    <div onclick="navigate('python')" class="bg-zinc-900 rounded-3xl p-8 card-hover cursor-pointer">
-                        <div class="flex justify-between">
-                            <span class="text-7xl">🐍</span>
-                            <span class="text-emerald-400 font-bold text-4xl">${user.progressPY}%</span>
-                        </div>
-                        <h3 class="text-4xl font-semibold mt-8">Python Expert</h3>
-                        <p class="text-zinc-400 mt-2">12 lições • 5 quizzes concluídos</p>
-                        <div class="mt-10 h-3 bg-zinc-800 rounded-full"><div class="h-3 bg-emerald-500 rounded-full" style="width: ${user.progressPY}%"></div></div>
-                    </div>
+    # ======================
+    # LÓGICA DO JOGO
+    # ======================
+    if estado == "jogando":
+        mota.atualizar()
 
-                    <div onclick="navigate('quizzes')" class="bg-gradient-to-br from-violet-600 to-fuchsia-600 rounded-3xl p-8 card-hover cursor-pointer text-white flex flex-col justify-between">
-                        <div>
-                            <span class="text-5xl">❔</span>
-                            <h3 class="text-4xl font-semibold mt-6">Modo Quiz Rápido</h3>
-                            <p class="mt-4 text-xl">Teste seu conhecimento em 60 segundos</p>
-                        </div>
-                        <div class="text-sm uppercase font-medium flex justify-end">8 quizzes por linguagem →</div>
-                    </div>
-                </div>
-            </div>`
-        }
+        # Atualiza obstáculos
+        for obs in obstaculos[:]:
+            obs.atualizar(velocidade)
+            if obs.x < -100:
+                obstaculos.remove(obs)
 
-        function renderLanguage(lang) {
-            const course = courses[lang]
-            let html = `
-            <div class="max-w-6xl mx-auto">
-                <h1 class="text-6xl font-semibold flex items-center gap-x-6"><span class="text-7xl">${course.emoji}</span> ${course.name}</h1>
-                <p class="text-emerald-400 text-3xl mb-12">Do básico ao avançado • ${course.units.reduce((a,u)=>a+u.exercises.length,0)} exercícios + 8 quizzes</p>`
-            
-            course.units.forEach((unit, uIdx) => {
-                html += `
-                <div class="mb-16">
-                    <div class="flex items-center gap-4 mb-6">
-                        <h2 class="text-3xl font-semibold">${unit.title}</h2>
-                        <div class="flex-1 h-px bg-gradient-to-r from-transparent to-zinc-700"></div>
-                        <div class="text-emerald-400 text-sm font-bold">${unit.completed}/${unit.total} completas</div>
-                    </div>
-                    <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">`
-                
-                unit.exercises.forEach((ex, eIdx) => {
-                    const diffColor = ex.difficulty === 'easy' ? 'bg-emerald-400' : (ex.difficulty === 'medium' ? 'bg-amber-400' : 'bg-red-400')
-                    html += `
-                    <div onclick="startExercise('${lang}', ${uIdx}, ${eIdx}, false)" class="bg-zinc-900 rounded-3xl p-7 card-hover cursor-pointer">
-                        <div class="flex justify-between items-start">
-                            <div><span class="${diffColor} text-xs font-bold px-5 py-1 rounded-3xl text-black">${ex.difficulty.toUpperCase()}</span></div>
-                            <span class="text-4xl">${course.emoji}</span>
-                        </div>
-                        <p class="font-semibold mt-8 text-xl">${ex.title}</p>
-                        <p class="text-zinc-400 text-sm line-clamp-3 mt-4">${ex.desc}</p>
-                        <div class="mt-8 flex justify-end text-emerald-400 font-medium text-sm">+${ex.points} XP</div>
-                    </div>`
-                })
-                html += `</div></div>`
-            })
-            html += `</div>`
-            return html
-        }
+            # Colisão mota <-> obstáculo
+            if (mota.x + mota.largura > obs.x and mota.x < obs.x + obs.largura and
+                mota.y + mota.altura > obs.y and mota.y < obs.y + obs.altura):
+                estado = "game_over"
+                tempo_mensagem = time.time()
 
-        function renderQuizzes() {
-            let html = `<div class="max-w-6xl mx-auto"><h1 class="text-6xl font-semibold mb-4">Quizzes Rápidos</h1><p class="text-zinc-400 text-2xl mb-12">8 por linguagem • Responda em menos de 60s</p>`
-            
-            // JS Quizzes
-            html += `<h2 class="flex items-center gap-4 text-3xl mb-8"><span class="text-5xl">🟨</span> JavaScript Quizzes</h2><div class="grid grid-cols-2 md:grid-cols-4 gap-6">`
-            quizzes.js.forEach((q, i) => {
-                html += `
-                <div onclick="startQuiz('js', ${i})" class="bg-zinc-900 rounded-3xl p-8 card-hover cursor-pointer">
-                    <p class="font-medium line-clamp-3">${q.q}</p>
-                    <div class="text-emerald-400 text-xs mt-8">QUIZ • 8 disponíveis</div>
-                </div>`
-            })
-            html += `</div>`
-            
-            // Python Quizzes
-            html += `<h2 class="flex items-center gap-4 text-3xl mt-16 mb-8"><span class="text-5xl">🐍</span> Python Quizzes</h2><div class="grid grid-cols-2 md:grid-cols-4 gap-6">`
-            quizzes.python.forEach((q, i) => {
-                html += `
-                <div onclick="startQuiz('python', ${i})" class="bg-zinc-900 rounded-3xl p-8 card-hover cursor-pointer">
-                    <p class="font-medium line-clamp-3">${q.q}</p>
-                    <div class="text-emerald-400 text-xs mt-8">QUIZ • 8 disponíveis</div>
-                </div>`
-            })
-            html += `</div></div>`
-            return html
-        }
+        distancia += velocidade
 
-        function renderProfile() {
-            return `
-            <div class="max-w-4xl mx-auto pt-12 text-center">
-                <div class="mx-auto w-32 h-32 bg-gradient-to-br from-violet-400 to-emerald-400 rounded-3xl flex items-center justify-center text-7xl mb-6 shadow-2xl">🚀</div>
-                <h1 class="text-5xl font-semibold">DevProdigy</h1>
-                <p class="text-emerald-400 text-2xl">Nível ${user.level} • ${user.xp} XP • Streak 🔥 ${user.streak}</p>
-                
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mt-16">
-                    <div class="bg-zinc-900 rounded-3xl p-8"><p class="text-6xl font-bold text-emerald-400">${user.achievements}</p><p class="text-sm text-zinc-400">Conquistas desbloqueadas</p></div>
-                    <div class="bg-zinc-900 rounded-3xl p-8"><p class="text-6xl font-bold">47</p><p class="text-sm text-zinc-400">Exercícios completos</p></div>
-                    <div class="bg-zinc-900 rounded-3xl p-8"><p class="text-6xl font-bold text-amber-400">9.4</p><p class="text-sm text-zinc-400">Média das avaliações IA</p></div>
-                    <div class="bg-zinc-900 rounded-3xl p-8"><p class="text-6xl font-bold">12</p><p class="text-sm text-zinc-400">Dias seguidos</p></div>
-                </div>
-                
-                <p class="mt-20 text-zinc-400 text-xl">O Codolingo agora tem 12 exercícios + 8 quizzes por linguagem. Tudo avaliado por IA com nota 0-10 e feedback detalhado!</p>
-                <button onclick="navigate('dashboard')" class="mt-12 px-12 py-6 bg-emerald-500 text-xl font-semibold rounded-3xl">Voltar ao início</button>
-            </div>`
-        }
+        # Verifica se passou o nível
+        if distancia >= distancia_alvo and len(obstaculos) == 0:
+            nivel_atual += 1
+            if nivel_atual >= 8:
+                estado = "vitoria"
+                tempo_mensagem = time.time()
+            else:
+                estado = "nivel_completo"
+                tempo_mensagem = time.time()
+                distancia_alvo = iniciar_nivel(nivel_atual)
 
-        // ===================== EXERCISE & QUIZ HANDLERS =====================
-        function startExercise(lang, unitIdx, exIdx, isQuiz) {
-            currentLang = lang
-            currentIsQuiz = isQuiz
-            currentExercise = isQuiz ? null : courses[lang].units[unitIdx].exercises[exIdx]
-            
-            const modal = document.getElementById('exercise-modal')
-            const emojiEl = document.getElementById('modal-emoji')
-            const titleEl = document.getElementById('modal-title')
-            const descEl = document.getElementById('modal-desc')
-            const langEl = document.getElementById('modal-lang')
-            const diffEl = document.getElementById('modal-difficulty')
-            
-            emojiEl.textContent = courses[lang].emoji
-            
-            if (isQuiz) {
-                // Quiz mode
-                titleEl.textContent = "Quiz Rápido"
-                descEl.innerHTML = `<p class="text-2xl">${quizzes[lang][exIdx].q}</p>`
-                langEl.innerHTML = lang.toUpperCase() + " • Múltipla escolha"
-                diffEl.innerHTML = "QUIZ"
-                document.getElementById('code-editor').style.display = 'none'
-            } else {
-                titleEl.textContent = currentExercise.title
-                descEl.innerHTML = `<strong>Desafio:</strong><br>${currentExercise.desc}<br><br><span class="text-emerald-400">+${currentExercise.points} XP se acertar</span>`
-                langEl.innerHTML = lang === 'js' ? 'JavaScript' : 'Python'
-                diffEl.innerHTML = currentExercise.difficulty.toUpperCase()
-                document.getElementById('code-editor').style.display = 'block'
-                document.getElementById('code-editor').value = currentExercise.template
-            }
-            
-            modal.classList.remove('hidden')
-            modal.classList.add('flex')
-        }
+    # ======================
+    # DESENHO
+    # ======================
+    tela.fill(CEU)                                      # céu
 
-        function startQuiz(lang, qIdx) {
-            startExercise(lang, null, qIdx, true)
-        }
+    # Chão
+    pygame.draw.rect(tela, CHAO_COR, (0, CHAO_Y, LARGURA, ALTURA - CHAO_Y))
 
-        function closeExercise() {
-            const modal = document.getElementById('exercise-modal')
-            modal.classList.add('hidden')
-            modal.classList.remove('flex')
-            currentExercise = null
-            document.getElementById('code-editor').style.display = 'block'
-        }
+    # Desenha mota e obstáculos
+    if estado != "vitoria":
+        mota.desenhar(tela)
+        for obs in obstaculos:
+            obs.desenhar(tela)
 
-        function runCodeDemo() {
-            if (currentIsQuiz) return alert("Este é um quiz de múltipla escolha. Envie para a IA!")
-            
-            const code = document.getElementById('code-editor').value
-            let result = "✅ Teste rápido executado!"
-            
-            try {
-                if (currentLang === 'js') {
-                    const testFn = new Function(code + `\nreturn ${currentExercise.test};`)
-                    const output = testFn()
-                    if (JSON.stringify(output) === JSON.stringify(currentExercise.expected)) {
-                        result = "🎉 Parabéns! Teste passou!"
-                    } else {
-                        result = `❌ Retornou ${output} (esperado ${currentExercise.expected})`
-                    }
-                } else {
-                    result = "🐍 Simulação Python executada (em produção teria Pyodide ou backend)"
-                }
-            } catch(e) {
-                result = "Erro de sintaxe: " + e.message
-            }
-            
-            alert(result)
-        }
+    # HUD
+    texto_nivel = fonte_pequena.render(f"Nível {nivel_atual + 1}/8", True, PRETO)
+    tela.blit(texto_nivel, (20, 20))
 
-        function submitToAI() {
-            if (currentIsQuiz) {
-                // Quiz answer simulation
-                const randomScore = Math.random() > 0.3 ? 10 : 7
-                showFeedback(randomScore, "Resposta correta! Ótimo conhecimento teórico.", true)
-                closeExercise()
-                return
-            }
-            
-            const code = document.getElementById('code-editor').value.trim()
-            let score = Math.floor(Math.random() * 4) + 7   // 7 a 10
-            let isGood = score >= 8
-            
-            // Melhor avaliação baseada em palavras-chave
-            if (currentExercise.title.includes("Bubble") && code.includes("for")) score = 10
-            if (currentExercise.title.includes("Fibonacci") && code.includes("push") || code.includes("append")) score = 9
-            
-            const feedbackText = isGood ? currentExercise.aiGood : currentExercise.aiBad
-            
-            if (isGood) {
-                user.xp += currentExercise.points
-                document.getElementById('xp-count').textContent = user.xp
-            }
-            
-            closeExercise()
-            showFeedback(score, feedbackText, isGood)
-            
-            // Atualiza progresso
-            if (currentLang === 'js') user.progressJS = Math.min(100, user.progressJS + 8)
-            else user.progressPY = Math.min(100, user.progressPY + 8)
-        }
+    texto_dist = fonte_pequena.render(f"Distância: {int(distancia)}", True, PRETO)
+    tela.blit(texto_dist, (20, 60))
 
-        function showFeedback(score, text, good) {
-            const modal = document.getElementById('feedback-modal')
-            const container = document.getElementById('score-container')
-            
-            container.innerHTML = `
-                <div class="w-40 h-40 rounded-full border-[12px] border-emerald-500 flex items-center justify-center text-7xl font-bold shadow-inner">
-                    ${score}<span class="text-2xl font-normal ml-1">/10</span>
-                </div>`
-            
-            document.getElementById('feedback-title').innerHTML = good 
-                ? `🎉 Excelente! +${currentExercise ? currentExercise.points : 40} XP` 
-                : `Quase lá! Nota ${score}`
-            
-            document.getElementById('feedback-subtitle').textContent = good ? "A IA Grok aprovou seu código!" : "A IA deu algumas dicas de melhoria:"
-            
-            document.getElementById('feedback-body').innerHTML = `
-                <p class="mb-6"><strong>Feedback da IA:</strong> ${text}</p>
-                <p class="text-emerald-600 font-medium">Dica para melhorar: Use nomes de variáveis mais claros e evite repetição de código.</p>
-                ${good ? `<div class="mt-8 flex justify-center text-4xl">🏆</div>` : ''}
-            `
-            
-            if (good) launchConfetti()
-            
-            modal.classList.remove('hidden')
-            modal.classList.add('flex')
-        }
+    # Mensagens de estado
+    if estado == "game_over":
+        msg = fonte.render("GAME OVER", True, VERMELHO)
+        tela.blit(msg, (LARGURA//2 - msg.get_width()//2, ALTURA//2 - 80))
+        msg2 = fonte_pequena.render("Pressione R para tentar novamente", True, PRETO)
+        tela.blit(msg2, (LARGURA//2 - msg2.get_width()//2, ALTURA//2 + 20))
 
-        function hideFeedback() {
-            const modal = document.getElementById('feedback-modal')
-            modal.classList.add('hidden')
-            modal.classList.remove('flex')
-        }
+    elif estado == "nivel_completo":
+        msg = fonte.render(f"NÍVEL {nivel_atual} COMPLETO!", True, (0, 180, 0))
+        tela.blit(msg, (LARGURA//2 - msg.get_width()//2, ALTURA//2 - 60))
+        # Volta automaticamente para jogar após 1.2 segundos
+        if time.time() - tempo_mensagem > 1.2:
+            estado = "jogando"
 
-        function retryExercise() {
-            hideFeedback()
-            // Reabre o modal automaticamente
-            setTimeout(() => {
-                const modal = document.getElementById('exercise-modal')
-                modal.classList.remove('hidden')
-                modal.classList.add('flex')
-            }, 300)
-        }
+    elif estado == "vitoria":
+        msg = fonte.render("PARABÉNS! VENCES-TE TODOS OS 8 NÍVEIS!", True, (0, 200, 0))
+        tela.blit(msg, (LARGURA//2 - msg.get_width()//2, ALTURA//2 - 100))
+        msg2 = fonte_pequena.render("Pressione ESC para sair", True, PRETO)
+        tela.blit(msg2, (LARGURA//2 - msg2.get_width()//2, ALTURA//2 + 40))
 
-        function finishExercise() {
-            hideFeedback()
-            navigate(currentLang || 'dashboard')
-        }
-
-        function launchConfetti() {
-            for (let i = 0; i < 80; i++) {
-                const confetti = document.createElement('div')
-                confetti.className = 'confetti'
-                confetti.style.left = Math.random() * 100 + 'vw'
-                confetti.style.backgroundColor = ['#22c55e','#eab308','#ec4899'][Math.floor(Math.random()*3)]
-                confetti.style.animationDuration = (Math.random() * 3 + 2) + 's'
-                confetti.style.opacity = Math.random()
-                confetti.style.transform = `rotate(${Math.random()*360}deg)`
-                document.body.appendChild(confetti)
-                
-                setTimeout(() => confetti.remove(), 5000)
-            }
-        }
-
-        // ===================== OUTROS HELPERS =====================
-        function loseHeart() {
-            if (user.hearts > 0) {
-                user.hearts--
-                document.getElementById('heart-' + (user.hearts + 1)).classList.add('text-zinc-500')
-                alert("💔 Coração perdido! Não erre mais de 5 vezes seguidas.")
-            }
-        }
-
-        function showStreakModal() {
-            alert(`🔥 SUA SEQUÊNCIA ATUAL: ${user.streak} DIAS!\n\n+50 XP garantidos amanhã se continuar.`)
-        }
-
-        function claimDailyReward() {
-            const now = Date.now()
-            if (now - user.lastDailyClaim > 86400000) {
-                user.xp += 150
-                user.streak++
-                user.lastDailyClaim = now
-                document.getElementById('xp-count').textContent = user.xp
-                document.getElementById('streak-count').textContent = user.streak
-                alert("🎉 +150 XP e +1 streak! Recompensa diária coletada.")
-            } else {
-                alert("⏳ Você já pegou a recompensa hoje. Volte amanhã!")
-            }
-        }
-
-        function completeDailyGoal() {
-            user.xp += 100
-            document.getElementById('xp-count').textContent = user.xp
-            alert("🎯 Meta diária completa! +100 XP e progresso avançado.")
-            navigate('dashboard')
-        }
-
-        function navigate(page) {
-            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('bg-emerald-400', 'text-black'))
-            
-            const main = document.getElementById('main-content')
-            if (page === 'dashboard') main.innerHTML = renderDashboard()
-            else if (page === 'js') main.innerHTML = renderLanguage('js')
-            else if (page === 'python') main.innerHTML = renderLanguage('python')
-            else if (page === 'quizzes') main.innerHTML = renderQuizzes()
-            else if (page === 'profile') main.innerHTML = renderProfile()
-            
-            // Marca botão ativo
-            const btns = document.querySelectorAll('.nav-btn')
-            if (page === 'js') btns[1].classList.add('bg-emerald-400', 'text-black')
-            else if (page === 'python') btns[2].classList.add('bg-emerald-400', 'text-black')
-            else if (page === 'quizzes') btns[3].classList.add('bg-emerald-400', 'text-black')
-        }
-
-        // ===================== INIT =====================
-        window.onload = () => {
-            navigate('dashboard')
-            console.log('%c✅ Codolingo PRO carregado! 12 exercícios difíceis + 8 quizzes por linguagem. Totalmente profissional e pronto para GitHub Pages.', 'color:#22c55e;font-weight:bold;font-size:14px')
-            console.log('Copie todo este código em index.html e publique no GitHub!')
-        }
-    </script>
-</body>
-</html>
+    pygame.display.flip()
+    relogio.tick(60)
