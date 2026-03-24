@@ -3,651 +3,502 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🌍 Explorador Global • Meu Projeto GitHub</title>
-    <!-- Tailwind CSS CDN -->
+    <title>NEON EXPLORER • Seu Projeto GitHub</title>
+    <!-- Tailwind + Neon Theme -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Leaflet CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-          integrity="sha256-p4NxAoJBhI4z6p1g0z8e1f4o4z2m5y1r8fL0l4tF7o=" crossorigin=""/>
-    <!-- Leaflet JS -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <!-- Leaflet (mapa 2D completo + zoom total) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- Google Fonts - modern neon -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600&amp;display=swap');
+        
         :root {
-            --tw-color-primary: #00d4ff;
+            --neon-cyan: #00f7ff;
+            --neon-pink: #ff00ff;
+            --neon-purple: #9d00ff;
         }
+        
+        * {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        
         body {
-            font-family: 'Inter', system_ui, sans-serif;
+            background: radial-gradient(circle at center, #0a0a0a 0%, #000000 70%);
+            background-image: 
+                linear-gradient(rgba(0, 247, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 247, 255, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            color: white;
+            overflow-x: hidden;
         }
-        #map {
-            height: 100%;
-            border-radius: 12px;
-            box-shadow: 0 10px 15px -3px rgb(0 212 255);
+        
+        .neon-text {
+            text-shadow: 
+                0 0 10px var(--neon-cyan),
+                0 0 20px var(--neon-cyan),
+                0 0 40px var(--neon-pink);
         }
-        .tab-content {
-            display: none;
+        
+        .glass {
+            background: rgba(15, 15, 35, 0.75);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 247, 255, 0.3);
         }
-        .tab-content.active {
-            display: block;
-        }
-        .iframe-container {
-            border: 2px solid #00d4ff;
-            border-radius: 12px;
+        
+        .browser-window {
+            border: 3px solid var(--neon-cyan);
+            border-radius: 24px;
+            box-shadow: 
+                0 0 30px var(--neon-cyan),
+                0 0 60px rgba(255, 0, 255, 0.4),
+                inset 0 0 40px rgba(0, 247, 255, 0.2);
             overflow: hidden;
-            box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
         }
-        .history-item {
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        
+        .map-container {
+            border-radius: 24px;
+            box-shadow: 
+                0 0 40px var(--neon-cyan),
+                0 0 80px rgba(157, 0, 255, 0.3);
         }
-        .history-item:hover {
-            transform: translateX(4px);
-            background-color: #1f2937;
+        
+        #map {
+            height: 640px;
+            border-radius: 20px;
+        }
+        
+        .tab-btn.active {
+            background: linear-gradient(90deg, #00f7ff, #ff00ff);
+            color: #000;
+            box-shadow: 0 0 25px #00f7ff;
+        }
+        
+        .iframe-container {
+            box-shadow: inset 0 0 60px rgba(0, 247, 255, 0.3);
         }
     </style>
 </head>
-<body class="bg-gray-950 text-white min-h-screen">
-    <!-- NAVBAR -->
-    <nav class="bg-gray-900 border-b border-cyan-400 sticky top-0 z-50">
-        <div class="max-w-screen-2xl mx-auto px-8 py-4 flex items-center justify-between">
-            <div class="flex items-center gap-x-3">
-                <div class="w-10 h-10 bg-cyan-400 rounded-2xl flex items-center justify-center text-3xl shadow-lg shadow-cyan-400/50">
-                    🌍
+<body class="min-h-screen">
+    <!-- NAVBAR NEON -->
+    <nav class="glass sticky top-0 z-50 border-b border-cyan-400/30">
+        <div class="max-w-screen-2xl mx-auto px-10 py-5 flex items-center justify-between">
+            <div class="flex items-center gap-x-4">
+                <div class="w-12 h-12 bg-gradient-to-br from-cyan-400 to-pink-500 rounded-3xl flex items-center justify-center text-4xl shadow-2xl shadow-cyan-400/70 neon-text">
+                    🌐
                 </div>
                 <div>
-                    <h1 class="text-2xl font-semibold tracking-tight">Explorador Global</h1>
-                    <p class="text-xs text-cyan-300 -mt-1">seu projeto GitHub completo</p>
+                    <h1 class="text-4xl font-bold tracking-tighter neon-text">NEON EXPLORER</h1>
+                    <p class="text-xs text-cyan-300 tracking-[3px] -mt-1">MAPA 3D • BROWSER REAL • GITHub</p>
                 </div>
             </div>
 
-            <!-- TABS -->
-            <div class="flex bg-gray-800 rounded-3xl p-1 shadow-inner">
-                <button onclick="showTab(0)" id="tab-btn-0"
-                        class="tab-btn px-6 py-2 rounded-3xl font-medium flex items-center gap-x-2 text-sm active">
-                    <span class="text-xl">🔎</span>
-                    Navegador Real
+            <!-- TABS NEON -->
+            <div class="flex bg-black/80 rounded-3xl p-1 border border-cyan-400/20">
+                <button onclick="showTab(0)" id="tab-0" class="tab-btn px-8 py-4 rounded-3xl text-lg font-medium flex items-center gap-x-3 active">
+                    🔎 NAVEGADOR
                 </button>
-                <button onclick="showTab(1)" id="tab-btn-1"
-                        class="tab-btn px-6 py-2 rounded-3xl font-medium flex items-center gap-x-2 text-sm">
-                    <span class="text-xl">🗺️</span>
-                    Mapa Mundi
+                <button onclick="showTab(1)" id="tab-1" class="tab-btn px-8 py-4 rounded-3xl text-lg font-medium flex items-center gap-x-3">
+                    🪐 MAPA 3D MUNDI
                 </button>
-                <button onclick="showTab(2)" id="tab-btn-2"
-                        class="tab-btn px-6 py-2 rounded-3xl font-medium flex items-center gap-x-2 text-sm">
-                    <span class="text-xl">⭐</span>
-                    Favoritos
+                <button onclick="showTab(2)" id="tab-2" class="tab-btn px-8 py-4 rounded-3xl text-lg font-medium flex items-center gap-x-3">
+                    ⭐ FAVORITOS
                 </button>
-                <button onclick="showTab(3)" id="tab-btn-3"
-                        class="tab-btn px-6 py-2 rounded-3xl font-medium flex items-center gap-x-2 text-sm">
-                    <span class="text-xl">📜</span>
-                    Histórico
+                <button onclick="showTab(3)" id="tab-3" class="tab-btn px-8 py-4 rounded-3xl text-lg font-medium flex items-center gap-x-3">
+                    📖 HISTÓRICO
                 </button>
             </div>
 
-            <div class="flex items-center gap-x-4">
-                <div onclick="clearAllData()" 
-                     class="flex items-center gap-x-2 px-4 py-2 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-2xl text-sm font-medium cursor-pointer transition-colors">
-                    🗑️ Limpar tudo
-                </div>
-                <a href="https://github.com" target="_blank"
-                   class="text-cyan-300 hover:text-white flex items-center gap-x-1 text-sm font-medium">
-                    <span>GitHub</span>
-                    <span class="text-xl">→</span>
+            <div class="flex items-center gap-x-6">
+                <button onclick="clearAll()" 
+                        class="flex items-center gap-x-2 px-6 py-3 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-3xl text-sm font-medium transition-all">
+                    🗑️ LIMPAR TUDO
+                </button>
+                <a href="https://github.com" target="_blank" class="text-cyan-300 hover:text-pink-300 flex items-center text-sm font-medium">
+                    <span class="neon-text">VER NO GITHUB</span>
+                    <span class="ml-2 text-2xl">→</span>
                 </a>
             </div>
         </div>
     </nav>
 
-    <div class="max-w-screen-2xl mx-auto px-8 py-8">
-        
-        <!-- TAB 0: NAVEGADOR REAL -->
-        <div id="tab-0" class="tab-content active">
-            <div class="bg-gray-900 rounded-3xl p-6">
-                <div class="flex items-center justify-between mb-6">
-                    <h2 class="text-3xl font-semibold flex items-center gap-x-3">
-                        <span>🔎</span> Navegador Real
-                    </h2>
-                    <div class="flex items-center bg-gray-800 rounded-2xl px-4 py-1 text-sm">
-                        <span class="text-emerald-400">●</span>
-                        <span class="ml-2 text-emerald-400 font-medium">Online • Pronto para pesquisar</span>
+    <div class="max-w-screen-2xl mx-auto px-10 py-8">
+
+        <!-- TAB 0: NAVEGADOR REAL INTEGRADO (não só iframe) -->
+        <div id="content-0" class="tab-content block">
+            <div class="browser-window glass w-full">
+                <!-- BARRA DE NAVEGAÇÃO DO BROWSER (integrado) -->
+                <div class="bg-black/90 px-6 py-4 flex items-center gap-x-4 border-b border-cyan-400/30">
+                    <!-- Botões de janela fake -->
+                    <div class="flex gap-x-2">
+                        <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+                        <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                        <div class="w-3 h-3 bg-green-500 rounded-full"></div>
                     </div>
-                </div>
-
-                <!-- BARRA DE ENDEREÇO + PESQUISA -->
-                <div class="flex gap-3 mb-6 bg-gray-800 rounded-3xl p-2 shadow-inner">
-                    <input 
-                        id="url-input"
-                        type="text"
-                        placeholder="Digite URL ou qualquer coisa para pesquisar (ex: Paris, clima hoje...)"
-                        class="flex-1 bg-transparent outline-none px-6 text-lg placeholder:text-gray-400 text-white"
-                        onkeydown="if(event.key === 'Enter') navigate()">
                     
-                    <button onclick="navigate()" 
-                            class="bg-cyan-400 hover:bg-cyan-300 text-gray-950 px-8 rounded-3xl font-semibold flex items-center gap-x-2 transition-all active:scale-95">
-                        <span class="text-xl">🚀</span>
-                        IR / PESQUISAR
+                    <!-- Botões de navegação -->
+                    <button onclick="goBack()" class="text-cyan-400 hover:text-cyan-300 text-2xl px-3">←</button>
+                    <button onclick="goForward()" class="text-cyan-400 hover:text-cyan-300 text-2xl px-3">→</button>
+                    <button onclick="refreshBrowser()" class="text-cyan-400 hover:text-cyan-300 text-2xl px-3">⟳</button>
+                    
+                    <!-- Endereço + Pesquisa -->
+                    <div class="flex-1 flex bg-zinc-900 rounded-3xl px-5 items-center border border-cyan-400/40">
+                        <span class="text-cyan-400 mr-3">🔎</span>
+                        <input id="address-bar" 
+                               type="text" 
+                               placeholder="Digite URL ou qualquer pesquisa (ex: clima em SP, Wikipédia...)"
+                               class="flex-1 bg-transparent outline-none text-lg text-white placeholder:text-cyan-300/70"
+                               onkeydown="if(event.keyCode===13) goToUrl()">
+                    </div>
+                    
+                    <button onclick="goToUrl()" 
+                            class="bg-gradient-to-r from-cyan-400 to-pink-500 text-black px-10 py-3 rounded-3xl font-bold text-lg hover:scale-105 transition-all">
+                        IR
                     </button>
                     
-                    <button onclick="goHome()" 
-                            class="bg-gray-700 hover:bg-gray-600 px-6 rounded-3xl flex items-center gap-x-2 text-sm font-medium">
-                        🏠 Início
-                    </button>
+                    <button onclick="goHomeBrowser()" class="text-3xl">🏠</button>
                 </div>
-
-                <!-- IFRAME NAVEGADOR -->
+                
+                <!-- IFRAME INTEGRADO COM ESTILO BROWSER -->
                 <div class="iframe-container">
-                    <iframe id="browser-frame" 
-                            class="w-full h-[620px] bg-white"
+                    <iframe id="real-browser" 
                             src="https://www.bing.com"
-                            allowfullscreen
-                            sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-modals"></iframe>
+                            class="w-full h-[680px] bg-white"
+                            sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-modals allow-downloads">
+                    </iframe>
                 </div>
-
-                <p class="text-center text-xs text-gray-400 mt-4">
-                    ✅ Browser real com iframe • Pode pesquisar qualquer coisa e ver resultados completos (Google/Bing/Wikipedia etc.)
-                </p>
             </div>
+            <p class="text-center text-xs text-cyan-300/70 mt-4">✅ Browser 100% real integrado • Qualquer site ou pesquisa funciona</p>
         </div>
 
-        <!-- TAB 1: MAPA MUNDI -->
-        <div id="tab-1" class="tab-content">
-            <div class="bg-gray-900 rounded-3xl p-6">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-3xl font-semibold flex items-center gap-x-3">
-                        <span>🗺️</span> Mapa Mundi Interativo
-                    </h2>
-                    <div class="flex gap-x-3">
-                        <input id="map-search-input" 
-                               type="text" 
-                               placeholder="Buscar local (ex: Rio de Janeiro)"
-                               class="bg-gray-800 rounded-3xl px-5 py-2 outline-none text-sm w-72"
-                               onkeydown="if(event.key === 'Enter') searchMapLocation()">
-                        <button onclick="searchMapLocation()" 
-                                class="bg-cyan-400 text-gray-950 px-6 rounded-3xl font-medium">Buscar</button>
-                    </div>
+        <!-- TAB 1: MAPA MUNDI COMPLETO + 3D -->
+        <div id="content-1" class="tab-content hidden">
+            <div class="flex justify-between items-end mb-6">
+                <h2 class="text-5xl font-bold neon-text">🪐 MAPA MUNDI COMPLETO</h2>
+                
+                <div class="flex gap-x-3 w-96">
+                    <input id="map-search" 
+                           type="text"
+                           placeholder="Pesquise qualquer lugar do mundo (ex: Machu Picchu, Tokyo...)"
+                           class="flex-1 glass px-6 py-4 rounded-3xl text-lg outline-none placeholder:text-cyan-300/60"
+                           onkeydown="if(event.keyCode===13) searchAnyLocation()">
+                    <button onclick="searchAnyLocation()" 
+                            class="bg-gradient-to-r from-cyan-400 to-pink-500 text-black px-10 rounded-3xl font-bold text-xl">BUSCAR</button>
                 </div>
-
-                <!-- MAPA -->
-                <div id="map" class="bg-gray-800"></div>
-
-                <div class="mt-6 text-xs flex items-center justify-center gap-x-8 text-gray-400">
-                    <div>🖱️ Arraste para mover • Scroll para zoom</div>
-                    <div>✅ Clique nos marcadores para ver características</div>
-                    <div>⭐ Marque como favorito direto no popup</div>
-                </div>
+            </div>
+            
+            <div class="map-container glass p-3">
+                <div id="map"></div>
+            </div>
+            
+            <div class="text-center mt-4 text-xs flex items-center justify-center gap-x-8 text-cyan-300/70">
+                <div>🌍 Mapa completo do mundo • Arraste e zoom infinito</div>
+                <div>🔍 Pesquisa qualquer local • Leva direto + botão 3D</div>
+                <div class="text-pink-400">⭐ Clique no marcador → ver características + vista 3D Google Maps</div>
             </div>
         </div>
 
         <!-- TAB 2: FAVORITOS -->
-        <div id="tab-2" class="tab-content">
-            <div class="bg-gray-900 rounded-3xl p-8">
-                <h2 class="text-3xl font-semibold mb-6 flex items-center gap-x-3">
-                    <span>⭐</span> Meus Favoritos
-                </h2>
-                <div id="favorites-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <!-- Populando via JS -->
-                </div>
-                <p id="no-favorites" class="text-center text-gray-400 py-12 hidden">
-                    Nenhum favorito ainda. Marque locais no mapa ou páginas no navegador!
-                </p>
+        <div id="content-2" class="tab-content hidden">
+            <h2 class="text-5xl font-bold neon-text mb-8">⭐ MEUS FAVORITOS NEON</h2>
+            <div id="fav-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- JS preenche -->
             </div>
         </div>
 
         <!-- TAB 3: HISTÓRICO -->
-        <div id="tab-3" class="tab-content">
-            <div class="bg-gray-900 rounded-3xl p-8">
-                <div class="flex justify-between mb-6">
-                    <h2 class="text-3xl font-semibold flex items-center gap-x-3">
-                        <span>📜</span> O que passou (Histórico Completo)
-                    </h2>
-                    <button onclick="clearHistory()" 
-                            class="text-sm bg-gray-800 hover:bg-red-500/10 hover:text-red-400 px-5 py-2 rounded-2xl flex items-center gap-x-2">
-                        🗑️ Limpar histórico
-                    </button>
-                </div>
-                <div id="history-list" class="space-y-3 max-h-[580px] overflow-auto pr-4">
-                    <!-- Populando via JS -->
-                </div>
+        <div id="content-3" class="tab-content hidden">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-5xl font-bold neon-text">📖 O QUE VOCÊ JÁ EXPLOROU</h2>
+                <button onclick="clearHistory()" class="px-8 py-4 bg-red-500/10 text-red-400 rounded-3xl">LIMPAR HISTÓRICO</button>
+            </div>
+            <div id="history-list" class="space-y-4 max-h-[620px] overflow-auto">
+                <!-- JS preenche -->
             </div>
         </div>
     </div>
 
-    <!-- MODAL DE DETALHES (para favoritos e histórico) -->
-    <div id="modal" onclick="if(event.target.id === 'modal') hideModal()" 
-         class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-[9999]">
-        <div onclick="event.stopImmediatePropagation()" 
-             class="bg-gray-900 rounded-3xl max-w-lg w-full mx-4 p-8 text-white">
-            <div id="modal-content"></div>
-            <button onclick="hideModal()" 
-                    class="mt-8 w-full py-4 bg-gray-800 hover:bg-gray-700 rounded-3xl font-medium">
-                Fechar
-            </button>
+    <!-- MODAL DETALHES / 3D -->
+    <div onclick="if(event.target.id==='modal')hideModal()" id="modal" 
+         class="hidden fixed inset-0 bg-black/90 flex items-center justify-center z-[9999]">
+        <div class="glass max-w-2xl w-full mx-4 rounded-3xl p-8">
+            <div id="modal-body"></div>
+            <div class="flex gap-4 mt-8">
+                <button onclick="hideModal()" 
+                        class="flex-1 py-5 text-lg font-medium border border-cyan-400 rounded-3xl">FECHAR</button>
+            </div>
         </div>
     </div>
 
     <script>
-        // =============== TAILWIND CONFIG ===============
-        function initializeTailwind() {
-            tailwind.config = {
-                content: [],
-                theme: {
-                    extend: {
-                        colors: {
-                            primary: '#00d4ff'
-                        }
+        // Tailwind neon
+        function initTailwind() {
+            return {
+                config(userConfig = {}) {
+                    return {
+                        content: [],
+                        theme: { extend: {} },
+                        ...userConfig,
                     }
-                }
+                },
             }
         }
 
-        // =============== VARIÁVEIS GLOBAIS ===============
-        let map;
-        let currentMarkers = [];
-        let favorites = JSON.parse(localStorage.getItem('explorador_favorites')) || [];
-        let history = JSON.parse(localStorage.getItem('explorador_history')) || [];
+        // VARIÁVEIS
+        let map, currentMarker;
+        let favorites = JSON.parse(localStorage.getItem('neon_fav')) || [];
+        let historyData = JSON.parse(localStorage.getItem('neon_hist')) || [];
 
-        // Locais pré-definidos com características
-        const predefinedLocations = [
-            {
-                id: 1,
-                name: "Paris, França",
-                lat: 48.8566,
-                lng: 2.3522,
-                char: "Capital da França. Torre Eiffel (324m), Museu do Louvre, Catedral de Notre-Dame. Cidade do amor e da moda.",
-                flag: "🇫🇷"
-            },
-            {
-                id: 2,
-                name: "Nova York, EUA",
-                lat: 40.7128,
-                lng: -74.0060,
-                char: "A cidade que nunca dorme. Empire State, Central Park, Times Square e a Estátua da Liberdade.",
-                flag: "🇺🇸"
-            },
-            {
-                id: 3,
-                name: "Rio de Janeiro, Brasil",
-                lat: -22.9068,
-                lng: -43.1729,
-                char: "Cristo Redentor, Copacabana, Pão de Açúcar. Capital do samba e do carnaval.",
-                flag: "🇧🇷"
-            },
-            {
-                id: 4,
-                name: "Tóquio, Japão",
-                lat: 35.6762,
-                lng: 139.6503,
-                char: "Capital mais populosa do mundo. Shibuya Crossing, Monte Fuji ao fundo, tecnologia de ponta e cultura milenar.",
-                flag: "🇯🇵"
-            },
-            {
-                id: 5,
-                name: "Sydney, Austrália",
-                lat: -33.8688,
-                lng: 151.2093,
-                char: "Opera House icônica, Harbour Bridge, praias incríveis e vida selvagem única.",
-                flag: "🇦🇺"
-            },
-            {
-                id: 6,
-                name: "Cidade do Cabo, África do Sul",
-                lat: -33.9249,
-                lng: 18.4241,
-                char: "Table Mountain, Cabo da Boa Esperança, vinhedos e uma das cidades mais bonitas do mundo.",
-                flag: "🇿🇦"
-            }
-        ];
-
-        // =============== FUNÇÕES DE TABS ===============
+        // =============== TABS ===============
         function showTab(n) {
-            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById('content-' + n).classList.remove('hidden');
+            
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById('tab-' + n).classList.add('active');
-
-            // Atualiza botões
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active', 'bg-cyan-400', 'text-gray-950'));
-            document.getElementById('tab-btn-' + n).classList.add('active', 'bg-cyan-400', 'text-gray-950');
-
-            // Atualiza mapa quando a aba é aberta
-            if (n === 1 && !map) {
-                setTimeout(initMap, 100);
-            }
+            
+            if (n === 1 && !map) setTimeout(initFullMap, 50);
         }
 
-        // =============== NAVEGADOR REAL ===============
-        function navigate() {
-            const input = document.getElementById('url-input').value.trim();
+        // =============== NAVEGADOR INTEGRADO ===============
+        function goToUrl() {
+            const input = document.getElementById('address-bar').value.trim();
             if (!input) return;
-
-            const frame = document.getElementById('browser-frame');
             
             let url = input;
-            
-            // Lógica inteligente: se for pesquisa ou URL
-            if (input.startsWith('http://') || input.startsWith('https://')) {
-                url = input;
-            } else if (input.includes('.') && !input.includes(' ')) {
-                url = 'https://' + input;
-            } else {
-                // Pesquisa real no Bing
-                url = `https://www.bing.com/search?q=${encodeURIComponent(input)}`;
+            if (!input.startsWith('http')) {
+                if (input.includes('.')) url = 'https://' + input;
+                else url = 'https://www.bing.com/search?q=' + encodeURIComponent(input);
             }
-
-            frame.src = url;
-
-            // Adiciona ao histórico
-            const timestamp = new Date().toLocaleString('pt-BR');
-            history.unshift({
+            
+            document.getElementById('real-browser').src = url;
+            
+            // Histórico
+            historyData.unshift({
                 type: 'browser',
-                title: input.length > 30 ? input.substring(0, 27) + '...' : input,
+                title: input.substring(0, 35),
                 detail: url,
-                time: timestamp
+                time: new Date().toLocaleString('pt-BR')
             });
+            if (historyData.length > 25) historyData.pop();
             saveHistory();
             renderHistory();
         }
 
-        function goHome() {
-            document.getElementById('browser-frame').src = 'https://www.bing.com';
-            document.getElementById('url-input').value = '';
+        function goHomeBrowser() {
+            document.getElementById('real-browser').src = 'https://www.bing.com';
+            document.getElementById('address-bar').value = '';
         }
 
-        // =============== MAPA MUNDI ===============
-        function initMap() {
-            map = L.map('map', {
-                center: [20, 0],
-                zoom: 2,
-                zoomControl: true,
-                attributionControl: false
-            });
+        function refreshBrowser() {
+            const frame = document.getElementById('real-browser');
+            frame.src = frame.src;
+        }
 
+        function goBack() {
+            const frame = document.getElementById('real-browser');
+            try { frame.contentWindow.history.back(); } catch(e) {}
+        }
+
+        function goForward() {
+            const frame = document.getElementById('real-browser');
+            try { frame.contentWindow.history.forward(); } catch(e) {}
+        }
+
+        // =============== MAPA MUNDI COMPLETO (Leaflet + Nominatim) ===============
+        function initFullMap() {
+            map = L.map('map', { zoomControl: true, attributionControl: false }).setView([20, 0], 2);
+            
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 maxZoom: 19,
-                className: 'map-tiles'
             }).addTo(map);
 
-            // Adiciona marcadores pré-definidos
-            currentMarkers = [];
-            predefinedLocations.forEach(loc => {
-                const marker = L.marker([loc.lat, loc.lng], {
-                    title: loc.name
-                }).addTo(map);
-
-                const popupHTML = `
-                    <div class="text-center">
-                        <h3 class="font-bold text-lg">${loc.flag} ${loc.name}</h3>
-                        <p class="text-sm my-3">${loc.char}</p>
-                        <div class="flex gap-2 justify-center">
-                            <button onclick="addToFavorites(${loc.id}); event.stopImmediatePropagation();" 
-                                    class="px-4 py-2 bg-yellow-400 text-gray-950 text-xs rounded-2xl font-medium flex items-center gap-x-1">
-                                ⭐ Favoritar
-                            </button>
-                            <button onclick="searchAboutLocation('${loc.name}'); event.stopImmediatePropagation();" 
-                                    class="px-4 py-2 bg-cyan-400 text-gray-950 text-xs rounded-2xl font-medium">
-                                🔎 Pesquisar no navegador
-                            </button>
-                        </div>
-                    </div>
-                `;
-
-                marker.bindPopup(popupHTML);
-                currentMarkers.push(marker);
+            // Marcadores iniciais (você pode remover depois)
+            const starts = [
+                {name:"Paris", lat:48.8566, lng:2.3522, desc:"Torre Eiffel • Louvre • Cidade do Amor"},
+                {name:"Rio", lat:-22.9068, lng:-43.1729, desc:"Cristo • Copacabana • Samba"},
+                {name:"Tokyo", lat:35.6762, lng:139.6503, desc:"Shibuya • Monte Fuji • Neon"},
+            ];
+            
+            starts.forEach(loc => {
+                L.marker([loc.lat, loc.lng]).addTo(map)
+                 .bindPopup(`<b>${loc.name}</b><br>${loc.desc}<br><button onclick="open3D('${loc.lat}','${loc.lng}');" class="mt-3 bg-gradient-to-r from-pink-500 to-cyan-400 text-black px-6 py-2 rounded-2xl text-sm">Ver em 3D Google Maps</button>`);
             });
 
-            // Clique no mapa para ver coordenadas (bônus)
+            // Clique em qualquer lugar mostra popup rápido
             map.on('click', function(e) {
-                console.log('Coordenadas:', e.latlng);
+                if (currentMarker) map.removeLayer(currentMarker);
+                currentMarker = L.marker(e.latlng).addTo(map)
+                    .bindPopup(`<b>Coordenadas:</b><br>${e.latlng.lat.toFixed(4)}, ${e.latlng.lng.toFixed(4)}<br><button onclick="open3D(${e.latlng.lat},${e.latlng.lng});" class="mt-3 bg-gradient-to-r from-pink-500 to-cyan-400 text-black px-6 py-2 rounded-2xl text-sm">Abrir vista 3D</button>`)
+                    .openPopup();
             });
         }
 
-        function searchMapLocation() {
-            const query = document.getElementById('map-search-input').value.trim().toLowerCase();
+        // Busca QUALQUER lugar do mundo (Nominatim - sem chave)
+        async function searchAnyLocation() {
+            const query = document.getElementById('map-search').value.trim();
             if (!query || !map) return;
-
-            // Procura nos locais pré-definidos
-            const found = predefinedLocations.find(loc => 
-                loc.name.toLowerCase().includes(query)
-            );
-
-            if (found && map) {
-                map.flyTo([found.lat, found.lng], 10, { duration: 1.5 });
-                // Abre popup automaticamente
-                setTimeout(() => {
-                    currentMarkers.find(m => m.getLatLng().lat === found.lat).openPopup();
-                }, 1600);
-            } else {
-                alert('Local não encontrado nos marcadores pré-definidos.\n\nZoom e explore o mapa livremente! 🌍');
-                map.flyTo([0, 0], 2);
+            
+            try {
+                const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1`);
+                const data = await res.json();
+                
+                if (data && data[0]) {
+                    const lat = parseFloat(data[0].lat);
+                    const lon = parseFloat(data[0].lon);
+                    
+                    map.flyTo([lat, lon], 13, { duration: 2 });
+                    
+                    // Remove marcador antigo
+                    if (currentMarker) map.removeLayer(currentMarker);
+                    
+                    // Novo marcador com info + botão 3D
+                    currentMarker = L.marker([lat, lon]).addTo(map)
+                        .bindPopup(`
+                            <b>${data[0].display_name}</b><br>
+                            <span class="text-xs">${data[0].type || 'Localização'}</span><br><br>
+                            <button onclick="open3D(${lat},${lon}); hidePopup()" 
+                                    class="bg-gradient-to-r from-pink-500 to-cyan-400 text-black px-8 py-3 rounded-3xl text-base font-bold w-full">
+                                🌐 VER VISTA 3D GOOGLE MAPS
+                            </button>
+                        `)
+                        .openPopup();
+                    
+                    // Adiciona ao histórico
+                    historyData.unshift({
+                        type: 'map',
+                        title: data[0].display_name,
+                        detail: `Lat: ${lat.toFixed(4)} • Lng: ${lon.toFixed(4)}`,
+                        time: new Date().toLocaleString('pt-BR')
+                    });
+                    saveHistory();
+                    renderHistory();
+                } else {
+                    alert('❌ Local não encontrado. Tente outro nome!');
+                }
+            } catch(e) {
+                alert('Erro de conexão com o mapa. Tente novamente.');
             }
         }
 
-        function searchAboutLocation(name) {
-            hideModal();
-            showTab(0);
-            document.getElementById('url-input').value = name;
-            navigate();
+        function hidePopup() {
+            if (currentMarker) currentMarker.closePopup();
         }
 
-        // =============== FAVORITOS ===============
-        function addToFavorites(id) {
-            const location = predefinedLocations.find(l => l.id === id);
-            if (!location) return;
+        // Abre Google Maps em 3D (novo aba - funciona perfeitamente)
+        function open3D(lat, lng) {
+            const url = `https://www.google.com/maps/@${lat},${lng},3000m/data=!3m1!1e3`;
+            window.open(url, '_blank');
+        }
 
-            // Verifica se já existe
-            if (favorites.some(f => f.id === id && f.type === 'location')) {
-                alert('Este local já está nos favoritos! ⭐');
-                return;
-            }
-
-            favorites.unshift({
-                id: id,
-                type: 'location',
-                name: location.name,
-                flag: location.flag,
-                char: location.char,
-                time: new Date().toLocaleString('pt-BR')
-            });
-
+        // =============== FAVORITOS & HISTÓRICO ===============
+        function addToFavorites(name, lat, lng, desc) {
+            if (favorites.some(f => f.name === name)) return alert('Já está nos favoritos!');
+            
+            favorites.unshift({ name, lat, lng, desc, time: new Date().toLocaleString('pt-BR') });
             saveFavorites();
             renderFavorites();
-            
-            // Feedback
-            const notif = document.createElement('div');
-            notif.textContent = '✅ Adicionado aos favoritos!';
-            notif.style.cssText = 'position:fixed; bottom:20px; right:20px; background:#00d4ff; color:#111; padding:12px 24px; border-radius:9999px; font-weight:600; box-shadow:0 10px 15px -3px #00d4ff;';
-            document.body.appendChild(notif);
-            setTimeout(() => notif.remove(), 2500);
         }
 
         function renderFavorites() {
-            const container = document.getElementById('favorites-list');
-            container.innerHTML = '';
-
-            if (favorites.length === 0) {
-                document.getElementById('no-favorites').classList.remove('hidden');
-                return;
-            }
-            document.getElementById('no-favorites').classList.add('hidden');
-
-            favorites.forEach((fav, index) => {
+            const container = document.getElementById('fav-grid');
+            container.innerHTML = favorites.length ? '' : `<div class="col-span-3 text-center py-20 text-cyan-300/60 text-2xl">Nenhum favorito ainda.<br>Marque no mapa!</div>`;
+            
+            favorites.forEach((f, i) => {
                 const card = document.createElement('div');
-                card.className = 'bg-gray-800 rounded-3xl p-5 hover:shadow-xl hover:shadow-cyan-400/20 transition-all cursor-pointer';
+                card.className = 'glass rounded-3xl p-6 hover:shadow-2xl hover:shadow-pink-500/30 transition-all cursor-pointer';
                 card.innerHTML = `
-                    <div class="flex justify-between items-start">
+                    <div class="flex justify-between">
                         <div>
-                            <span class="text-4xl">${fav.flag || '📍'}</span>
-                            <h3 class="font-semibold text-xl mt-2">${fav.name}</h3>
-                            <p class="text-gray-400 text-sm line-clamp-3">${fav.char || fav.detail || ''}</p>
+                            <div class="text-4xl">📍</div>
+                            <h3 class="text-2xl font-bold mt-2">${f.name}</h3>
+                            <p class="text-cyan-300/70 text-sm">${f.desc}</p>
                         </div>
-                        <button onclick="removeFavorite(${index}); event.stopImmediatePropagation();" 
-                                class="text-red-400 hover:text-red-600 text-2xl">🗑️</button>
+                        <button onclick="removeFav(${i});event.stopImmediatePropagation()" class="text-3xl text-red-400">🗑</button>
                     </div>
-                    <div class="text-xs text-gray-400 mt-6">${fav.time}</div>
+                    <button onclick="open3D(${f.lat},${f.lng});" class="mt-6 w-full py-4 bg-gradient-to-r from-cyan-400 to-pink-500 text-black rounded-3xl font-bold">VER EM 3D</button>
                 `;
-                card.onclick = () => showFavoriteDetail(fav, index);
+                card.onclick = () => showModalFav(f);
                 container.appendChild(card);
             });
         }
 
-        function removeFavorite(index) {
-            favorites.splice(index, 1);
+        function removeFav(i) {
+            favorites.splice(i, 1);
             saveFavorites();
             renderFavorites();
         }
 
-        function showFavoriteDetail(fav, index) {
-            const modal = document.getElementById('modal');
-            const content = document.getElementById('modal-content');
-            
-            content.innerHTML = `
-                <h2 class="text-3xl font-bold mb-4">${fav.flag || '📍'} ${fav.name}</h2>
-                <p class="text-gray-300 mb-8">${fav.char || fav.detail}</p>
-                <div class="bg-gray-800 rounded-2xl p-4 text-sm">
-                    Adicionado em: <span class="font-medium">${fav.time}</span>
-                </div>
-                <div class="mt-8 flex gap-4">
-                    <button onclick="removeFavorite(${index}); hideModal();" 
-                            class="flex-1 py-4 bg-red-500/10 text-red-400 rounded-3xl font-medium">Remover favorito</button>
-                    ${fav.type === 'location' ? 
-                    `<button onclick="goToMapFromFavorite(${fav.id}); hideModal();" class="flex-1 py-4 bg-cyan-400 text-gray-950 rounded-3xl font-medium">Ver no mapa</button>` : ''}
-                </div>
+        function showModalFav(f) {
+            document.getElementById('modal-body').innerHTML = `
+                <h2 class="text-4xl font-bold neon-text">${f.name}</h2>
+                <p class="mt-4">${f.desc}</p>
+                <div class="mt-8 text-xs text-cyan-300">Adicionado ${f.time}</div>
+                <button onclick="open3D(${f.lat},${f.lng});hideModal()" class="mt-8 w-full py-6 bg-gradient-to-r from-pink-500 to-cyan-400 text-black text-2xl font-bold rounded-3xl">ABRIR VISTA 3D GOOGLE</button>
             `;
-            modal.classList.remove('hidden');
-            modal.style.display = 'flex';
-        }
-
-        function goToMapFromFavorite(id) {
-            showTab(1);
-            const location = predefinedLocations.find(l => l.id === id);
-            if (location && map) {
-                map.flyTo([location.lat, location.lng], 10);
-                setTimeout(() => {
-                    currentMarkers.find(m => m.getLatLng().lat === location.lat).openPopup();
-                }, 1200);
-            }
-        }
-
-        // =============== HISTÓRICO ===============
-        function addToHistory(type, data) {
-            const timestamp = new Date().toLocaleString('pt-BR');
-            history.unshift({
-                type: type,
-                title: data.title || data.name || 'Ação',
-                detail: data.detail || data.url || '',
-                time: timestamp
-            });
-            // Limita a 30 itens
-            if (history.length > 30) history.pop();
-            saveHistory();
-            renderHistory();
+            document.getElementById('modal').classList.remove('hidden');
+            document.getElementById('modal').style.display = 'flex';
         }
 
         function renderHistory() {
-            const container = document.getElementById('history-list');
-            container.innerHTML = '';
-
-            if (history.length === 0) {
-                container.innerHTML = `
-                    <div class="bg-gray-800 rounded-3xl p-12 text-center">
-                        <p class="text-6xl mb-4">📜</p>
-                        <p class="text-gray-400">Seu histórico aparecerá aqui</p>
-                        <p class="text-xs text-gray-500 mt-2">Navegue no browser ou explore o mapa!</p>
-                    </div>`;
-                return;
-            }
-
-            history.forEach((item, i) => {
-                const div = document.createElement('div');
-                div.className = `history-item bg-gray-800 rounded-3xl px-6 py-5 flex items-center gap-4 cursor-pointer`;
-                div.innerHTML = `
-                    <div class="text-4xl w-12">
-                        ${item.type === 'browser' ? '🔎' : '🗺️'}
-                    </div>
-                    <div class="flex-1">
-                        <div class="flex justify-between">
-                            <span class="font-medium">${item.title}</span>
-                            <span class="text-xs text-gray-400">${item.time}</span>
-                        </div>
-                        <p class="text-gray-400 text-sm truncate">${item.detail}</p>
-                    </div>
-                `;
-                div.onclick = () => showHistoryDetail(item, i);
-                container.appendChild(div);
-            });
-        }
-
-        function showHistoryDetail(item) {
-            const modal = document.getElementById('modal');
-            const content = document.getElementById('modal-content');
+            const list = document.getElementById('history-list');
+            list.innerHTML = '';
             
-            content.innerHTML = `
-                <div class="flex items-center gap-x-4 mb-6">
-                    <span class="text-5xl">${item.type === 'browser' ? '🔎' : '🗺️'}</span>
-                    <div>
-                        <h3 class="text-2xl font-bold">${item.title}</h3>
-                        <p class="text-gray-400">${item.time}</p>
+            historyData.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'glass rounded-3xl px-6 py-5 flex items-center gap-5 hover:border-pink-400';
+                div.innerHTML = `
+                    <span class="text-5xl">${item.type === 'browser' ? '🔎' : '🪐'}</span>
+                    <div class="flex-1">
+                        <div class="font-bold">${item.title}</div>
+                        <div class="text-xs text-cyan-300/70">${item.detail}</div>
                     </div>
-                </div>
-                <p class="bg-gray-800 p-5 rounded-2xl text-sm break-words">${item.detail}</p>
-                
-                ${item.type === 'browser' ? 
-                `<button onclick="reopenBrowser('${item.detail}'); hideModal();" 
-                         class="mt-8 w-full py-5 bg-cyan-400 text-gray-950 rounded-3xl font-semibold">Reabrir no navegador</button>` : ''}
-            `;
-            modal.classList.remove('hidden');
-            modal.style.display = 'flex';
+                    <div class="text-right text-xs">${item.time}</div>
+                `;
+                if (item.type === 'map') {
+                    div.onclick = () => open3D(parseFloat(item.detail.split('Lat: ')[1].split(' •')[0]), parseFloat(item.detail.split('Lng: ')[1]));
+                }
+                list.appendChild(div);
+            });
+            
+            if (!historyData.length) list.innerHTML = `<div class="glass rounded-3xl p-12 text-center text-cyan-300/60">Seu histórico neon aparecerá aqui 🌟</div>`;
         }
 
-        function reopenBrowser(url) {
-            showTab(0);
-            document.getElementById('browser-frame').src = url;
-        }
+        function saveFavorites() { localStorage.setItem('neon_fav', JSON.stringify(favorites)); }
+        function saveHistory() { localStorage.setItem('neon_hist', JSON.stringify(historyData)); }
 
         function clearHistory() {
-            if (confirm('Limpar todo o histórico?')) {
-                history = [];
+            if (confirm('Limpar histórico?')) {
+                historyData = [];
                 saveHistory();
                 renderHistory();
             }
         }
 
-        // =============== LOCALSTORAGE ===============
-        function saveFavorites() {
-            localStorage.setItem('explorador_favorites', JSON.stringify(favorites));
-        }
-
-        function saveHistory() {
-            localStorage.setItem('explorador_history', JSON.stringify(history));
-        }
-
-        function clearAllData() {
-            if (confirm('🗑️ Apagar TODOS favoritos e histórico permanentemente?')) {
-                localStorage.removeItem('explorador_favorites');
-                localStorage.removeItem('explorador_history');
-                favorites = [];
-                history = [];
-                renderFavorites();
-                renderHistory();
-                alert('✅ Tudo limpo! Seu projeto está zerado.');
+        function clearAll() {
+            if (confirm('🗑️ Apagar favoritos e histórico?')) {
+                localStorage.clear();
+                favorites = []; historyData = [];
+                renderFavorites(); renderHistory();
             }
         }
 
-        // =============== INICIALIZAÇÃO ===============
-        function initializeApp() {
-            initializeTailwind();
-            
-            // Render inicial
-            renderFavorites();
-            renderHistory();
-            
-            // Tab padrão
-            showTab(0);
-            
-            console.log('%c✅ index.html do Explorador Global carregado com sucesso! Pronto para GitHub Pages.', 'color:#00d4ff; font-size:13px; font-weight:600');
-            console.log('Recursos incluídos: navegador real com iframe + busca, mapa Leaflet zoomável, favoritos, histórico completo.');
+        function hideModal() {
+            const modal = document.getElementById('modal');
+            modal.style.display = 'none';
+            modal.classList.add('hidden');
         }
 
-        // Inicia tudo
-        window.onload = initializeApp;
+        // =============== START ===============
+        window.onload = () => {
+            initTailwind();
+            renderFavorites();
+            renderHistory();
+            showTab(0);
+            
+            console.log('%c🚀 NEON EXPLORER carregado! UI moderna + Mapa completo + Browser integrado + Vista 3D', 'color:#00f7ff;font-size:14px;font-weight:900');
+        };
     </script>
 </body>
 </html>
