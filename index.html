@@ -1,215 +1,298 @@
-import pygame
-import sys
-import time
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GameHub - 20 Jogos Incríveis</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Orbitron:wght@400;700&display=swap');
 
-# ======================
-# JOGO: MOTA 2D - PASSA OBSTÁCULOS
-# Versão básica para GitHub
-# 8 níveis com dificuldade crescente
-# Usa apenas pygame (sem imagens externas)
-# ======================
+    :root {
+      --primary: #00ff9d;
+      --accent: #ff00aa;
+      --bg: #0a0a1f;
+      --card: #1a1a3a;
+    }
 
-pygame.init()
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: linear-gradient(135deg, #0a0a1f 0%, #1a0033 100%);
+      color: white;
+      font-family: 'Orbitron', sans-serif;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
 
-# Configurações da janela
-LARGURA = 800
-ALTURA = 600
-tela = pygame.display.set_mode((LARGURA, ALTURA))
-pygame.display.set_caption("Mota 2D - Passa os Obstáculos!")
-relogio = pygame.time.Clock()
-fonte = pygame.font.SysFont(None, 48)
-fonte_pequena = pygame.font.SysFont(None, 32)
+    header {
+      text-align: center;
+      padding: 40px 20px 20px;
+      background: rgba(0,0,0,0.6);
+      border-bottom: 3px solid var(--primary);
+    }
 
-# Cores
-CEU = (135, 206, 235)
-CHAO_COR = (34, 139, 34)
-PRETO = (0, 0, 0)
-BRANCO = (255, 255, 255)
-VERMELHO = (200, 0, 0)
-CINZA = (100, 100, 100)
+    h1 {
+      font-family: 'Press Start 2P', cursive;
+      font-size: 3.5rem;
+      background: linear-gradient(to right, var(--primary), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 30px rgba(0,255,157,0.5);
+    }
 
-# Variáveis do jogo
-CHAO_Y = 480
-VELOCIDADE_BASE = 6
+    .coins {
+      position: absolute;
+      top: 30px;
+      right: 40px;
+      background: var(--card);
+      padding: 10px 20px;
+      border-radius: 50px;
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border: 2px solid var(--primary);
+    }
 
-class Mota:
-    def __init__(self):
-        self.x = 150                    # posição fixa (runner style)
-        self.y = CHAO_Y - 60
-        self.largura = 70
-        self.altura = 40
-        self.vel_y = 0
-        self.no_chao = True
+    .container {
+      max-width: 1400px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
 
-    def pular(self):
-        if self.no_chao:
-            self.vel_y = -18
-            self.no_chao = False
+    .section {
+      margin-bottom: 60px;
+    }
 
-    def atualizar(self):
-        self.vel_y += 1.2          # gravidade
-        self.y += self.vel_y
+    .section h2 {
+      font-size: 2rem;
+      margin-bottom: 25px;
+      text-align: center;
+      color: var(--primary);
+      text-shadow: 0 0 15px var(--primary);
+    }
 
-        # Colisão com o chão
-        if self.y >= CHAO_Y - self.altura:
-            self.y = CHAO_Y - self.altura
-            self.vel_y = 0
-            self.no_chao = True
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 25px;
+    }
 
-    def desenhar(self, tela):
-        # Corpo da mota (retângulo cinza)
-        pygame.draw.rect(tela, CINZA, (self.x, self.y + 15, self.largura, 25))
-        # Roda traseira
-        pygame.draw.circle(tela, PRETO, (self.x + 15, self.y + 38), 12)
-        # Roda dianteira
-        pygame.draw.circle(tela, PRETO, (self.x + 55, self.y + 38), 12)
-        # Banco / piloto (triângulo vermelho)
-        pontos = [(self.x + 20, self.y + 15), (self.x + 45, self.y + 10), (self.x + 60, self.y + 25)]
-        pygame.draw.polygon(tela, VERMELHO, pontos)
-        # Guidão
-        pygame.draw.line(tela, PRETO, (self.x + 55, self.y + 18), (self.x + 70, self.y + 8), 6)
+    .game-card {
+      background: var(--card);
+      border-radius: 20px;
+      overflow: hidden;
+      transition: all 0.4s ease;
+      border: 2px solid transparent;
+      position: relative;
+    }
 
-class Obstaculo:
-    def __init__(self, x):
-        self.x = x
-        self.y = CHAO_Y - 35
-        self.largura = 45
-        self.altura = 35
+    .game-card:hover {
+      transform: translateY(-15px) scale(1.05);
+      box-shadow: 0 0 40px rgba(0, 255, 157, 0.6);
+      border-color: var(--primary);
+    }
 
-    def atualizar(self, velocidade):
-        self.x -= velocidade
+    .game-card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+    }
 
-    def desenhar(self, tela):
-        # Caixa de obstáculo (vermelho com "espinhos")
-        pygame.draw.rect(tela, VERMELHO, (self.x, self.y, self.largura, self.altura))
-        # Espinhos simples
-        pygame.draw.line(tela, PRETO, (self.x + 10, self.y), (self.x + 10, self.y - 12), 4)
-        pygame.draw.line(tela, PRETO, (self.x + 22, self.y), (self.x + 22, self.y - 12), 4)
-        pygame.draw.line(tela, PRETO, (self.x + 34, self.y), (self.x + 34, self.y - 12), 4)
+    .game-info {
+      padding: 20px;
+      text-align: center;
+    }
 
-def iniciar_nivel(nivel):
-    """Gera os obstáculos para o nível atual"""
-    global obstaculos, distancia, velocidade
-    obstaculos = []
-    distancia = 0
+    .game-info h3 {
+      font-size: 1.4rem;
+      margin-bottom: 10px;
+    }
 
-    # Dificuldade crescente
-    velocidade = VELOCIDADE_BASE + nivel * 0.8
-    num_obstaculos = 4 + nivel * 2          # nível 1 = 6, nível 8 = 20
-    espacamento = max(220 - nivel * 12, 120)  # ficam mais próximos
+    .play-btn {
+      background: linear-gradient(to right, var(--primary), #00cc7a);
+      color: black;
+      border: none;
+      padding: 12px 30px;
+      border-radius: 50px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+      font-size: 1.1rem;
+    }
 
-    x_inicial = LARGURA + 100
-    for i in range(num_obstaculos):
-        x = x_inicial + i * espacamento
-        obstaculos.append(Obstaculo(x))
+    .play-btn:hover {
+      background: linear-gradient(to right, #ff00aa, var(--accent));
+      color: white;
+      transform: scale(1.1);
+    }
 
-    # Distância necessária para completar o nível
-    return 1800 + nivel * 450
+    .casino {
+      border-color: var(--accent);
+    }
 
-# ======================
-# VARIÁVEIS DO JOGO
-# ======================
-mota = Mota()
-obstaculos = []
-distancia = 0
-nivel_atual = 0
-distancia_alvo = iniciar_nivel(0)
-estado = "jogando"          # jogando, game_over, vitoria, nivel_completo
-tempo_mensagem = 0
+    footer {
+      text-align: center;
+      padding: 30px;
+      color: #666;
+      font-size: 0.9rem;
+    }
 
-# Loop principal
-while True:
-    for evento in pygame.event.get():
-        if evento.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
+    .particles {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: -1;
+      opacity: 0.15;
+    }
+  </style>
+</head>
+<body>
 
-        if evento.type == pygame.KEYDOWN:
-            if estado == "jogando" and evento.key == pygame.K_SPACE:
-                mota.pular()
+  <header>
+    <h1>GAMEHUB</h1>
+    <div class="coins" id="coinDisplay">
+      💰 <span id="coinCount">2500</span> Coins
+    </div>
+  </header>
 
-            # Reiniciar nível com R
-            if estado == "game_over" and evento.key == pygame.K_r:
-                distancia_alvo = iniciar_nivel(nivel_atual)
-                estado = "jogando"
-                mota = Mota()
+  <div class="container">
 
-            # Sair com ESC
-            if evento.key == pygame.K_ESCAPE:
-                pygame.quit()
-                sys.exit()
+    <!-- === JOGOS NORMAIS (15) === -->
+    <div class="section">
+      <h2>🎮 15 Jogos Normais</h2>
+      <div class="games-grid" id="normalGames"></div>
+    </div>
 
-    # ======================
-    # LÓGICA DO JOGO
-    # ======================
-    if estado == "jogando":
-        mota.atualizar()
+    <!-- === JOGOS DE CASINO (5) === -->
+    <div class="section">
+      <h2>🎰 5 Jogos de Casino</h2>
+      <div class="games-grid" id="casinoGames"></div>
+    </div>
 
-        # Atualiza obstáculos
-        for obs in obstaculos[:]:
-            obs.atualizar(velocidade)
-            if obs.x < -100:
-                obstaculos.remove(obs)
+  </div>
 
-            # Colisão mota <-> obstáculo
-            if (mota.x + mota.largura > obs.x and mota.x < obs.x + obs.largura and
-                mota.y + mota.altura > obs.y and mota.y < obs.y + obs.altura):
-                estado = "game_over"
-                tempo_mensagem = time.time()
+  <footer>
+    GameHub © 2026 - Feito com ❤️ para diversão. Todos os jogos rodam no navegador.
+  </footer>
 
-        distancia += velocidade
+  <canvas class="particles" id="particles"></canvas>
 
-        # Verifica se passou o nível
-        if distancia >= distancia_alvo and len(obstaculos) == 0:
-            nivel_atual += 1
-            if nivel_atual >= 8:
-                estado = "vitoria"
-                tempo_mensagem = time.time()
-            else:
-                estado = "nivel_completo"
-                tempo_mensagem = time.time()
-                distancia_alvo = iniciar_nivel(nivel_atual)
+  <script>
+    // Sistema de moedas (salvo no localStorage)
+    let coins = parseInt(localStorage.getItem('gameHubCoins')) || 2500;
+    document.getElementById('coinCount').textContent = coins;
 
-    # ======================
-    # DESENHO
-    # ======================
-    tela.fill(CEU)                                      # céu
+    function updateCoins(amount) {
+      coins += amount;
+      localStorage.setItem('gameHubCoins', coins);
+      document.getElementById('coinCount').textContent = coins;
+    }
 
-    # Chão
-    pygame.draw.rect(tela, CHAO_COR, (0, CHAO_Y, LARGURA, ALTURA - CHAO_Y))
+    // Lista de 15 jogos normais (podes mudar os nomes e pastas)
+    const normalGames = [
+      { name: "Racing Turbo",       folder: "racing",       img: "https://picsum.photos/id/1015/300/180" },
+      { name: "Futebol Arena",      folder: "futebol",      img: "https://picsum.photos/id/201/300/180" },
+      { name: "Basketball Hoops",   folder: "basketball",   img: "https://picsum.photos/id/237/300/180" },
+      { name: "Flappy Bird",        folder: "flappy",       img: "https://picsum.photos/id/180/300/180" },
+      { name: "Snake Classic",      folder: "snake",        img: "https://picsum.photos/id/251/300/180" },
+      { name: "Tetris",             folder: "tetris",       img: "https://picsum.photos/id/133/300/180" },
+      { name: "Pong 2P",            folder: "pong",         img: "https://picsum.photos/id/180/300/180" },
+      { name: "Space Invaders",     folder: "space",        img: "https://picsum.photos/id/1016/300/180" },
+      { name: "Platformer Hero",    folder: "platformer",   img: "https://picsum.photos/id/201/300/180" },
+      { name: "Breakout",           folder: "breakout",     img: "https://picsum.photos/id/133/300/180" },
+      { name: "2048",               folder: "2048",         img: "https://picsum.photos/id/251/300/180" },
+      { name: "Memory Match",       folder: "memory",       img: "https://picsum.photos/id/180/300/180" },
+      { name: "Rock Paper Scissors",folder: "rps",          img: "https://picsum.photos/id/1015/300/180" },
+      { name: "Endless Runner",     folder: "runner",       img: "https://picsum.photos/id/201/300/180" },
+      { name: "Pac-Man Clone",      folder: "pacman",       img: "https://picsum.photos/id/237/300/180" }
+    ];
 
-    # Desenha mota e obstáculos
-    if estado != "vitoria":
-        mota.desenhar(tela)
-        for obs in obstaculos:
-            obs.desenhar(tela)
+    // 5 jogos de casino
+    const casinoGames = [
+      { name: "🎰 Slots Machine",   folder: "slots",        img: "https://picsum.photos/id/1018/300/180" },
+      { name: "💣 Mines",           folder: "mines",        img: "https://picsum.photos/id/133/300/180" },
+      { name: "🎡 Roulette",        folder: "roulette",     img: "https://picsum.photos/id/180/300/180" },
+      { name: "🃏 Blackjack",       folder: "blackjack",    img: "https://picsum.photos/id/201/300/180" },
+      { name: "🚀 Crash",           folder: "crash",        img: "https://picsum.photos/id/251/300/180" }
+    ];
 
-    # HUD
-    texto_nivel = fonte_pequena.render(f"Nível {nivel_atual + 1}/8", True, PRETO)
-    tela.blit(texto_nivel, (20, 20))
+    // Gerar cards
+    function createGameCard(game, isCasino = false) {
+      const card = document.createElement('div');
+      card.className = `game-card ${isCasino ? 'casino' : ''}`;
+      card.innerHTML = `
+        <img src="${game.img}" alt="${game.name}">
+        <div class="game-info">
+          <h3>${game.name}</h3>
+          <button class="play-btn" onclick="playGame('${game.folder}', ${isCasino})">JOGAR AGORA</button>
+        </div>
+      `;
+      return card;
+    }
 
-    texto_dist = fonte_pequena.render(f"Distância: {int(distancia)}", True, PRETO)
-    tela.blit(texto_dist, (20, 60))
+    normalGames.forEach(game => {
+      document.getElementById('normalGames').appendChild(createGameCard(game));
+    });
 
-    # Mensagens de estado
-    if estado == "game_over":
-        msg = fonte.render("GAME OVER", True, VERMELHO)
-        tela.blit(msg, (LARGURA//2 - msg.get_width()//2, ALTURA//2 - 80))
-        msg2 = fonte_pequena.render("Pressione R para tentar novamente", True, PRETO)
-        tela.blit(msg2, (LARGURA//2 - msg2.get_width()//2, ALTURA//2 + 20))
+    casinoGames.forEach(game => {
+      document.getElementById('casinoGames').appendChild(createGameCard(game, true));
+    });
 
-    elif estado == "nivel_completo":
-        msg = fonte.render(f"NÍVEL {nivel_atual} COMPLETO!", True, (0, 180, 0))
-        tela.blit(msg, (LARGURA//2 - msg.get_width()//2, ALTURA//2 - 60))
-        # Volta automaticamente para jogar após 1.2 segundos
-        if time.time() - tempo_mensagem > 1.2:
-            estado = "jogando"
+    // Função para abrir o jogo
+    function playGame(folder, isCasino) {
+      window.open(`games/${folder}/index.html`, '_blank');
+      // Exemplo: dar moedas ao voltar (podes melhorar depois)
+      if (Math.random() > 0.7) {
+        setTimeout(() => {
+          updateCoins(isCasino ? 150 : 50);
+          alert(`🎉 Ganhaste ${isCasino ? 150 : 50} coins!`);
+        }, 3000);
+      }
+    }
 
-    elif estado == "vitoria":
-        msg = fonte.render("PARABÉNS! VENCES-TE TODOS OS 8 NÍVEIS!", True, (0, 200, 0))
-        tela.blit(msg, (LARGURA//2 - msg.get_width()//2, ALTURA//2 - 100))
-        msg2 = fonte_pequena.render("Pressione ESC para sair", True, PRETO)
-        tela.blit(msg2, (LARGURA//2 - msg2.get_width()//2, ALTURA//2 + 40))
+    // Partículas de fundo simples
+    const canvas = document.getElementById('particles');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 
-    pygame.display.flip()
-    relogio.tick(60)
+    let particles = [];
+    class Particle {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 3 + 1;
+        this.speed = Math.random() * 0.5 + 0.2;
+      }
+      update() {
+        this.y += this.speed;
+        if (this.y > canvas.height) this.y = 0;
+      }
+      draw() {
+        ctx.fillStyle = '#00ff9d';
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    for (let i = 0; i < 80; i++) particles.push(new Particle());
+
+    function animateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => {
+        p.update();
+        p.draw();
+      });
+      requestAnimationFrame(animateParticles);
+    }
+    animateParticles();
+
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+  </script>
+</body>
+</html>
