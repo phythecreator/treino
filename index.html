@@ -1,384 +1,653 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GameHub - 20 Jogos Incríveis</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Poppins:wght@400;600;700&display=swap');
-
-    :root {
-      --teal: #00d4ff;
-      --pink: #ff00aa;
-      --bg: linear-gradient(135deg, #00c4ff 0%, #00ff9d 100%);
-    }
-
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      background: var(--bg);
-      color: #000;
-      font-family: 'Poppins', sans-serif;
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
-
-    header {
-      background: rgba(255,255,255,0.95);
-      padding: 15px 40px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-
-    .logo {
-      font-family: 'Press Start 2P', cursive;
-      font-size: 2.2rem;
-      background: linear-gradient(to right, #00d4ff, #ff00aa);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      letter-spacing: 3px;
-    }
-
-    .search {
-      background: #fff;
-      border: 3px solid #000;
-      border-radius: 50px;
-      padding: 12px 25px;
-      width: 380px;
-      font-size: 1.1rem;
-      outline: none;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    }
-
-    .coins {
-      background: #000;
-      color: #fff;
-      padding: 8px 20px;
-      border-radius: 50px;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 1.3rem;
-      box-shadow: 0 4px 15px rgba(255,0,170,0.4);
-    }
-
-    .container {
-      max-width: 1600px;
-      margin: 40px auto;
-      padding: 0 30px;
-    }
-
-    .section {
-      margin-bottom: 80px;
-    }
-
-    .section h2 {
-      font-size: 2.4rem;
-      margin-bottom: 30px;
-      text-align: center;
-      color: #000;
-      text-shadow: 4px 4px 0 #ff00aa;
-      font-weight: 700;
-    }
-
-    .games-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 25px;
-    }
-
-    .game-card {
-      background: white;
-      border-radius: 24px;
-      overflow: hidden;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      position: relative;
-      border: 5px solid #000;
-    }
-
-    .game-card:hover {
-      transform: scale(1.08) rotate(2deg);
-      box-shadow: 0 20px 40px rgba(255,0,170,0.4);
-    }
-
-    .game-card img {
-      width: 100%;
-      height: 200px;
-      object-fit: cover;
-      display: block;
-    }
-
-    .game-info {
-      padding: 18px;
-      text-align: center;
-    }
-
-    .game-info h3 {
-      font-size: 1.35rem;
-      margin-bottom: 12px;
-      font-weight: 700;
-      color: #000;
-    }
-
-    .play-btn {
-      background: linear-gradient(to right, #00d4ff, #ff00aa);
-      color: #000;
-      border: 4px solid #000;
-      padding: 14px 40px;
-      border-radius: 50px;
-      font-size: 1.2rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.3s;
-      width: 100%;
-    }
-
-    .play-btn:hover {
-      background: linear-gradient(to right, #ff00aa, #00d4ff);
-      transform: scale(1.05);
-    }
-
-    /* Modal do jogo (abre dentro do site) */
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.9);
-      z-index: 1000;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .modal-content {
-      width: 95%;
-      max-width: 1400px;
-      height: 90%;
-      background: #000;
-      border-radius: 20px;
-      position: relative;
-      overflow: hidden;
-      box-shadow: 0 0 60px rgba(0,212,255,0.8);
-    }
-
-    .modal-content iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-    }
-
-    .close-btn {
-      position: absolute;
-      top: 20px;
-      right: 30px;
-      background: #ff00aa;
-      color: white;
-      border: 4px solid #000;
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      font-size: 2rem;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 10;
-    }
-
-    footer {
-      text-align: center;
-      padding: 40px;
-      color: #000;
-      font-weight: 600;
-      font-size: 1.1rem;
-    }
-
-    /* Partículas leves no fundo */
-    .particles {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      pointer-events: none;
-      z-index: -1;
-      opacity: 0.2;
-    }
-  </style>
-</head>
-<body>
-
-  <header>
-    <div class="logo">GAMEHUB</div>
-    <input type="text" class="search" placeholder="🔎 Procurar jogo...">
-    <div class="coins" id="coinDisplay">
-      💰 <span id="coinCount">4850</span> Coins
-    </div>
-  </header>
-
-  <div class="container">
-
-    <!-- 15 JOGOS NORMAIS -->
-    <div class="section">
-      <h2>🎮 15 JOGOS NORMAIS</h2>
-      <div class="games-grid" id="normalGames"></div>
-    </div>
-
-    <!-- 5 JOGOS DE CASINO -->
-    <div class="section">
-      <h2>🎰 5 JOGOS DE CASINO</h2>
-      <div class="games-grid" id="casinoGames"></div>
-    </div>
-
-  </div>
-
-  <!-- MODAL - Jogo abre AQUI dentro do site -->
-  <div class="modal" id="gameModal">
-    <div class="modal-content">
-      <button class="close-btn" onclick="closeGame()">✕</button>
-      <iframe id="gameFrame" src=""></iframe>
-    </div>
-  </div>
-
-  <footer>
-    GameHub © 2026 • Todos os jogos rodam 100% dentro deste site • Feito com ❤️
-  </footer>
-
-  <canvas class="particles" id="particles"></canvas>
-
-  <script>
-    // Moedas
-    let coins = parseInt(localStorage.getItem('gameHubCoins')) || 4850;
-    document.getElementById('coinCount').textContent = coins;
-
-    function updateCoins(amount) {
-      coins += amount;
-      localStorage.setItem('gameHubCoins', coins);
-      document.getElementById('coinCount').textContent = coins;
-    }
-
-    // 15 Jogos Normais com IMAGENS VERDADEIRAS (fotos reais de jogos populares)
-    const normalGames = [
-      { name: "Burnin' Rubber Crash n Burn", folder: "racing",       img: "https://picsum.photos/id/1015/600/400" },
-      { name: "Penalty Shooters 2",         folder: "futebol",      img: "https://picsum.photos/id/1005/600/400" },
-      { name: "Basketball Hoops",           folder: "basketball",   img: "https://picsum.photos/id/201/600/400" },
-      { name: "Moto X3M",                   folder: "motox",        img: "https://picsum.photos/id/133/600/400" },
-      { name: "Flappy Bird",                folder: "flappy",       img: "https://picsum.photos/id/180/600/400" },
-      { name: "Tetris",                     folder: "tetris",       img: "https://picsum.photos/id/251/600/400" },
-      { name: "World Cup 2026",             folder: "worldcup",     img: "https://picsum.photos/id/1009/600/400" },
-      { name: "True Love Calculator",       folder: "lovecal",      img: "https://picsum.photos/id/1006/600/400" },
-      { name: "Crazy Runner",               folder: "runner",       img: "https://picsum.photos/id/133/600/400" },
-      { name: "Master Chess",               folder: "chess",        img: "https://picsum.photos/id/1016/600/400" },
-      { name: "2048",                       folder: "2048",         img: "https://picsum.photos/id/201/600/400" },
-      { name: "Repuls",                     folder: "repuls",       img: "https://picsum.photos/id/180/600/400" },
-      { name: "Vectaria",                   folder: "vectaria",     img: "https://picsum.photos/id/251/600/400" },
-      { name: "Euro Cup 2026",              folder: "eurocup",      img: "https://picsum.photos/id/1005/600/400" },
-      { name: "Who is Lying?",              folder: "lying",        img: "https://picsum.photos/id/133/600/400" }
-    ];
-
-    // 5 Jogos de Casino com imagens reais
-    const casinoGames = [
-      { name: "🎰 Slots Machine",   folder: "slots",        img: "https://picsum.photos/id/1018/600/400" },
-      { name: "💣 Mines",           folder: "mines",        img: "https://picsum.photos/id/133/600/400" },
-      { name: "🎡 Roulette",        folder: "roulette",     img: "https://picsum.photos/id/180/600/400" },
-      { name: "🃏 Blackjack",       folder: "blackjack",    img: "https://picsum.photos/id/201/600/400" },
-      { name: "🚀 Crash Game",      folder: "crash",        img: "https://picsum.photos/id/251/600/400" }
-    ];
-
-    // Criar cards
-    function createGameCard(game, isCasino = false) {
-      const card = document.createElement('div');
-      card.className = `game-card`;
-      card.innerHTML = `
-        <img src="${game.img}" alt="${game.name}">
-        <div class="game-info">
-          <h3>${game.name}</h3>
-          <button class="play-btn" onclick="openGame('${game.folder}')">JOGAR AGORA</button>
-        </div>
-      `;
-      return card;
-    }
-
-    normalGames.forEach(game => {
-      document.getElementById('normalGames').appendChild(createGameCard(game));
-    });
-
-    casinoGames.forEach(game => {
-      document.getElementById('casinoGames').appendChild(createGameCard(game, true));
-    });
-
-    // ABRIR JOGO DENTRO DO PRÓPRIO SITE (modal + iframe)
-    function openGame(folder) {
-      const modal = document.getElementById('gameModal');
-      const iframe = document.getElementById('gameFrame');
-      iframe.src = `games/${folder}/index.html`;
-      modal.style.display = 'flex';
-      
-      // Exemplo: ganhar moedas ao jogar
-      setTimeout(() => {
-        if (Math.random() > 0.6) {
-          const win = Math.floor(Math.random() * 300) + 100;
-          updateCoins(win);
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌍 Explorador Global • Meu Projeto GitHub</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhI4z6p1g0z8e1f4o4z2m5y1r8fL0l4tF7o=" crossorigin=""/>
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+        :root {
+            --tw-color-primary: #00d4ff;
         }
-      }, 8000);
-    }
+        body {
+            font-family: 'Inter', system_ui, sans-serif;
+        }
+        #map {
+            height: 100%;
+            border-radius: 12px;
+            box-shadow: 0 10px 15px -3px rgb(0 212 255);
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .iframe-container {
+            border: 2px solid #00d4ff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+        }
+        .history-item {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .history-item:hover {
+            transform: translateX(4px);
+            background-color: #1f2937;
+        }
+    </style>
+</head>
+<body class="bg-gray-950 text-white min-h-screen">
+    <!-- NAVBAR -->
+    <nav class="bg-gray-900 border-b border-cyan-400 sticky top-0 z-50">
+        <div class="max-w-screen-2xl mx-auto px-8 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-x-3">
+                <div class="w-10 h-10 bg-cyan-400 rounded-2xl flex items-center justify-center text-3xl shadow-lg shadow-cyan-400/50">
+                    🌍
+                </div>
+                <div>
+                    <h1 class="text-2xl font-semibold tracking-tight">Explorador Global</h1>
+                    <p class="text-xs text-cyan-300 -mt-1">seu projeto GitHub completo</p>
+                </div>
+            </div>
 
-    function closeGame() {
-      const modal = document.getElementById('gameModal');
-      const iframe = document.getElementById('gameFrame');
-      iframe.src = ''; // limpa o iframe
-      modal.style.display = 'none';
-    }
+            <!-- TABS -->
+            <div class="flex bg-gray-800 rounded-3xl p-1 shadow-inner">
+                <button onclick="showTab(0)" id="tab-btn-0"
+                        class="tab-btn px-6 py-2 rounded-3xl font-medium flex items-center gap-x-2 text-sm active">
+                    <span class="text-xl">🔎</span>
+                    Navegador Real
+                </button>
+                <button onclick="showTab(1)" id="tab-btn-1"
+                        class="tab-btn px-6 py-2 rounded-3xl font-medium flex items-center gap-x-2 text-sm">
+                    <span class="text-xl">🗺️</span>
+                    Mapa Mundi
+                </button>
+                <button onclick="showTab(2)" id="tab-btn-2"
+                        class="tab-btn px-6 py-2 rounded-3xl font-medium flex items-center gap-x-2 text-sm">
+                    <span class="text-xl">⭐</span>
+                    Favoritos
+                </button>
+                <button onclick="showTab(3)" id="tab-btn-3"
+                        class="tab-btn px-6 py-2 rounded-3xl font-medium flex items-center gap-x-2 text-sm">
+                    <span class="text-xl">📜</span>
+                    Histórico
+                </button>
+            </div>
 
-    // Partículas leves no fundo (estilo Poki)
-    const canvas = document.getElementById('particles');
-    const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+            <div class="flex items-center gap-x-4">
+                <div onclick="clearAllData()" 
+                     class="flex items-center gap-x-2 px-4 py-2 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-2xl text-sm font-medium cursor-pointer transition-colors">
+                    🗑️ Limpar tudo
+                </div>
+                <a href="https://github.com" target="_blank"
+                   class="text-cyan-300 hover:text-white flex items-center gap-x-1 text-sm font-medium">
+                    <span>GitHub</span>
+                    <span class="text-xl">→</span>
+                </a>
+            </div>
+        </div>
+    </nav>
 
-    let particles = [];
-    class Particle {
-      constructor() {
-        this.x = Math.random() * canvas.width;
-        this.y = Math.random() * canvas.height;
-        this.size = Math.random() * 4 + 1;
-        this.speedX = Math.random() * 1 - 0.5;
-        this.speedY = Math.random() * 1 - 0.5;
-      }
-      update() {
-        this.x += this.speedX;
-        this.y += this.speedY;
-        if (this.size > 0.2) this.size -= 0.02;
-      }
-      draw() {
-        ctx.fillStyle = '#ff00aa';
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fill();
-      }
-    }
+    <div class="max-w-screen-2xl mx-auto px-8 py-8">
+        
+        <!-- TAB 0: NAVEGADOR REAL -->
+        <div id="tab-0" class="tab-content active">
+            <div class="bg-gray-900 rounded-3xl p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-3xl font-semibold flex items-center gap-x-3">
+                        <span>🔎</span> Navegador Real
+                    </h2>
+                    <div class="flex items-center bg-gray-800 rounded-2xl px-4 py-1 text-sm">
+                        <span class="text-emerald-400">●</span>
+                        <span class="ml-2 text-emerald-400 font-medium">Online • Pronto para pesquisar</span>
+                    </div>
+                </div>
 
-    for (let i = 0; i < 120; i++) particles.push(new Particle());
+                <!-- BARRA DE ENDEREÇO + PESQUISA -->
+                <div class="flex gap-3 mb-6 bg-gray-800 rounded-3xl p-2 shadow-inner">
+                    <input 
+                        id="url-input"
+                        type="text"
+                        placeholder="Digite URL ou qualquer coisa para pesquisar (ex: Paris, clima hoje...)"
+                        class="flex-1 bg-transparent outline-none px-6 text-lg placeholder:text-gray-400 text-white"
+                        onkeydown="if(event.key === 'Enter') navigate()">
+                    
+                    <button onclick="navigate()" 
+                            class="bg-cyan-400 hover:bg-cyan-300 text-gray-950 px-8 rounded-3xl font-semibold flex items-center gap-x-2 transition-all active:scale-95">
+                        <span class="text-xl">🚀</span>
+                        IR / PESQUISAR
+                    </button>
+                    
+                    <button onclick="goHome()" 
+                            class="bg-gray-700 hover:bg-gray-600 px-6 rounded-3xl flex items-center gap-x-2 text-sm font-medium">
+                        🏠 Início
+                    </button>
+                </div>
 
-    function animate() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      particles.forEach((p, i) => {
-        p.update();
-        p.draw();
-        if (p.size <= 0.2) particles[i] = new Particle();
-      });
-      requestAnimationFrame(animate);
-    }
-    animate();
+                <!-- IFRAME NAVEGADOR -->
+                <div class="iframe-container">
+                    <iframe id="browser-frame" 
+                            class="w-full h-[620px] bg-white"
+                            src="https://www.bing.com"
+                            allowfullscreen
+                            sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-modals"></iframe>
+                </div>
 
-    window.addEventListener('resize', () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    });
-  </script>
+                <p class="text-center text-xs text-gray-400 mt-4">
+                    ✅ Browser real com iframe • Pode pesquisar qualquer coisa e ver resultados completos (Google/Bing/Wikipedia etc.)
+                </p>
+            </div>
+        </div>
+
+        <!-- TAB 1: MAPA MUNDI -->
+        <div id="tab-1" class="tab-content">
+            <div class="bg-gray-900 rounded-3xl p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-3xl font-semibold flex items-center gap-x-3">
+                        <span>🗺️</span> Mapa Mundi Interativo
+                    </h2>
+                    <div class="flex gap-x-3">
+                        <input id="map-search-input" 
+                               type="text" 
+                               placeholder="Buscar local (ex: Rio de Janeiro)"
+                               class="bg-gray-800 rounded-3xl px-5 py-2 outline-none text-sm w-72"
+                               onkeydown="if(event.key === 'Enter') searchMapLocation()">
+                        <button onclick="searchMapLocation()" 
+                                class="bg-cyan-400 text-gray-950 px-6 rounded-3xl font-medium">Buscar</button>
+                    </div>
+                </div>
+
+                <!-- MAPA -->
+                <div id="map" class="bg-gray-800"></div>
+
+                <div class="mt-6 text-xs flex items-center justify-center gap-x-8 text-gray-400">
+                    <div>🖱️ Arraste para mover • Scroll para zoom</div>
+                    <div>✅ Clique nos marcadores para ver características</div>
+                    <div>⭐ Marque como favorito direto no popup</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: FAVORITOS -->
+        <div id="tab-2" class="tab-content">
+            <div class="bg-gray-900 rounded-3xl p-8">
+                <h2 class="text-3xl font-semibold mb-6 flex items-center gap-x-3">
+                    <span>⭐</span> Meus Favoritos
+                </h2>
+                <div id="favorites-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Populando via JS -->
+                </div>
+                <p id="no-favorites" class="text-center text-gray-400 py-12 hidden">
+                    Nenhum favorito ainda. Marque locais no mapa ou páginas no navegador!
+                </p>
+            </div>
+        </div>
+
+        <!-- TAB 3: HISTÓRICO -->
+        <div id="tab-3" class="tab-content">
+            <div class="bg-gray-900 rounded-3xl p-8">
+                <div class="flex justify-between mb-6">
+                    <h2 class="text-3xl font-semibold flex items-center gap-x-3">
+                        <span>📜</span> O que passou (Histórico Completo)
+                    </h2>
+                    <button onclick="clearHistory()" 
+                            class="text-sm bg-gray-800 hover:bg-red-500/10 hover:text-red-400 px-5 py-2 rounded-2xl flex items-center gap-x-2">
+                        🗑️ Limpar histórico
+                    </button>
+                </div>
+                <div id="history-list" class="space-y-3 max-h-[580px] overflow-auto pr-4">
+                    <!-- Populando via JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE DETALHES (para favoritos e histórico) -->
+    <div id="modal" onclick="if(event.target.id === 'modal') hideModal()" 
+         class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-[9999]">
+        <div onclick="event.stopImmediatePropagation()" 
+             class="bg-gray-900 rounded-3xl max-w-lg w-full mx-4 p-8 text-white">
+            <div id="modal-content"></div>
+            <button onclick="hideModal()" 
+                    class="mt-8 w-full py-4 bg-gray-800 hover:bg-gray-700 rounded-3xl font-medium">
+                Fechar
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // =============== TAILWIND CONFIG ===============
+        function initializeTailwind() {
+            tailwind.config = {
+                content: [],
+                theme: {
+                    extend: {
+                        colors: {
+                            primary: '#00d4ff'
+                        }
+                    }
+                }
+            }
+        }
+
+        // =============== VARIÁVEIS GLOBAIS ===============
+        let map;
+        let currentMarkers = [];
+        let favorites = JSON.parse(localStorage.getItem('explorador_favorites')) || [];
+        let history = JSON.parse(localStorage.getItem('explorador_history')) || [];
+
+        // Locais pré-definidos com características
+        const predefinedLocations = [
+            {
+                id: 1,
+                name: "Paris, França",
+                lat: 48.8566,
+                lng: 2.3522,
+                char: "Capital da França. Torre Eiffel (324m), Museu do Louvre, Catedral de Notre-Dame. Cidade do amor e da moda.",
+                flag: "🇫🇷"
+            },
+            {
+                id: 2,
+                name: "Nova York, EUA",
+                lat: 40.7128,
+                lng: -74.0060,
+                char: "A cidade que nunca dorme. Empire State, Central Park, Times Square e a Estátua da Liberdade.",
+                flag: "🇺🇸"
+            },
+            {
+                id: 3,
+                name: "Rio de Janeiro, Brasil",
+                lat: -22.9068,
+                lng: -43.1729,
+                char: "Cristo Redentor, Copacabana, Pão de Açúcar. Capital do samba e do carnaval.",
+                flag: "🇧🇷"
+            },
+            {
+                id: 4,
+                name: "Tóquio, Japão",
+                lat: 35.6762,
+                lng: 139.6503,
+                char: "Capital mais populosa do mundo. Shibuya Crossing, Monte Fuji ao fundo, tecnologia de ponta e cultura milenar.",
+                flag: "🇯🇵"
+            },
+            {
+                id: 5,
+                name: "Sydney, Austrália",
+                lat: -33.8688,
+                lng: 151.2093,
+                char: "Opera House icônica, Harbour Bridge, praias incríveis e vida selvagem única.",
+                flag: "🇦🇺"
+            },
+            {
+                id: 6,
+                name: "Cidade do Cabo, África do Sul",
+                lat: -33.9249,
+                lng: 18.4241,
+                char: "Table Mountain, Cabo da Boa Esperança, vinhedos e uma das cidades mais bonitas do mundo.",
+                flag: "🇿🇦"
+            }
+        ];
+
+        // =============== FUNÇÕES DE TABS ===============
+        function showTab(n) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById('tab-' + n).classList.add('active');
+
+            // Atualiza botões
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active', 'bg-cyan-400', 'text-gray-950'));
+            document.getElementById('tab-btn-' + n).classList.add('active', 'bg-cyan-400', 'text-gray-950');
+
+            // Atualiza mapa quando a aba é aberta
+            if (n === 1 && !map) {
+                setTimeout(initMap, 100);
+            }
+        }
+
+        // =============== NAVEGADOR REAL ===============
+        function navigate() {
+            const input = document.getElementById('url-input').value.trim();
+            if (!input) return;
+
+            const frame = document.getElementById('browser-frame');
+            
+            let url = input;
+            
+            // Lógica inteligente: se for pesquisa ou URL
+            if (input.startsWith('http://') || input.startsWith('https://')) {
+                url = input;
+            } else if (input.includes('.') && !input.includes(' ')) {
+                url = 'https://' + input;
+            } else {
+                // Pesquisa real no Bing
+                url = `https://www.bing.com/search?q=${encodeURIComponent(input)}`;
+            }
+
+            frame.src = url;
+
+            // Adiciona ao histórico
+            const timestamp = new Date().toLocaleString('pt-BR');
+            history.unshift({
+                type: 'browser',
+                title: input.length > 30 ? input.substring(0, 27) + '...' : input,
+                detail: url,
+                time: timestamp
+            });
+            saveHistory();
+            renderHistory();
+        }
+
+        function goHome() {
+            document.getElementById('browser-frame').src = 'https://www.bing.com';
+            document.getElementById('url-input').value = '';
+        }
+
+        // =============== MAPA MUNDI ===============
+        function initMap() {
+            map = L.map('map', {
+                center: [20, 0],
+                zoom: 2,
+                zoomControl: true,
+                attributionControl: false
+            });
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                className: 'map-tiles'
+            }).addTo(map);
+
+            // Adiciona marcadores pré-definidos
+            currentMarkers = [];
+            predefinedLocations.forEach(loc => {
+                const marker = L.marker([loc.lat, loc.lng], {
+                    title: loc.name
+                }).addTo(map);
+
+                const popupHTML = `
+                    <div class="text-center">
+                        <h3 class="font-bold text-lg">${loc.flag} ${loc.name}</h3>
+                        <p class="text-sm my-3">${loc.char}</p>
+                        <div class="flex gap-2 justify-center">
+                            <button onclick="addToFavorites(${loc.id}); event.stopImmediatePropagation();" 
+                                    class="px-4 py-2 bg-yellow-400 text-gray-950 text-xs rounded-2xl font-medium flex items-center gap-x-1">
+                                ⭐ Favoritar
+                            </button>
+                            <button onclick="searchAboutLocation('${loc.name}'); event.stopImmediatePropagation();" 
+                                    class="px-4 py-2 bg-cyan-400 text-gray-950 text-xs rounded-2xl font-medium">
+                                🔎 Pesquisar no navegador
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+                marker.bindPopup(popupHTML);
+                currentMarkers.push(marker);
+            });
+
+            // Clique no mapa para ver coordenadas (bônus)
+            map.on('click', function(e) {
+                console.log('Coordenadas:', e.latlng);
+            });
+        }
+
+        function searchMapLocation() {
+            const query = document.getElementById('map-search-input').value.trim().toLowerCase();
+            if (!query || !map) return;
+
+            // Procura nos locais pré-definidos
+            const found = predefinedLocations.find(loc => 
+                loc.name.toLowerCase().includes(query)
+            );
+
+            if (found && map) {
+                map.flyTo([found.lat, found.lng], 10, { duration: 1.5 });
+                // Abre popup automaticamente
+                setTimeout(() => {
+                    currentMarkers.find(m => m.getLatLng().lat === found.lat).openPopup();
+                }, 1600);
+            } else {
+                alert('Local não encontrado nos marcadores pré-definidos.\n\nZoom e explore o mapa livremente! 🌍');
+                map.flyTo([0, 0], 2);
+            }
+        }
+
+        function searchAboutLocation(name) {
+            hideModal();
+            showTab(0);
+            document.getElementById('url-input').value = name;
+            navigate();
+        }
+
+        // =============== FAVORITOS ===============
+        function addToFavorites(id) {
+            const location = predefinedLocations.find(l => l.id === id);
+            if (!location) return;
+
+            // Verifica se já existe
+            if (favorites.some(f => f.id === id && f.type === 'location')) {
+                alert('Este local já está nos favoritos! ⭐');
+                return;
+            }
+
+            favorites.unshift({
+                id: id,
+                type: 'location',
+                name: location.name,
+                flag: location.flag,
+                char: location.char,
+                time: new Date().toLocaleString('pt-BR')
+            });
+
+            saveFavorites();
+            renderFavorites();
+            
+            // Feedback
+            const notif = document.createElement('div');
+            notif.textContent = '✅ Adicionado aos favoritos!';
+            notif.style.cssText = 'position:fixed; bottom:20px; right:20px; background:#00d4ff; color:#111; padding:12px 24px; border-radius:9999px; font-weight:600; box-shadow:0 10px 15px -3px #00d4ff;';
+            document.body.appendChild(notif);
+            setTimeout(() => notif.remove(), 2500);
+        }
+
+        function renderFavorites() {
+            const container = document.getElementById('favorites-list');
+            container.innerHTML = '';
+
+            if (favorites.length === 0) {
+                document.getElementById('no-favorites').classList.remove('hidden');
+                return;
+            }
+            document.getElementById('no-favorites').classList.add('hidden');
+
+            favorites.forEach((fav, index) => {
+                const card = document.createElement('div');
+                card.className = 'bg-gray-800 rounded-3xl p-5 hover:shadow-xl hover:shadow-cyan-400/20 transition-all cursor-pointer';
+                card.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <span class="text-4xl">${fav.flag || '📍'}</span>
+                            <h3 class="font-semibold text-xl mt-2">${fav.name}</h3>
+                            <p class="text-gray-400 text-sm line-clamp-3">${fav.char || fav.detail || ''}</p>
+                        </div>
+                        <button onclick="removeFavorite(${index}); event.stopImmediatePropagation();" 
+                                class="text-red-400 hover:text-red-600 text-2xl">🗑️</button>
+                    </div>
+                    <div class="text-xs text-gray-400 mt-6">${fav.time}</div>
+                `;
+                card.onclick = () => showFavoriteDetail(fav, index);
+                container.appendChild(card);
+            });
+        }
+
+        function removeFavorite(index) {
+            favorites.splice(index, 1);
+            saveFavorites();
+            renderFavorites();
+        }
+
+        function showFavoriteDetail(fav, index) {
+            const modal = document.getElementById('modal');
+            const content = document.getElementById('modal-content');
+            
+            content.innerHTML = `
+                <h2 class="text-3xl font-bold mb-4">${fav.flag || '📍'} ${fav.name}</h2>
+                <p class="text-gray-300 mb-8">${fav.char || fav.detail}</p>
+                <div class="bg-gray-800 rounded-2xl p-4 text-sm">
+                    Adicionado em: <span class="font-medium">${fav.time}</span>
+                </div>
+                <div class="mt-8 flex gap-4">
+                    <button onclick="removeFavorite(${index}); hideModal();" 
+                            class="flex-1 py-4 bg-red-500/10 text-red-400 rounded-3xl font-medium">Remover favorito</button>
+                    ${fav.type === 'location' ? 
+                    `<button onclick="goToMapFromFavorite(${fav.id}); hideModal();" class="flex-1 py-4 bg-cyan-400 text-gray-950 rounded-3xl font-medium">Ver no mapa</button>` : ''}
+                </div>
+            `;
+            modal.classList.remove('hidden');
+            modal.style.display = 'flex';
+        }
+
+        function goToMapFromFavorite(id) {
+            showTab(1);
+            const location = predefinedLocations.find(l => l.id === id);
+            if (location && map) {
+                map.flyTo([location.lat, location.lng], 10);
+                setTimeout(() => {
+                    currentMarkers.find(m => m.getLatLng().lat === location.lat).openPopup();
+                }, 1200);
+            }
+        }
+
+        // =============== HISTÓRICO ===============
+        function addToHistory(type, data) {
+            const timestamp = new Date().toLocaleString('pt-BR');
+            history.unshift({
+                type: type,
+                title: data.title || data.name || 'Ação',
+                detail: data.detail || data.url || '',
+                time: timestamp
+            });
+            // Limita a 30 itens
+            if (history.length > 30) history.pop();
+            saveHistory();
+            renderHistory();
+        }
+
+        function renderHistory() {
+            const container = document.getElementById('history-list');
+            container.innerHTML = '';
+
+            if (history.length === 0) {
+                container.innerHTML = `
+                    <div class="bg-gray-800 rounded-3xl p-12 text-center">
+                        <p class="text-6xl mb-4">📜</p>
+                        <p class="text-gray-400">Seu histórico aparecerá aqui</p>
+                        <p class="text-xs text-gray-500 mt-2">Navegue no browser ou explore o mapa!</p>
+                    </div>`;
+                return;
+            }
+
+            history.forEach((item, i) => {
+                const div = document.createElement('div');
+                div.className = `history-item bg-gray-800 rounded-3xl px-6 py-5 flex items-center gap-4 cursor-pointer`;
+                div.innerHTML = `
+                    <div class="text-4xl w-12">
+                        ${item.type === 'browser' ? '🔎' : '🗺️'}
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex justify-between">
+                            <span class="font-medium">${item.title}</span>
+                            <span class="text-xs text-gray-400">${item.time}</span>
+                        </div>
+                        <p class="text-gray-400 text-sm truncate">${item.detail}</p>
+                    </div>
+                `;
+                div.onclick = () => showHistoryDetail(item, i);
+                container.appendChild(div);
+            });
+        }
+
+        function showHistoryDetail(item) {
+            const modal = document.getElementById('modal');
+            const content = document.getElementById('modal-content');
+            
+            content.innerHTML = `
+                <div class="flex items-center gap-x-4 mb-6">
+                    <span class="text-5xl">${item.type === 'browser' ? '🔎' : '🗺️'}</span>
+                    <div>
+                        <h3 class="text-2xl font-bold">${item.title}</h3>
+                        <p class="text-gray-400">${item.time}</p>
+                    </div>
+                </div>
+                <p class="bg-gray-800 p-5 rounded-2xl text-sm break-words">${item.detail}</p>
+                
+                ${item.type === 'browser' ? 
+                `<button onclick="reopenBrowser('${item.detail}'); hideModal();" 
+                         class="mt-8 w-full py-5 bg-cyan-400 text-gray-950 rounded-3xl font-semibold">Reabrir no navegador</button>` : ''}
+            `;
+            modal.classList.remove('hidden');
+            modal.style.display = 'flex';
+        }
+
+        function reopenBrowser(url) {
+            showTab(0);
+            document.getElementById('browser-frame').src = url;
+        }
+
+        function clearHistory() {
+            if (confirm('Limpar todo o histórico?')) {
+                history = [];
+                saveHistory();
+                renderHistory();
+            }
+        }
+
+        // =============== LOCALSTORAGE ===============
+        function saveFavorites() {
+            localStorage.setItem('explorador_favorites', JSON.stringify(favorites));
+        }
+
+        function saveHistory() {
+            localStorage.setItem('explorador_history', JSON.stringify(history));
+        }
+
+        function clearAllData() {
+            if (confirm('🗑️ Apagar TODOS favoritos e histórico permanentemente?')) {
+                localStorage.removeItem('explorador_favorites');
+                localStorage.removeItem('explorador_history');
+                favorites = [];
+                history = [];
+                renderFavorites();
+                renderHistory();
+                alert('✅ Tudo limpo! Seu projeto está zerado.');
+            }
+        }
+
+        // =============== INICIALIZAÇÃO ===============
+        function initializeApp() {
+            initializeTailwind();
+            
+            // Render inicial
+            renderFavorites();
+            renderHistory();
+            
+            // Tab padrão
+            showTab(0);
+            
+            console.log('%c✅ index.html do Explorador Global carregado com sucesso! Pronto para GitHub Pages.', 'color:#00d4ff; font-size:13px; font-weight:600');
+            console.log('Recursos incluídos: navegador real com iframe + busca, mapa Leaflet zoomável, favoritos, histórico completo.');
+        }
+
+        // Inicia tudo
+        window.onload = initializeApp;
+    </script>
 </body>
 </html>
