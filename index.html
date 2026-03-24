@@ -1,901 +1,715 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FinTrack • Finanças Modernas</title>
+    <title>🦉 Codolingo - Duolingo de Código</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;600&amp;display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;600&display=swap');
         
         :root {
-            --tw-color-primary: #00d4ff;
+            --tw-color-primary: #22c55e;
         }
         
         * {
-            transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
-            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-            transition-duration: 150ms;
+            font-family: 'Inter', system_ui, sans-serif;
         }
         
-        .card {
+        .logo-font {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .duo-green {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+        }
+        
+        .card-hover {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
-        .card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 25px 50px -12px rgb(0 212 255 / 0.15);
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
         }
         
-        .nav-link {
-            position: relative;
+        .editor {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            line-height: 1.5;
+            tab-size: 4;
         }
         
-        .nav-link.active:after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 0;
-            width: 100%;
-            height: 3px;
-            background: #00d4ff;
-            border-radius: 9999px;
+        .modal {
+            animation: modalPop 0.3s ease;
         }
         
-        .glass {
-            background: rgba(255,255,255,0.08);
-            backdrop-filter: blur(16px);
+        @keyframes modalPop {
+            0% { transform: scale(0.95); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
         }
     </style>
 </head>
-<body class="bg-zinc-950 text-zinc-100 font-sans">
-    <!-- HEADER / NAV -->
-    <nav class="border-b border-white/10 bg-zinc-900 sticky top-0 z-50">
-        <div class="max-w-screen-2xl mx-auto px-8 py-5 flex items-center justify-between">
+<body class="bg-zinc-950 text-white">
+    <!-- NAVBAR -->
+    <nav class="bg-zinc-900 border-b border-zinc-800 sticky top-0 z-50">
+        <div class="max-w-screen-2xl mx-auto px-8 py-4 flex items-center justify-between">
             <!-- Logo -->
             <div class="flex items-center gap-x-3">
-                <div class="w-9 h-9 bg-[#00d4ff] rounded-2xl flex items-center justify-center text-zinc-950 font-bold text-2xl">📈</div>
-                <div>
-                    <h1 class="font-semibold text-2xl tracking-[-1px]" style="font-family: 'Space Grotesk', sans-serif;">FinTrack</h1>
-                    <p class="text-xs text-zinc-400 -mt-1">poupança • portfólio • reforma</p>
+                <div class="w-10 h-10 bg-emerald-500 rounded-2xl flex items-center justify-center text-3xl">🦉</div>
+                <h1 class="logo-font text-3xl tracking-tighter text-white">codolingo</h1>
+            </div>
+
+            <!-- Stats -->
+            <div class="flex items-center gap-x-8">
+                <div onclick="showStreak()" class="flex items-center gap-x-2 bg-zinc-800 hover:bg-zinc-700 px-5 py-2 rounded-3xl cursor-pointer">
+                    <span class="text-2xl">🔥</span>
+                    <div>
+                        <span id="streak-count" class="font-semibold text-xl">7</span>
+                        <span class="text-zinc-400 text-sm ml-1">dias</span>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-x-2 bg-zinc-800 hover:bg-zinc-700 px-5 py-2 rounded-3xl cursor-pointer">
+                    <i class="fa-solid fa-gem text-yellow-400 text-2xl"></i>
+                    <span id="xp-count" class="font-semibold text-xl">1240</span>
+                    <span class="text-emerald-400 text-sm font-medium">XP</span>
+                </div>
+
+                <!-- Hearts -->
+                <div class="flex items-center gap-x-1">
+                    <i onclick="loseHeart()" class="fa-solid fa-heart text-red-500 text-3xl cursor-pointer"></i>
+                    <i onclick="loseHeart()" class="fa-solid fa-heart text-red-500 text-3xl cursor-pointer"></i>
+                    <i onclick="loseHeart()" class="fa-solid fa-heart text-red-500 text-3xl cursor-pointer"></i>
+                    <i onclick="loseHeart()" class="fa-solid fa-heart text-red-500 text-3xl cursor-pointer"></i>
+                    <i onclick="loseHeart()" class="fa-solid fa-heart text-red-500 text-3xl cursor-pointer"></i>
+                </div>
+
+                <div class="flex items-center gap-x-3">
+                    <div class="w-9 h-9 bg-violet-500 rounded-2xl flex items-center justify-center text-xl">👨‍💻</div>
+                    <div>
+                        <p class="font-medium">DevAprendiz</p>
+                        <p class="text-xs text-emerald-400">Nível 12</p>
+                    </div>
                 </div>
             </div>
 
-            <!-- Menu Desktop -->
-            <div class="hidden md:flex items-center gap-x-8 text-sm font-medium">
-                <button onclick="showSection('dashboard')" class="nav-link active flex items-center gap-x-2 px-5 py-2 hover:text-[#00d4ff]" id="nav-dashboard">
-                    <span>📊</span>
-                    Dashboard Despesas
+            <!-- Navigation -->
+            <div class="flex items-center gap-x-2 text-sm font-medium">
+                <button onclick="navigate('dashboard')" 
+                        class="nav-btn flex items-center gap-x-2 px-6 py-3 rounded-3xl hover:bg-white/10 transition-colors active">
+                    <i class="fa-solid fa-house"></i>
+                    <span>Início</span>
                 </button>
-                <button onclick="showSection('portfolio')" class="nav-link flex items-center gap-x-2 px-5 py-2 hover:text-[#00d4ff]" id="nav-portfolio">
-                    <span>💼</span>
-                    Simulador Portfólio
+                <button onclick="navigate('js')" 
+                        class="nav-btn flex items-center gap-x-2 px-6 py-3 rounded-3xl hover:bg-white/10 transition-colors">
+                    <span class="text-2xl">🟨</span>
+                    <span>JavaScript</span>
                 </button>
-                <button onclick="showSection('fire')" class="nav-link flex items-center gap-x-2 px-5 py-2 hover:text-[#00d4ff]" id="nav-fire">
-                    <span>🔥</span>
-                    Calculadora FIRE
+                <button onclick="navigate('python')" 
+                        class="nav-btn flex items-center gap-x-2 px-6 py-3 rounded-3xl hover:bg-white/10 transition-colors">
+                    <span class="text-2xl">🐍</span>
+                    <span>Python</span>
                 </button>
-                <button onclick="showSection('comparator')" class="nav-link flex items-center gap-x-2 px-5 py-2 hover:text-[#00d4ff]" id="nav-comparator">
-                    <span>📉</span>
-                    Comparador Fundos/ETFs
+                <button onclick="navigate('profile')" 
+                        class="nav-btn flex items-center gap-x-2 px-6 py-3 rounded-3xl hover:bg-white/10 transition-colors">
+                    <i class="fa-solid fa-user"></i>
+                    <span>Perfil</span>
                 </button>
-            </div>
-
-            <!-- User -->
-            <div class="flex items-center gap-x-4">
-                <div class="flex items-center bg-zinc-800 rounded-3xl px-4 py-1 text-sm">
-                    <div class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse mr-2"></div>
-                    João Silva • Lisboa
-                </div>
-                <button onclick="fakeLogout()" class="w-9 h-9 bg-zinc-800 hover:bg-zinc-700 rounded-2xl flex items-center justify-center text-xl">
-                    👤
-                </button>
-                <div class="md:hidden">
-                    <button onclick="toggleMobileMenu()" class="w-9 h-9 bg-zinc-800 hover:bg-zinc-700 rounded-2xl flex items-center justify-center text-2xl">☰</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Mobile Menu -->
-        <div id="mobileMenu" class="hidden md:hidden bg-zinc-900 border-t border-white/10 px-8 py-4">
-            <div class="flex flex-col gap-y-2 text-sm font-medium">
-                <button onclick="showSection('dashboard');toggleMobileMenu()" class="flex items-center gap-x-3 py-3 px-4 rounded-2xl hover:bg-white/5">📊 Dashboard Despesas</button>
-                <button onclick="showSection('portfolio');toggleMobileMenu()" class="flex items-center gap-x-3 py-3 px-4 rounded-2xl hover:bg-white/5">💼 Simulador Portfólio</button>
-                <button onclick="showSection('fire');toggleMobileMenu()" class="flex items-center gap-x-3 py-3 px-4 rounded-2xl hover:bg-white/5">🔥 Calculadora FIRE</button>
-                <button onclick="showSection('comparator');toggleMobileMenu()" class="flex items-center gap-x-3 py-3 px-4 rounded-2xl hover:bg-white/5">📉 Comparador Fundos/ETFs</button>
             </div>
         </div>
     </nav>
 
-    <div class="max-w-screen-2xl mx-auto px-8 py-10">
-        
-        <!-- DASHBOARD DESPESAS -->
-        <div id="dashboard" class="section">
+    <div class="max-w-screen-2xl mx-auto flex">
+        <!-- SIDEBAR -->
+        <div class="w-72 bg-zinc-900 min-h-[calc(100vh-73px)] border-r border-zinc-800 p-6 hidden lg:flex flex-col">
             <div class="mb-8">
-                <h2 class="text-4xl font-semibold tracking-tight">Dashboard de Despesas</h2>
-                <p class="text-zinc-400">Acompanhe os teus gastos por categoria • Atualização em tempo real</p>
+                <h2 class="text-emerald-400 text-xs font-semibold tracking-widest mb-3">SEUS CURSOS</h2>
+                <div onclick="navigate('js')" class="flex items-center gap-x-4 p-4 rounded-3xl hover:bg-zinc-800 cursor-pointer mb-2">
+                    <div class="text-4xl">🟨</div>
+                    <div class="flex-1">
+                        <p class="font-semibold">JavaScript</p>
+                        <div class="h-2 bg-zinc-700 rounded-full mt-2">
+                            <div id="progress-js" class="h-2 bg-emerald-500 rounded-full w-3/4"></div>
+                        </div>
+                    </div>
+                    <span class="text-sm font-medium text-emerald-400">75%</span>
+                </div>
+                <div onclick="navigate('python')" class="flex items-center gap-x-4 p-4 rounded-3xl hover:bg-zinc-800 cursor-pointer">
+                    <div class="text-4xl">🐍</div>
+                    <div class="flex-1">
+                        <p class="font-semibold">Python</p>
+                        <div class="h-2 bg-zinc-700 rounded-full mt-2">
+                            <div id="progress-py" class="h-2 bg-emerald-500 rounded-full w-1/3"></div>
+                        </div>
+                    </div>
+                    <span class="text-sm font-medium text-emerald-400">33%</span>
+                </div>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                <!-- Resumo -->
-                <div class="lg:col-span-4 glass border border-white/10 rounded-3xl p-8">
-                    <div class="flex justify-between items-start mb-6">
+            <div class="mt-auto pt-8 border-t border-zinc-800">
+                <div class="text-xs font-medium text-zinc-400 mb-4">PRÓXIMOS TESTES</div>
+                <div class="space-y-4">
+                    <div class="flex gap-x-3 text-sm">
+                        <div class="text-2xl">🔥</div>
                         <div>
-                            <p class="text-sm text-zinc-400">Rendimento mensal</p>
-                            <input id="incomeInput" type="text" value="3200" 
-                                   class="text-5xl font-semibold bg-transparent w-48 focus:outline-none text-[#00d4ff]"
-                                   oninput="updateDashboard()">
-                            <span class="text-5xl text-zinc-400">€</span>
-                        </div>
-                        <div class="text-right">
-                            <p class="text-sm text-emerald-400 font-medium">+12% vs mês passado</p>
-                            <p id="savingsDisplay" class="text-4xl font-semibold text-emerald-400">€1.240</p>
-                            <p class="text-xs text-zinc-400">poupança este mês</p>
+                            <p class="font-medium">Desafio Diário JS</p>
+                            <p class="text-zinc-400 text-xs">Loops + Arrays</p>
                         </div>
                     </div>
-                    
-                    <div class="h-2 bg-white/10 rounded-3xl mb-2 overflow-hidden">
-                        <div id="savingsBar" class="h-2 bg-emerald-400 rounded-3xl w-3/5"></div>
+                    <div class="flex gap-x-3 text-sm">
+                        <div class="text-2xl">🐍</div>
+                        <div>
+                            <p class="font-medium">Desafio Diário Python</p>
+                            <p class="text-zinc-400 text-xs">Funções + Listas</p>
+                        </div>
                     </div>
-                    <p class="text-xs text-zinc-400 flex justify-between"><span>38% poupado</span><span>Meta: 40%</span></p>
                 </div>
+            </div>
 
-                <!-- Total Despesas -->
-                <div class="lg:col-span-4 glass border border-white/10 rounded-3xl p-8 flex flex-col">
-                    <p class="text-sm text-zinc-400 mb-2">Total despesas mensais</p>
-                    <p id="totalExpenses" class="text-6xl font-semibold mb-auto">€1.960</p>
-                    <div class="flex items-center gap-x-2 text-emerald-400">
-                        <span class="text-2xl">↓</span>
-                        <span class="font-medium">-8% desde o mês passado</span>
-                    </div>
-                </div>
-
-                <!-- Gráfico Pizza -->
-                <div class="lg:col-span-4 glass border border-white/10 rounded-3xl p-8">
-                    <p class="text-sm text-zinc-400 mb-4">Distribuição por categoria</p>
-                    <canvas id="expensesPie" class="mx-auto" width="280" height="280"></canvas>
-                </div>
-
-                <!-- Categorias -->
-                <div class="lg:col-span-12 glass border border-white/10 rounded-3xl p-8">
-                    <div class="flex justify-between mb-6">
-                        <h3 class="font-semibold">Categorias • Valores mensais (€)</h3>
-                        <button onclick="addNewCategory()" 
-                                class="text-sm flex items-center gap-x-2 bg-white/10 hover:bg-white/20 px-6 py-2 rounded-3xl">
-                            <span class="text-xl leading-none">+</span> Nova categoria
-                        </button>
-                    </div>
-                    
-                    <div id="categoriesGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                        <!-- Gerado por JS -->
-                    </div>
-                </div>
+            <div class="mt-10 text-xs text-zinc-500 flex items-center gap-x-2">
+                <i class="fa-solid fa-code"></i>
+                <span>Feito com ❤️ por Grok para você</span>
             </div>
         </div>
 
-        <!-- SIMULADOR PORTFÓLIO -->
-        <div id="portfolio" class="section hidden">
-            <div class="mb-8">
-                <h2 class="text-4xl font-semibold tracking-tight">Simulador de Portfólio</h2>
-                <p class="text-zinc-400">Ajusta a tua alocação e vê a projeção de crescimento</p>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                <!-- Controles -->
-                <div class="lg:col-span-5 glass border border-white/10 rounded-3xl p-8">
-                    <div class="space-y-8">
-                        <div>
-                            <label class="block text-sm font-medium mb-2">Capital inicial</label>
-                            <div class="flex items-center">
-                                <span class="text-4xl text-zinc-400 mr-3">€</span>
-                                <input id="initialCapital" type="text" value="25000" 
-                                       class="flex-1 bg-transparent text-4xl font-semibold focus:outline-none"
-                                       oninput="simulatePortfolio()">
-                            </div>
-                        </div>
-
-                        <div>
-                            <label class="block text-sm font-medium mb-2">Contribuição mensal</label>
-                            <div class="flex items-center">
-                                <span class="text-4xl text-zinc-400 mr-3">€</span>
-                                <input id="monthlyContribution" type="text" value="500" 
-                                       class="flex-1 bg-transparent text-4xl font-semibold focus:outline-none"
-                                       oninput="simulatePortfolio()">
-                            </div>
-                        </div>
-
-                        <div>
-                            <label class="block text-sm font-medium mb-2">Horizonte (anos)</label>
-                            <input id="yearsHorizon" type="range" min="5" max="40" value="15" 
-                                   class="w-full accent-[#00d4ff]" oninput="simulatePortfolio()">
-                            <div class="flex justify-between text-xs text-zinc-400">
-                                <span>5 anos</span>
-                                <span id="yearsValue" class="font-semibold text-[#00d4ff]">15 anos</span>
-                                <span>40 anos</span>
-                            </div>
-                        </div>
-
-                        <!-- Alocação -->
-                        <div>
-                            <div class="flex justify-between items-baseline mb-4">
-                                <label class="text-sm font-medium">Alocação de ativos</label>
-                                <span id="allocationSum" class="text-xs font-medium text-emerald-400">100%</span>
-                            </div>
-                            <div id="assetSliders" class="space-y-6">
-                                <!-- Gerado por JS -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Resultados -->
-                <div class="lg:col-span-7">
-                    <div class="glass border border-white/10 rounded-3xl p-8 h-full flex flex-col">
-                        <div class="flex justify-between mb-6">
-                            <div>
-                                <p class="text-sm text-zinc-400">Retorno anual esperado</p>
-                                <p id="expectedReturn" class="text-6xl font-semibold">7.8%</p>
-                            </div>
-                            <div class="text-right">
-                                <p class="text-sm text-zinc-400">Valor projetado no fim</p>
-                                <p id="projectedValue" class="text-6xl font-semibold">€148.920</p>
-                            </div>
-                        </div>
-
-                        <div class="flex-1">
-                            <canvas id="portfolioChart" class="w-full h-80"></canvas>
-                        </div>
-                        
-                        <div class="grid grid-cols-3 gap-4 mt-6 text-center text-xs">
-                            <div class="bg-white/5 rounded-2xl p-4">
-                                <p class="text-emerald-400">Risco (volatilidade)</p>
-                                <p id="portfolioVol" class="font-semibold text-xl">14.2%</p>
-                            </div>
-                            <div class="bg-white/5 rounded-2xl p-4">
-                                <p class="text-emerald-400">Sharpe Ratio</p>
-                                <p id="sharpeRatio" class="font-semibold text-xl">0.82</p>
-                            </div>
-                            <div class="bg-white/5 rounded-2xl p-4">
-                                <p class="text-emerald-400">Pior cenário (-2σ)</p>
-                                <p id="worstCase" class="font-semibold text-xl text-orange-400">-€12.400</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <!-- MAIN CONTENT -->
+        <div id="main-content" class="flex-1 p-8 overflow-auto">
+            <!-- O conteúdo é carregado via JavaScript -->
         </div>
+    </div>
 
-        <!-- CALCULADORA FIRE -->
-        <div id="fire" class="section hidden">
-            <div class="mb-8">
-                <h2 class="text-4xl font-semibold tracking-tight">Calculadora FIRE 🔥</h2>
-                <p class="text-zinc-400">Quanto precisas de poupar para te reformares cedo? Gráficos interativos em tempo real</p>
+    <!-- EXERCISE MODAL -->
+    <div id="exercise-modal" onclick="if(event.target.id === 'exercise-modal') closeExercise()" 
+         class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-[100]">
+        <div onclick="event.stopImmediatePropagation()" 
+             class="bg-zinc-900 w-full max-w-4xl mx-4 rounded-3xl overflow-hidden modal">
+            
+            <div class="px-8 pt-6 pb-4 border-b border-zinc-800 flex items-center justify-between">
+                <div class="flex items-center gap-x-3">
+                    <span id="exercise-lang-icon" class="text-3xl"></span>
+                    <h2 id="exercise-title" class="text-2xl font-semibold"></h2>
+                </div>
+                <button onclick="closeExercise()" class="text-zinc-400 hover:text-white">
+                    <i class="fa-solid fa-xmark text-3xl"></i>
+                </button>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                <div class="lg:col-span-4 glass border border-white/10 rounded-3xl p-8 space-y-8">
-                    <div>
-                        <label class="text-sm font-medium">Idade atual</label>
-                        <input id="currentAge" type="text" value="32" 
-                               class="w-full mt-2 bg-transparent text-4xl font-semibold focus:outline-none border-b border-white/20 pb-2"
-                               oninput="calculateFire()">
+            <div class="p-8">
+                <p id="exercise-desc" class="text-zinc-300 text-lg mb-8"></p>
+                
+                <!-- Editor -->
+                <div class="mb-6">
+                    <div class="flex justify-between text-xs font-medium mb-2 text-zinc-400">
+                        <span>SEU CÓDIGO</span>
+                        <span id="lang-label" class="px-3 py-1 bg-zinc-800 rounded-2xl"></span>
                     </div>
-                    <div>
-                        <label class="text-sm font-medium">Idade desejada para reforma</label>
-                        <input id="retireAge" type="text" value="45" 
-                               class="w-full mt-2 bg-transparent text-4xl font-semibold focus:outline-none border-b border-white/20 pb-2"
-                               oninput="calculateFire()">
-                    </div>
-                    <div>
-                        <label class="text-sm font-medium">Despesas anuais na reforma (hoje)</label>
-                        <div class="flex">
-                            <span class="text-4xl text-zinc-400">€</span>
-                            <input id="annualExpenses" type="text" value="28000" 
-                                   class="flex-1 ml-3 bg-transparent text-4xl font-semibold focus:outline-none"
-                                   oninput="calculateFire()">
-                        </div>
-                    </div>
-                    <div>
-                        <label class="text-sm font-medium">Poupança atual</label>
-                        <div class="flex">
-                            <span class="text-4xl text-zinc-400">€</span>
-                            <input id="currentSavings" type="text" value="45000" 
-                                   class="flex-1 ml-3 bg-transparent text-4xl font-semibold focus:outline-none"
-                                   oninput="calculateFire()">
-                        </div>
-                    </div>
-                    <div>
-                        <label class="text-sm font-medium">Poupança mensal adicional</label>
-                        <div class="flex">
-                            <span class="text-4xl text-zinc-400">€</span>
-                            <input id="monthlySave" type="text" value="1200" 
-                                   class="flex-1 ml-3 bg-transparent text-4xl font-semibold focus:outline-none"
-                                   oninput="calculateFire()">
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-6">
-                        <div>
-                            <label class="text-sm font-medium">Retorno anual esperado</label>
-                            <input id="returnRate" type="range" min="4" max="12" value="7" step="0.1" 
-                                   class="accent-[#00d4ff] w-full" oninput="document.getElementById('returnValue').innerText=this.value + '%';calculateFire()">
-                            <div class="flex justify-between text-xs"><span>4%</span><span id="returnValue" class="font-medium">7%</span><span>12%</span></div>
-                        </div>
-                        <div>
-                            <label class="text-sm font-medium">Inflação anual</label>
-                            <input id="inflationRate" type="range" min="1" max="6" value="2.5" step="0.1" 
-                                   class="accent-[#00d4ff] w-full" oninput="document.getElementById('inflationValue').innerText=this.value + '%';calculateFire()">
-                            <div class="flex justify-between text-xs"><span>1%</span><span id="inflationValue" class="font-medium">2.5%</span><span>6%</span></div>
-                        </div>
-                    </div>
+                    <textarea id="code-editor" 
+                              class="editor w-full h-72 bg-zinc-950 border border-zinc-700 focus:border-emerald-500 rounded-3xl p-6 text-emerald-200 text-base resize-none outline-none"></textarea>
                 </div>
 
-                <!-- Resultados FIRE -->
-                <div class="lg:col-span-8 glass border border-white/10 rounded-3xl p-8 flex flex-col">
-                    <div class="grid grid-cols-3 gap-6 mb-8">
-                        <div class="text-center">
-                            <p class="text-xs uppercase tracking-widest text-zinc-400">Anos até FIRE</p>
-                            <p id="yearsToFire" class="text-7xl font-bold text-[#00d4ff]">13</p>
-                        </div>
-                        <div class="text-center">
-                            <p class="text-xs uppercase tracking-widest text-zinc-400">Capital necessário</p>
-                            <p id="neededNest" class="text-7xl font-bold">€700.000</p>
-                        </div>
-                        <div class="text-center">
-                            <p class="text-xs uppercase tracking-widest text-zinc-400">Taxa de poupança atual</p>
-                            <p id="savingsRate" class="text-7xl font-bold text-emerald-400">37%</p>
-                        </div>
-                    </div>
-                    
-                    <canvas id="fireChart" class="flex-1"></canvas>
-                    
-                    <div class="mt-6 text-xs flex items-center justify-center gap-x-8 text-zinc-400">
-                        <div class="flex items-center gap-x-1"><span class="inline-block w-3 h-px bg-[#00d4ff]"></span> Crescimento da poupança</div>
-                        <div class="flex items-center gap-x-1"><span class="inline-block w-3 h-px bg-white"></span> Linha FIRE (4% rule)</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- COMPARADOR FUNDOS/ETFs -->
-        <div id="comparator" class="section hidden">
-            <div class="mb-8">
-                <h2 class="text-4xl font-semibold tracking-tight">Comparador de Fundos &amp; ETFs</h2>
-                <p class="text-zinc-400">Métricas lado a lado • TER • Retorno histórico • Volatilidade</p>
-            </div>
-
-            <div class="glass border border-white/10 rounded-3xl p-8">
-                <div class="flex flex-wrap gap-6 mb-8">
-                    <div class="flex-1 min-w-[280px]">
-                        <label class="text-sm font-medium block mb-2">ETF / Fundo 1</label>
-                        <select id="etf1" onchange="compareETFs()" 
-                                class="w-full bg-zinc-800 text-white rounded-3xl px-6 py-4 text-lg focus:outline-none">
-                            <!-- populated by JS -->
-                        </select>
-                    </div>
-                    <div class="flex-1 min-w-[280px]">
-                        <label class="text-sm font-medium block mb-2">ETF / Fundo 2</label>
-                        <select id="etf2" onchange="compareETFs()" 
-                                class="w-full bg-zinc-800 text-white rounded-3xl px-6 py-4 text-lg focus:outline-none">
-                            <!-- populated by JS -->
-                        </select>
-                    </div>
-                    <button onclick="compareETFs()" 
-                            class="px-10 bg-[#00d4ff] hover:bg-[#00b8e0] text-zinc-950 font-semibold rounded-3xl text-lg self-end">
-                        COMPARAR
+                <div class="flex gap-x-4">
+                    <button onclick="runCode()" 
+                            class="flex-1 bg-white text-zinc-900 font-semibold py-4 rounded-3xl flex items-center justify-center gap-x-3 hover:bg-emerald-100">
+                        <i class="fa-solid fa-play"></i>
+                        <span>TESTAR CÓDIGO</span>
                     </button>
-                </div>
-
-                <!-- Resultado side-by-side -->
-                <div id="comparisonResult" class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <!-- Preenchido por JS -->
+                    
+                    <button onclick="submitForAI()" 
+                            class="flex-1 bg-emerald-500 hover:bg-emerald-600 font-semibold py-4 rounded-3xl flex items-center justify-center gap-x-3">
+                        <i class="fa-solid fa-robot"></i>
+                        <span>ENVIAR PARA A IA (Avaliar 0-10)</span>
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- FEEDBACK MODAL -->
+    <div id="feedback-modal" onclick="if(event.target.id === 'feedback-modal') hideFeedback()" 
+         class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-[110]">
+        <div class="bg-white text-zinc-900 w-full max-w-lg mx-4 rounded-3xl overflow-hidden modal p-8">
+            <div class="flex justify-center mb-6">
+                <div id="score-circle" class="w-32 h-32 rounded-full border-8 border-emerald-500 flex items-center justify-center text-5xl font-bold"></div>
+            </div>
+            
+            <h2 id="feedback-title" class="text-center text-3xl font-semibold mb-2"></h2>
+            <p id="feedback-subtitle" class="text-center text-zinc-500 mb-8"></p>
+            
+            <div id="feedback-text" class="bg-zinc-100 rounded-3xl p-6 text-lg leading-relaxed mb-8"></div>
+            
+            <div class="flex gap-x-4">
+                <button onclick="retryExercise()" 
+                        class="flex-1 border border-zinc-300 font-medium py-4 rounded-3xl">Tentar novamente</button>
+                <button onclick="finishExercise()" 
+                        class="flex-1 bg-emerald-500 text-white font-semibold py-4 rounded-3xl">Continuar →</button>
+            </div>
+            
+            <p class="text-center text-xs text-zinc-400 mt-8">A IA Grok analisou seu código e deu esta nota!</p>
+        </div>
+    </div>
+
     <script>
-        // ====================== TAILWIND + DARK MODE ======================
+        // ==================== CONFIGURAÇÃO TAILWIND ====================
         function initTailwind() {
-            return {
-                config(userConfig = {}) {
-                    return {
-                        content: [],
-                        theme: {
-                            extend: {}
-                        },
-                        plugins: [],
-                        ...userConfig,
-                    }
-                },
+            tailwind.config = {
+                content: [],
                 theme: {
                     extend: {}
                 }
             }
         }
-        
-        // ====================== DADOS MOCK ======================
-        let expenseData = {
-            income: 3200,
-            categories: [
-                { id: 1, name: "Habitação", emoji: "🏠", value: 950, color: "#00d4ff" },
-                { id: 2, name: "Alimentação", emoji: "🍎", value: 420, color: "#22c55e" },
-                { id: 3, name: "Transporte", emoji: "🚗", value: 180, color: "#eab308" },
-                { id: 4, name: "Lazer", emoji: "🎬", value: 130, color: "#ec4899" },
-                { id: 5, name: "Saúde", emoji: "🩺", value: 110, color: "#8b5cf6" },
-                { id: 6, name: "Outros", emoji: "📦", value: 170, color: "#f43f5e" }
-            ]
+
+        // ==================== DADOS DO APP ====================
+        let currentUser = {
+            xp: 1240,
+            streak: 7,
+            hearts: 5,
+            progressJS: 75,
+            progressPY: 33
         }
 
-        const assets = [
-            { name: "Ações Globais", expectedReturn: 9.5, volatility: 18, color: "#00d4ff" },
-            { name: "Obrigações", expectedReturn: 3.8, volatility: 6, color: "#22c55e" },
-            { name: "Imobiliário", expectedReturn: 6.2, volatility: 12, color: "#eab308" },
-            { name: "Cripto / Alternativos", expectedReturn: 14, volatility: 35, color: "#ec4899" }
-        ]
-
-        let currentWeights = [50, 30, 15, 5]
-
-        const etfList = [
-            {
-                id: 1,
-                name: "VWCE • Vanguard FTSE All-World",
-                ter: 0.22,
-                return1y: 22.4,
-                return5y: 13.1,
-                return10y: 9.8,
-                volatility: 14.8,
-                sharpe: 0.91
-            },
-            {
-                id: 2,
-                name: "SPY • SPDR S&P 500",
-                ter: 0.09,
-                return1y: 28.7,
-                return5y: 15.4,
-                return10y: 12.6,
-                volatility: 16.2,
-                sharpe: 1.05
-            },
-            {
-                id: 3,
-                name: "QQQ • Invesco QQQ (Nasdaq-100)",
-                ter: 0.20,
-                return1y: 34.2,
-                return5y: 18.9,
-                return10y: 17.3,
-                volatility: 21.5,
-                sharpe: 1.12
-            },
-            {
-                id: 4,
-                name: "IWDA • iShares Core MSCI World",
-                ter: 0.20,
-                return1y: 24.8,
-                return5y: 13.8,
-                return10y: 10.4,
-                volatility: 15.1,
-                sharpe: 0.88
-            },
-            {
-                id: 5,
-                name: "EMIM • iShares Core MSCI Emerging Markets",
-                ter: 0.18,
-                return1y: 12.3,
-                return5y: 6.7,
-                return10y: 4.9,
-                volatility: 18.9,
-                sharpe: 0.45
-            }
-        ]
-
-        // ====================== CHARTS ======================
-        let pieChart = null
-        let portfolioLineChart = null
-        let fireLineChart = null
-
-        function createPieChart() {
-            const ctx = document.getElementById('expensesPie')
-            if (pieChart) pieChart.destroy()
-            
-            const labels = expenseData.categories.map(c => c.emoji + ' ' + c.name)
-            const values = expenseData.categories.map(c => c.value)
-            const colors = expenseData.categories.map(c => c.color)
-            
-            pieChart = new Chart(ctx, {
-                type: 'pie',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        data: values,
-                        backgroundColor: colors,
-                        borderColor: '#18181b',
-                        borderWidth: 4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: true,
-                    plugins: {
-                        legend: { display: true, position: 'bottom', labels: { color: '#a1a1aa', padding: 18, usePointStyle: true } },
-                        tooltip: { backgroundColor: '#27272a', titleColor: '#fff', bodyColor: '#00d4ff' }
+        const courses = {
+            js: {
+                name: "JavaScript",
+                emoji: "🟨",
+                units: [
+                    {
+                        id: 1,
+                        title: "Fundamentos Básicos",
+                        completed: 3,
+                        total: 5,
+                        exercises: [
+                            {
+                                id: 101,
+                                title: "Olá, Mundo!",
+                                desc: "Escreva um código que imprima 'Olá, Mundo!' no console. É o primeiro passo de todo programador!",
+                                type: "js",
+                                template: `console.log("Olá, Mundo!");`,
+                                expected: "Olá, Mundo!",
+                                aiFeedbackGood: "Perfeito! Você entendeu o básico do console.log. Nota máxima!",
+                                aiFeedbackBad: "Quase lá! O console.log precisa estar correto. Tente novamente."
+                            },
+                            {
+                                id: 102,
+                                title: "Soma de dois números",
+                                desc: "Crie uma função chamada 'soma' que receba dois números e retorne a soma deles.",
+                                type: "js",
+                                template: `function soma(a, b) {\n  // seu código aqui\n  return a + b;\n}`,
+                                expected: 8,
+                                testCode: `soma(5, 3)`,
+                                aiFeedbackGood: "Excelente! Sua função está limpa e correta. Isso é código profissional.",
+                                aiFeedbackBad: "A função não retornou o valor certo. Verifique o return."
+                            }
+                        ]
                     }
-                }
-            })
-        }
-
-        function createPortfolioChart(years, values) {
-            const ctx = document.getElementById('portfolioChart')
-            if (portfolioLineChart) portfolioLineChart.destroy()
-            
-            portfolioLineChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: Array.from({length: years + 1}, (_, i) => i + ' anos'),
-                    datasets: [{
-                        label: 'Valor do portfólio',
-                        data: values,
-                        borderColor: '#00d4ff',
-                        borderWidth: 3,
-                        tension: 0.3,
-                        pointRadius: 0,
-                        fill: true,
-                        backgroundColor: 'rgba(0, 212, 255, 0.15)'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        y: { grid: { color: '#27272a' }, ticks: { color: '#a1a1aa', callback: v => '€' + v.toLocaleString('pt-PT') } },
-                        x: { grid: { color: '#27272a' }, ticks: { color: '#a1a1aa' } }
+                ]
+            },
+            python: {
+                name: "Python",
+                emoji: "🐍",
+                units: [
+                    {
+                        id: 1,
+                        title: "Fundamentos Básicos",
+                        completed: 1,
+                        total: 5,
+                        exercises: [
+                            {
+                                id: 201,
+                                title: "Olá, Mundo! (Python)",
+                                desc: "Escreva um código que imprima 'Olá, Mundo!' usando print().",
+                                type: "python",
+                                template: `print("Olá, Mundo!")`,
+                                aiFeedbackGood: "Muito bom! Python é simples e bonito. Você dominou o print!",
+                                aiFeedbackBad: "Faltou o print() ou as aspas. Tente de novo!"
+                            },
+                            {
+                                id: 202,
+                                title: "Função de soma (Python)",
+                                desc: "Crie uma função chamada 'soma' que some dois números.",
+                                type: "python",
+                                template: `def soma(a, b):\n    # seu código aqui\n    return a + b`,
+                                aiFeedbackGood: "Perfeito! Python é ótimo para funções simples.",
+                                aiFeedbackBad: "A indentação ou o return estão errados. Python é sensível a espaços!"
+                            }
+                        ]
                     }
-                }
-            })
-        }
-
-        function createFireChart(yearsArray, savingsArray, neededArray) {
-            const ctx = document.getElementById('fireChart')
-            if (fireLineChart) fireLineChart.destroy()
-            
-            fireLineChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: yearsArray,
-                    datasets: [
-                        {
-                            label: 'Poupança acumulada',
-                            data: savingsArray,
-                            borderColor: '#00d4ff',
-                            borderWidth: 4,
-                            tension: 0.2,
-                            pointRadius: 0
-                        },
-                        {
-                            label: 'Capital necessário (4% rule)',
-                            data: neededArray,
-                            borderColor: '#fff',
-                            borderWidth: 3,
-                            borderDash: [8, 4],
-                            tension: 0
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { position: 'top', labels: { color: '#a1a1aa' } } },
-                    scales: {
-                        y: { grid: { color: '#27272a' }, ticks: { color: '#a1a1aa', callback: v => '€' + v.toLocaleString('pt-PT') } },
-                        x: { grid: { color: '#27272a' }, ticks: { color: '#a1a1aa' } }
-                    }
-                }
-            })
-        }
-
-        // ====================== DASHBOARD ======================
-        function updateDashboard() {
-            expenseData.income = parseFloat(document.getElementById('incomeInput').value) || 0
-            
-            // Atualiza totais
-            const totalExp = expenseData.categories.reduce((sum, cat) => sum + cat.value, 0)
-            document.getElementById('totalExpenses').textContent = '€' + totalExp.toLocaleString('pt-PT')
-            
-            const savings = expenseData.income - totalExp
-            document.getElementById('savingsDisplay').textContent = '€' + savings.toLocaleString('pt-PT')
-            
-            // Barra
-            const savingsRate = Math.max(0, Math.min(100, Math.round((savings / expenseData.income) * 100)))
-            document.getElementById('savingsBar').style.width = savingsRate + '%'
-            
-            createPieChart()
-        }
-
-        function renderCategories() {
-            const container = document.getElementById('categoriesGrid')
-            container.innerHTML = ''
-            
-            expenseData.categories.forEach((cat, index) => {
-                const div = document.createElement('div')
-                div.className = 'glass border border-white/10 rounded-3xl p-5 flex flex-col'
-                div.innerHTML = `
-                    <div class="flex justify-between items-center mb-4">
-                        <span class="text-3xl">${cat.emoji}</span>
-                        <span class="font-semibold">${cat.name}</span>
-                    </div>
-                    <div class="flex-1 flex items-end">
-                        <input type="text" value="${cat.value}" 
-                               class="text-4xl font-semibold bg-transparent w-full focus:outline-none"
-                               oninput="expenseData.categories[${index}].value = parseFloat(this.value)||0; updateDashboard()">
-                        <span class="text-4xl text-zinc-400">€</span>
-                    </div>
-                `
-                container.appendChild(div)
-            })
-        }
-
-        function addNewCategory() {
-            const newCat = {
-                id: Date.now(),
-                name: "Nova categoria",
-                emoji: "📌",
-                value: 100,
-                color: "#64748b"
+                ]
             }
-            expenseData.categories.push(newCat)
-            renderCategories()
-            updateDashboard()
         }
 
-        // ====================== PORTFÓLIO SIMULATOR ======================
-        function renderAssetSliders() {
-            const container = document.getElementById('assetSliders')
-            container.innerHTML = ''
-            
-            assets.forEach((asset, i) => {
-                const weight = currentWeights[i]
-                
-                const html = `
-                <div class="flex items-center gap-x-4">
-                    <div class="flex-1">
-                        <div class="flex justify-between text-sm mb-1">
-                            <span>${asset.name}</span>
-                            <span class="font-medium">${weight}%</span>
-                        </div>
-                        <input type="range" min="0" max="100" value="${weight}" 
-                               class="accent-[#00d4ff] w-full" 
-                               oninput="currentWeights[${i}] = parseFloat(this.value); normalizeWeights(); simulatePortfolio()">
-                    </div>
-                    <div class="text-xs text-zinc-400 w-12 text-right">
-                        ${asset.expectedReturn}%<br>
-                        <span class="text-[10px]">vol ${asset.volatility}%</span>
-                    </div>
-                </div>`
-                
-                container.innerHTML += html
-            })
-        }
+        let currentExercise = null
+        let currentLanguage = null
 
-        function normalizeWeights() {
-            let sum = currentWeights.reduce((a, b) => a + b, 0)
-            if (sum === 0) return
-            currentWeights = currentWeights.map(w => Math.round(w * 100 / sum))
-            renderAssetSliders()
-        }
-
-        function simulatePortfolio() {
-            // Atualiza anos
-            const years = parseInt(document.getElementById('yearsHorizon').value)
-            document.getElementById('yearsValue').textContent = years + ' anos'
-            
-            // Weighted return
-            let weightedReturn = 0
-            let weightedVol = 0
-            let totalWeight = 0
-            
-            currentWeights.forEach((w, i) => {
-                if (w > 0) {
-                    weightedReturn += (assets[i].expectedReturn * w)
-                    weightedVol += (assets[i].volatility * w)
-                    totalWeight += w
-                }
-            })
-            
-            weightedReturn = totalWeight > 0 ? (weightedReturn / totalWeight) : 0
-            weightedVol = totalWeight > 0 ? (weightedVol / totalWeight) : 0
-            
-            document.getElementById('expectedReturn').textContent = weightedReturn.toFixed(1) + '%'
-            document.getElementById('portfolioVol').textContent = weightedVol.toFixed(1) + '%'
-            document.getElementById('sharpeRatio').textContent = (weightedReturn / weightedVol * 0.8).toFixed(2)
-            
-            // Cálculo composto
-            let initial = parseFloat(document.getElementById('initialCapital').value) || 0
-            let monthly = parseFloat(document.getElementById('monthlyContribution').value) || 0
-            let values = [initial]
-            let current = initial
-            
-            for (let y = 1; y <= years; y++) {
-                current = current * (1 + weightedReturn / 100) + monthly * 12
-                values.push(Math.round(current))
-            }
-            
-            document.getElementById('projectedValue').textContent = '€' + values[values.length - 1].toLocaleString('pt-PT')
-            document.getElementById('worstCase').textContent = '-€' + Math.round(values[values.length - 1] * 0.65).toLocaleString('pt-PT')
-            
-            createPortfolioChart(years, values)
-        }
-
-        // ====================== FIRE CALCULATOR ======================
-        function calculateFire() {
-            const currentAge = parseInt(document.getElementById('currentAge').value) || 30
-            const retireAge = parseInt(document.getElementById('retireAge').value) || 50
-            const yearsToRetire = Math.max(1, retireAge - currentAge)
-            
-            const annualExpenses = parseFloat(document.getElementById('annualExpenses').value) || 25000
-            const needed = annualExpenses * 25
-            document.getElementById('neededNest').textContent = '€' + needed.toLocaleString('pt-PT')
-            
-            const currentSavings = parseFloat(document.getElementById('currentSavings').value) || 0
-            const monthlySave = parseFloat(document.getElementById('monthlySave').value) || 0
-            const annualReturn = parseFloat(document.getElementById('returnRate').value) || 7
-            const inflation = parseFloat(document.getElementById('inflationRate').value) || 2.5
-            
-            let savings = currentSavings
-            const savingsHistory = [savings]
-            const neededHistory = [needed]
-            const yearLabels = []
-            
-            let year = 0
-            let foundYears = 0
-            
-            while (savings < needed && year < 60) {
-                year++
-                // Aplicar retorno líquido da inflação
-                const netReturn = (annualReturn - inflation) / 100
-                savings = savings * (1 + netReturn) + monthlySave * 12
-                
-                // Inflação nas despesas (e portanto no target)
-                const inflatedNeeded = needed * Math.pow(1 + inflation / 100, year)
-                
-                savingsHistory.push(Math.round(savings))
-                neededHistory.push(Math.round(inflatedNeeded))
-                yearLabels.push(currentAge + year)
-                
-                if (savings >= inflatedNeeded && foundYears === 0) {
-                    foundYears = year
-                }
-            }
-            
-            document.getElementById('yearsToFire').textContent = foundYears || 'Ainda não atinge'
-            document.getElementById('savingsRate').textContent = Math.round((monthlySave * 12 / (expenseData.income || 3200)) * 100) + '%'
-            
-            createFireChart(yearLabels, savingsHistory, neededHistory)
-        }
-
-        // ====================== COMPARADOR ETFs ======================
-        function populateETFs() {
-            const select1 = document.getElementById('etf1')
-            const select2 = document.getElementById('etf2')
-            
-            etfList.forEach(etf => {
-                const opt1 = document.createElement('option')
-                opt1.value = etf.id
-                opt1.textContent = etf.name
-                select1.appendChild(opt1)
-                
-                const opt2 = document.createElement('option')
-                opt2.value = etf.id
-                opt2.textContent = etf.name
-                select2.appendChild(opt2)
-            })
-            
-            // Valores iniciais diferentes
-            select1.value = 1
-            select2.value = 2
-        }
-
-        function compareETFs() {
-            const id1 = parseInt(document.getElementById('etf1').value)
-            const id2 = parseInt(document.getElementById('etf2').value)
-            
-            const etfA = etfList.find(e => e.id === id1)
-            const etfB = etfList.find(e => e.id === id2)
-            
-            if (!etfA || !etfB) return
-            
-            const container = document.getElementById('comparisonResult')
-            container.innerHTML = `
-            <div class="glass border border-white/10 rounded-3xl p-8">
-                <h4 class="font-semibold text-xl mb-6">${etfA.name}</h4>
-                <div class="space-y-6">
-                    <div class="flex justify-between"><span class="text-zinc-400">TER</span><span class="font-semibold">${etfA.ter}%</span></div>
-                    <div class="flex justify-between"><span class="text-zinc-400">Retorno 1 ano</span><span class="font-semibold text-emerald-400">${etfA.return1y}%</span></div>
-                    <div class="flex justify-between"><span class="text-zinc-400">Retorno 5 anos</span><span class="font-semibold text-emerald-400">${etfA.return5y}%</span></div>
-                    <div class="flex justify-between"><span class="text-zinc-400">Retorno 10 anos</span><span class="font-semibold text-emerald-400">${etfA.return10y}%</span></div>
-                    <div class="flex justify-between"><span class="text-zinc-400">Volatilidade anual</span><span class="font-semibold">${etfA.volatility}%</span></div>
-                    <div class="flex justify-between"><span class="text-zinc-400">Sharpe Ratio</span><span class="font-semibold">${etfA.sharpe}</span></div>
+        // ==================== RENDERIZAÇÃO ====================
+        function renderDashboard() {
+            return `
+            <div class="max-w-5xl mx-auto">
+                <div class="mb-10">
+                    <h1 class="text-5xl font-semibold logo-font tracking-tighter">Bom dia, DevAprendiz! 👋</h1>
+                    <p class="text-zinc-400 text-xl">Vamos aprender JavaScript e Python hoje?</p>
                 </div>
-            </div>
-            
-            <div class="glass border border-white/10 rounded-3xl p-8">
-                <h4 class="font-semibold text-xl mb-6">${etfB.name}</h4>
-                <div class="space-y-6">
-                    <div class="flex justify-between"><span class="text-zinc-400">TER</span><span class="font-semibold">${etfB.ter}%</span></div>
-                    <div class="flex justify-between"><span class="text-zinc-400">Retorno 1 ano</span><span class="font-semibold text-emerald-400">${etfB.return1y}%</span></div>
-                    <div class="flex justify-between"><span class="text-zinc-400">Retorno 5 anos</span><span class="font-semibold text-emerald-400">${etfB.return5y}%</span></div>
-                    <div class="flex justify-between"><span class="text-zinc-400">Retorno 10 anos</span><span class="font-semibold text-emerald-400">${etfB.return10y}%</span></div>
-                    <div class="flex justify-between"><span class="text-zinc-400">Volatilidade anual</span><span class="font-semibold">${etfB.volatility}%</span></div>
-                    <div class="flex justify-between"><span class="text-zinc-400">Sharpe Ratio</span><span class="font-semibold">${etfB.sharpe}</span></div>
+
+                <!-- Daily streak -->
+                <div class="bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-3xl p-8 flex items-center justify-between mb-10">
+                    <div>
+                        <div class="flex items-center gap-x-4">
+                            <span class="text-6xl">🔥</span>
+                            <div>
+                                <p class="text-4xl font-bold">${currentUser.streak} dias</p>
+                                <p class="text-xl">de sequência!</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-sm opacity-90">Continue assim e ganhe +50 XP amanhã</p>
+                        <button onclick="claimDaily()" 
+                                class="mt-4 bg-white text-emerald-600 px-8 py-3 rounded-3xl font-semibold">Pegar recompensa diária</button>
+                    </div>
+                </div>
+
+                <!-- Progress cards -->
+                <div class="grid grid-cols-2 gap-8">
+                    <!-- JS Card -->
+                    <div onclick="navigate('js')" class="bg-zinc-900 rounded-3xl p-8 card-hover cursor-pointer">
+                        <div class="flex justify-between items-start">
+                            <div class="text-7xl">🟨</div>
+                            <div class="text-right">
+                                <span class="inline-block px-4 py-1 bg-emerald-500 text-white text-sm font-medium rounded-3xl">${courses.js.progressJS || currentUser.progressJS}%</span>
+                            </div>
+                        </div>
+                        <h3 class="text-3xl font-semibold mt-6">JavaScript</h3>
+                        <p class="text-zinc-400">12 lições • 4 testes concluídos</p>
+                        <div class="mt-8 h-3 bg-zinc-800 rounded-3xl">
+                            <div class="h-3 bg-emerald-500 rounded-3xl" style="width: ${currentUser.progressJS}%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Python Card -->
+                    <div onclick="navigate('python')" class="bg-zinc-900 rounded-3xl p-8 card-hover cursor-pointer">
+                        <div class="flex justify-between items-start">
+                            <div class="text-7xl">🐍</div>
+                            <div class="text-right">
+                                <span class="inline-block px-4 py-1 bg-emerald-500 text-white text-sm font-medium rounded-3xl">${courses.python.progressPY || currentUser.progressPY}%</span>
+                            </div>
+                        </div>
+                        <h3 class="text-3xl font-semibold mt-6">Python</h3>
+                        <p class="text-zinc-400">8 lições • 1 teste concluído</p>
+                        <div class="mt-8 h-3 bg-zinc-800 rounded-3xl">
+                            <div class="h-3 bg-emerald-500 rounded-3xl" style="width: ${currentUser.progressPY}%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-12">
+                    <h3 class="font-medium text-xl mb-6 flex items-center gap-x-2">
+                        <span>Próximos exercícios</span>
+                        <span class="flex-1 h-px bg-gradient-to-r from-transparent via-zinc-700 to-transparent"></span>
+                    </h3>
+                    <div class="grid grid-cols-3 gap-6">
+                        <div onclick="startExercise('js', 0, 0)" class="bg-zinc-900 p-6 rounded-3xl cursor-pointer card-hover">
+                            <div class="flex justify-between"><span class="text-4xl">🟨</span><span class="text-emerald-400">Fácil</span></div>
+                            <p class="mt-6 font-semibold">Olá, Mundo! em JavaScript</p>
+                        </div>
+                        <div onclick="startExercise('js', 0, 1)" class="bg-zinc-900 p-6 rounded-3xl cursor-pointer card-hover">
+                            <div class="flex justify-between"><span class="text-4xl">🟨</span><span class="text-emerald-400">Médio</span></div>
+                            <p class="mt-6 font-semibold">Função de soma em JavaScript</p>
+                        </div>
+                        <div onclick="startExercise('python', 0, 0)" class="bg-zinc-900 p-6 rounded-3xl cursor-pointer card-hover">
+                            <div class="flex justify-between"><span class="text-4xl">🐍</span><span class="text-emerald-400">Fácil</span></div>
+                            <p class="mt-6 font-semibold">Olá, Mundo! em Python</p>
+                        </div>
+                    </div>
                 </div>
             </div>`
         }
 
-        // ====================== NAVEGAÇÃO ======================
-        function showSection(section) {
-            document.querySelectorAll('.section').forEach(s => s.classList.add('hidden'))
-            document.getElementById(section).classList.remove('hidden')
+        function renderJS() {
+            let html = `<div class="max-w-5xl mx-auto"><h1 class="text-5xl font-semibold mb-2 flex items-center gap-x-4"><span class="text-6xl">🟨</span> JavaScript</h1><p class="text-emerald-400 text-2xl mb-10">Aprenda do zero ao avançado</p>`
             
-            // Atualiza nav ativo
-            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'))
-            const activeId = 'nav-' + section
-            const activeLink = document.getElementById(activeId)
-            if (activeLink) activeLink.classList.add('active')
+            courses.js.units.forEach((unit, unitIndex) => {
+                html += `
+                <div class="mb-12">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="font-semibold text-2xl">${unit.title}</h2>
+                        <div class="text-sm bg-zinc-800 px-4 py-2 rounded-3xl">${unit.completed}/${unit.total} lições</div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">`
+                
+                unit.exercises.forEach((ex, exIndex) => {
+                    html += `
+                    <div onclick="startExercise('js', ${unitIndex}, ${exIndex})" 
+                         class="bg-zinc-900 rounded-3xl p-6 card-hover cursor-pointer flex flex-col">
+                        <div class="flex-1">
+                            <p class="font-medium">${ex.title}</p>
+                            <p class="text-sm text-zinc-400 line-clamp-2 mt-2">${ex.desc}</p>
+                        </div>
+                        <div class="mt-6 flex justify-end">
+                            <span class="text-xs px-5 py-2 bg-emerald-500/10 text-emerald-400 rounded-3xl">Praticar agora</span>
+                        </div>
+                    </div>`
+                })
+                html += `</div></div>`
+            })
+            html += `</div>`
+            return html
+        }
+
+        function renderPython() {
+            let html = `<div class="max-w-5xl mx-auto"><h1 class="text-5xl font-semibold mb-2 flex items-center gap-x-4"><span class="text-6xl">🐍</span> Python</h1><p class="text-emerald-400 text-2xl mb-10">A linguagem mais amada do mundo</p>`
             
-            // Trigger inicial dos gráficos quando a secção é aberta
-            if (section === 'dashboard') {
-                setTimeout(() => { updateDashboard(); createPieChart() }, 50)
-            }
-            if (section === 'portfolio') {
-                setTimeout(() => { simulatePortfolio() }, 50)
-            }
-            if (section === 'fire') {
-                setTimeout(() => { calculateFire() }, 50)
-            }
-            if (section === 'comparator') {
-                setTimeout(() => { compareETFs() }, 50)
+            courses.python.units.forEach((unit, unitIndex) => {
+                html += `
+                <div class="mb-12">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="font-semibold text-2xl">${unit.title}</h2>
+                        <div class="text-sm bg-zinc-800 px-4 py-2 rounded-3xl">${unit.completed}/${unit.total} lições</div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">`
+                
+                unit.exercises.forEach((ex, exIndex) => {
+                    html += `
+                    <div onclick="startExercise('python', ${unitIndex}, ${exIndex})" 
+                         class="bg-zinc-900 rounded-3xl p-6 card-hover cursor-pointer flex flex-col">
+                        <div class="flex-1">
+                            <p class="font-medium">${ex.title}</p>
+                            <p class="text-sm text-zinc-400 line-clamp-2 mt-2">${ex.desc}</p>
+                        </div>
+                        <div class="mt-6 flex justify-end">
+                            <span class="text-xs px-5 py-2 bg-emerald-500/10 text-emerald-400 rounded-3xl">Praticar agora</span>
+                        </div>
+                    </div>`
+                })
+                html += `</div></div>`
+            })
+            html += `</div>`
+            return html
+        }
+
+        function renderProfile() {
+            return `
+            <div class="max-w-2xl mx-auto text-center pt-10">
+                <div class="mx-auto w-28 h-28 bg-gradient-to-br from-violet-400 to-emerald-400 rounded-3xl flex items-center justify-center text-6xl mb-6">👨‍💻</div>
+                <h1 class="text-4xl font-semibold">DevAprendiz</h1>
+                <p class="text-emerald-400">Nível 12 • 1240 XP</p>
+                
+                <div class="mt-16 grid grid-cols-3 gap-6">
+                    <div class="bg-zinc-900 rounded-3xl p-8">
+                        <p class="text-5xl font-bold text-emerald-400">12</p>
+                        <p class="text-sm text-zinc-400">Dias de streak</p>
+                    </div>
+                    <div class="bg-zinc-900 rounded-3xl p-8">
+                        <p class="text-5xl font-bold">47</p>
+                        <p class="text-sm text-zinc-400">Exercícios feitos</p>
+                    </div>
+                    <div class="bg-zinc-900 rounded-3xl p-8">
+                        <p class="text-5xl font-bold text-amber-400">8.7</p>
+                        <p class="text-sm text-zinc-400">Média das avaliações</p>
+                    </div>
+                </div>
+                
+                <p class="mt-20 text-zinc-400">Este é o seu Duolingo de código. Continue praticando e a IA vai te ajudar a melhorar a cada exercício!</p>
+            </div>`
+        }
+
+        // ==================== NAVEGAÇÃO ====================
+        function navigate(page) {
+            const main = document.getElementById('main-content')
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'))
+            
+            if (page === 'dashboard') {
+                main.innerHTML = renderDashboard()
+            } else if (page === 'js') {
+                main.innerHTML = renderJS()
+                document.querySelectorAll('.nav-btn')[1].classList.add('active')
+            } else if (page === 'python') {
+                main.innerHTML = renderPython()
+                document.querySelectorAll('.nav-btn')[2].classList.add('active')
+            } else if (page === 'profile') {
+                main.innerHTML = renderProfile()
             }
         }
 
-        function toggleMobileMenu() {
-            const menu = document.getElementById('mobileMenu')
-            menu.classList.toggle('hidden')
+        // ==================== EXERCÍCIOS ====================
+        function startExercise(lang, unitIndex, exerciseIndex) {
+            currentLanguage = lang
+            const course = courses[lang]
+            currentExercise = course.units[unitIndex].exercises[exerciseIndex]
+            
+            const modal = document.getElementById('exercise-modal')
+            document.getElementById('exercise-lang-icon').innerHTML = course.emoji
+            document.getElementById('exercise-title').textContent = currentExercise.title
+            document.getElementById('exercise-desc').innerHTML = `<strong>Desafio:</strong> ${currentExercise.desc}`
+            document.getElementById('lang-label').innerHTML = lang === 'js' ? 'JavaScript' : 'Python'
+            document.getElementById('code-editor').value = currentExercise.template
+            
+            modal.classList.remove('hidden')
+            modal.classList.add('flex')
         }
 
-        function fakeLogout() {
-            if (confirm('Queres sair da sessão? (Demo)')) {
-                alert('👋 Obrigado por usares o FinTrack! O teu portfólio está guardado na nuvem (simulação).')
+        function closeExercise() {
+            const modal = document.getElementById('exercise-modal')
+            modal.classList.add('hidden')
+            modal.classList.remove('flex')
+            currentExercise = null
+        }
+
+        // Executa o código (demo rápido)
+        function runCode() {
+            const code = document.getElementById('code-editor').value
+            if (!currentExercise) return
+            
+            let result = "Código executado com sucesso!"
+            
+            if (currentExercise.type === 'js') {
+                try {
+                    // Simula execução JS
+                    if (currentExercise.id === 101 && code.includes('Olá, Mundo!')) {
+                        result = "✅ Console: Olá, Mundo!"
+                    } else if (currentExercise.id === 102) {
+                        // Testa função
+                        const funcTest = new Function(code + `\nreturn ${currentExercise.testCode};`)
+                        const output = funcTest()
+                        if (output === currentExercise.expected) {
+                            result = `✅ Sua função retornou ${output}`
+                        } else {
+                            result = `❌ Retornou ${output} (esperado 8)`
+                        }
+                    }
+                    alert(result)
+                } catch(e) {
+                    alert("Erro no seu código JS: " + e.message)
+                }
+            } else {
+                alert("🐍 Python simulado! No GitHub Pages não temos execução real de Python (mas no backend completo teremos).")
             }
         }
 
-        // ====================== INICIALIZAÇÃO ======================
-        function initializeApp() {
-            // Tailwind
+        // Avaliação completa com IA (simulada)
+        function submitForAI() {
+            if (!currentExercise) return
+            
+            const code = document.getElementById('code-editor').value.trim()
+            let score = 0
+            let feedback = ""
+            let isGood = false
+            
+            // Lógica simples de avaliação
+            if (currentExercise.type === 'js') {
+                if (currentExercise.id === 101) {
+                    isGood = code.includes('console.log') && code.includes('Olá, Mundo!')
+                    score = isGood ? 10 : 4
+                } else if (currentExercise.id === 102) {
+                    try {
+                        const testFunc = new Function(code + `\nreturn ${currentExercise.testCode};`)
+                        const result = testFunc()
+                        isGood = result === currentExercise.expected
+                        score = isGood ? 10 : (result === 8 ? 9 : 3)
+                    } catch(e) {
+                        score = 2
+                    }
+                }
+                feedback = isGood ? currentExercise.aiFeedbackGood : currentExercise.aiFeedbackBad
+            } 
+            else if (currentExercise.type === 'python') {
+                // Simulação Python
+                isGood = code.includes('print') || code.includes('def soma')
+                score = isGood ? (code.length > 30 ? 10 : 8) : 5
+                feedback = isGood ? currentExercise.aiFeedbackGood : currentExercise.aiFeedbackBad
+            }
+            
+            // Atualiza XP
+            if (score >= 8) {
+                currentUser.xp += 50
+                document.getElementById('xp-count').textContent = currentUser.xp
+            }
+            
+            closeExercise()
+            showFeedback(score, feedback, isGood)
+        }
+
+        function showFeedback(score, feedbackText, isGood) {
+            const modal = document.getElementById('feedback-modal')
+            const circle = document.getElementById('score-circle')
+            
+            circle.innerHTML = `
+                <div class="text-center">
+                    <div class="text-6xl">${score}</div>
+                    <div class="text-xs tracking-widest font-medium -mt-2">/10</div>
+                </div>
+            `
+            circle.style.borderColor = score >= 8 ? '#22c55e' : (score >= 5 ? '#eab308' : '#ef4444')
+            
+            document.getElementById('feedback-title').innerHTML = isGood ? 
+                `🎉 Perfeito! <span class="text-emerald-500">+50 XP</span>` : 
+                `Quase lá! Você tirou <span class="text-amber-500">${score}</span>`
+            
+            document.getElementById('feedback-subtitle').innerHTML = isGood ? 
+                'A IA achou seu código limpo e correto!' : 
+                'A IA corrigiu alguns pontos. Veja o feedback:'
+            
+            document.getElementById('feedback-text').innerHTML = `
+                <strong>O que está bom:</strong> ${feedbackText}<br><br>
+                <strong>Sugestão da IA:</strong> ${isGood ? 'Nada! Está ótimo.' : 'Tente usar mais nomes claros de variáveis e evitar repetição.'}
+            `
+            
+            modal.classList.remove('hidden')
+            modal.classList.add('flex')
+        }
+
+        function hideFeedback() {
+            const modal = document.getElementById('feedback-modal')
+            modal.classList.add('hidden')
+            modal.classList.remove('flex')
+        }
+
+        function retryExercise() {
+            hideFeedback()
+            // Reabre o mesmo exercício
+            if (currentExercise) {
+                const modal = document.getElementById('exercise-modal')
+                modal.classList.remove('hidden')
+                modal.classList.add('flex')
+            }
+        }
+
+        function finishExercise() {
+            hideFeedback()
+            // Atualiza progresso fake
+            if (currentLanguage === 'js') currentUser.progressJS = Math.min(100, currentUser.progressJS + 15)
+            else currentUser.progressPY = Math.min(100, currentUser.progressPY + 15)
+            
+            navigate(currentLanguage)
+        }
+
+        function loseHeart() {
+            if (currentUser.hearts > 0) {
+                currentUser.hearts--
+                alert(`💔 Você perdeu 1 coração! Restam ${currentUser.hearts}`)
+            }
+        }
+
+        function showStreak() {
+            alert(`🔥 Sua sequência está em ${currentUser.streak} dias!\n\nContinue estudando todo dia para não perder!`)
+        }
+
+        function claimDaily() {
+            currentUser.xp += 50
+            currentUser.streak++
+            document.getElementById('xp-count').textContent = currentUser.xp
+            document.getElementById('streak-count').textContent = currentUser.streak
+            alert("🎁 +50 XP e +1 dia de streak! Parabéns!")
+        }
+
+        // ==================== INICIALIZAÇÃO ====================
+        window.onload = function() {
             initTailwind()
+            navigate('dashboard')
             
-            // Renderizar categorias
-            renderCategories()
-            
-            // Renderizar sliders do portfólio
-            renderAssetSliders()
-            
-            // Popular selects de ETFs
-            populateETFs()
-            
-            // Primeira renderização
-            createPieChart()
-            simulatePortfolio()
-            calculateFire()
-            compareETFs()
-            
-            console.log('%c✅ FinTrack carregado com sucesso! UI moderna, 100% funcional e pronta para GitHub.', 'color:#00d4ff; font-family:Space Grotesk')
-            
-            // Mensagem final para o utilizador
-            console.log('Copia este ficheiro inteiro para index.html no teu repositório GitHub. Ativa GitHub Pages e partilha o link!')
+            console.log('%c✅ Codolingo carregado com sucesso! Este é o seu Duolingo de Código completo.', 'color:#22c55e; font-size:13px')
+            console.log('Copie este arquivo como index.html no GitHub e ative GitHub Pages. Quer um backend Node.js + Python real? É só pedir!')
         }
-
-        // Start
-        window.onload = initializeApp
     </script>
 </body>
 </html>
