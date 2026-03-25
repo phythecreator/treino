@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Avaliação - Notas 0 a 100</title>
+    <title>Sistema de Avaliação - Níveis de Desempenho</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * {
@@ -20,11 +20,10 @@
         }
 
         .container {
-            max-width: 1300px;
+            max-width: 1400px;
             margin: 0 auto;
         }
 
-        /* Header */
         .header {
             text-align: center;
             margin-bottom: 25px;
@@ -41,14 +40,28 @@
             font-size: 0.9em;
         }
 
-        /* Layout Principal */
+        .niveis-info {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .nivel-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75em;
+            font-weight: bold;
+            color: white;
+        }
+
         .main-grid {
             display: grid;
             grid-template-columns: 1fr 380px;
             gap: 20px;
         }
 
-        /* Cards */
         .card {
             background: white;
             border-radius: 16px;
@@ -69,12 +82,11 @@
             padding-left: 12px;
         }
 
-        /* Disciplinas */
         .disciplinas-container {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 12px;
-            max-height: 500px;
+            max-height: 550px;
             overflow-y: auto;
             padding-right: 5px;
         }
@@ -132,16 +144,8 @@
             margin-top: 5px;
         }
 
-        .btn-remove {
-            background: #dc3545;
-            color: white;
-            border: none;
-            padding: 2px 8px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.7em;
-            margin-left: 5px;
-        }
+        .btn-add:hover { background: #218838; }
+        .btn-remove:hover { background: #c82333; }
 
         .comport-group {
             display: flex;
@@ -187,10 +191,19 @@
             padding-top: 8px;
             border-top: 1px solid #e0e0e0;
             font-weight: bold;
-            font-size: 1.1em;
+            font-size: 0.9em;
         }
 
-        /* Painel Lateral */
+        .nivel-display {
+            font-size: 0.8em;
+            margin-top: 5px;
+            text-align: right;
+            padding: 4px 8px;
+            border-radius: 12px;
+            display: inline-block;
+            float: right;
+        }
+
         .painel-resultado {
             background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
         }
@@ -215,12 +228,12 @@
             margin-top: 5px;
         }
 
-        .classificacao {
+        .nivel-final {
             margin-top: 10px;
             padding: 8px;
             border-radius: 20px;
-            font-size: 0.9em;
-            font-weight: 500;
+            font-size: 1em;
+            font-weight: bold;
         }
 
         .btn-calcular {
@@ -261,7 +274,7 @@
         }
 
         .stat-value {
-            font-size: 1.5em;
+            font-size: 1.3em;
             font-weight: bold;
             color: #2a5298;
         }
@@ -271,31 +284,49 @@
             color: #666;
         }
 
-        .grafico-mini {
+        .grafico-container {
             margin: 15px 0;
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
         }
 
         canvas {
-            max-height: 200px;
+            max-height: 220px;
+            width: 100%;
         }
 
         .relatorio {
             margin-top: 15px;
-            max-height: 250px;
+            max-height: 280px;
             overflow-y: auto;
             font-size: 0.85em;
         }
 
         .relatorio-item {
-            padding: 8px;
+            padding: 10px;
             border-bottom: 1px solid #e0e0e0;
             display: flex;
             justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 5px;
         }
 
+        .relatorio-notas {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .nivel-1 { background: #dc3545; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.7em; font-weight: bold; }
+        .nivel-2 { background: #fd7e14; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.7em; font-weight: bold; }
+        .nivel-3 { background: #ffc107; color: #333; padding: 2px 8px; border-radius: 12px; font-size: 0.7em; font-weight: bold; }
+        .nivel-4 { background: #20c997; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.7em; font-weight: bold; }
+        .nivel-5 { background: #28a745; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.7em; font-weight: bold; }
         .aprovado { color: #28a745; font-weight: bold; }
-        .reprovado { color: #dc3545; font-weight: bold; }
         .recuperacao { color: #ffc107; font-weight: bold; }
+        .reprovado { color: #dc3545; font-weight: bold; }
 
         .footer {
             text-align: center;
@@ -308,7 +339,6 @@
             .main-grid {
                 grid-template-columns: 1fr;
             }
-            
             .disciplinas-container {
                 max-height: 400px;
             }
@@ -317,12 +347,10 @@
         ::-webkit-scrollbar {
             width: 5px;
         }
-        
         ::-webkit-scrollbar-track {
             background: #f1f1f1;
             border-radius: 10px;
         }
-        
         ::-webkit-scrollbar-thumb {
             background: #2a5298;
             border-radius: 10px;
@@ -332,12 +360,18 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>📊 Sistema de Avaliação Acadêmica</h1>
-            <p>Notas de 0 a 100 | Conversão automática para escala 0-5 | Cálculo ponderado</p>
+            <h1>📊 Sistema de Avaliação por Níveis</h1>
+            <p>Notas de 0 a 100 | Classificação por Níveis de 1 a 5</p>
+            <div class="niveis-info">
+                <span class="nivel-badge" style="background:#dc3545">Nível 1: 0-20</span>
+                <span class="nivel-badge" style="background:#fd7e14">Nível 2: 20-50</span>
+                <span class="nivel-badge" style="background:#ffc107; color:#333">Nível 3: 50-69</span>
+                <span class="nivel-badge" style="background:#20c997">Nível 4: 70-89</span>
+                <span class="nivel-badge" style="background:#28a745">Nível 5: 90-100</span>
+            </div>
         </div>
 
         <div class="main-grid">
-            <!-- Coluna Esquerda: Disciplinas -->
             <div class="card">
                 <div class="card-title">
                     <span>📚</span> Disciplinas
@@ -345,7 +379,6 @@
                 <div class="disciplinas-container" id="disciplinasContainer"></div>
             </div>
 
-            <!-- Coluna Direita: Resultados -->
             <div>
                 <div class="card painel-resultado">
                     <div class="card-title">
@@ -354,8 +387,8 @@
                     
                     <div class="resultado-principal" id="resultadoPrincipal">
                         <div class="nota-final">0.0</div>
-                        <div class="nota-original">0 / 100 (0.0 / 5)</div>
-                        <div class="classificacao" id="classificacao">---</div>
+                        <div class="nota-original">0 / 100</div>
+                        <div class="nivel-final" id="nivelFinal">Nível --</div>
                     </div>
 
                     <button class="btn-calcular" onclick="calcularTudo()">🔢 CALCULAR MÉDIA FINAL</button>
@@ -368,7 +401,7 @@
                         </div>
                         <div class="stat-card">
                             <div class="stat-value" id="aprovadasCount">0</div>
-                            <div class="stat-label">Aprovadas</div>
+                            <div class="stat-label">Aprovadas (≥70)</div>
                         </div>
                         <div class="stat-card">
                             <div class="stat-value" id="mediaGeral">0.0</div>
@@ -380,8 +413,8 @@
                         </div>
                     </div>
 
-                    <div class="grafico-mini">
-                        <canvas id="miniChart"></canvas>
+                    <div class="grafico-container">
+                        <canvas id="niveisChart"></canvas>
                     </div>
 
                     <div class="card-title" style="margin-top: 10px;">
@@ -392,7 +425,7 @@
             </div>
         </div>
         <div class="footer">
-            <p>📝 Testes (60%) | 👥 Comportamento (20%) | 📚 Questões Aula (20%) • Notas convertidas para escala 0-5</p>
+            <p>📝 Testes (60%) | 👥 Comportamento (20%) | 📚 Questões Aula (20%)</p>
         </div>
     </div>
 
@@ -403,6 +436,16 @@
         ];
 
         let dados = {};
+        let meuGrafico = null;
+
+        function getNivel(nota) {
+            if (nota >= 0 && nota < 20) return { nivel: 1, cor: "#dc3545", nome: "Nível 1 - Insuficiente" };
+            if (nota >= 20 && nota < 50) return { nivel: 2, cor: "#fd7e14", nome: "Nível 2 - Regular" };
+            if (nota >= 50 && nota < 70) return { nivel: 3, cor: "#ffc107", nome: "Nível 3 - Satisfatório" };
+            if (nota >= 70 && nota < 90) return { nivel: 4, cor: "#20c997", nome: "Nível 4 - Bom" };
+            if (nota >= 90 && nota <= 100) return { nivel: 5, cor: "#28a745", nome: "Nível 5 - Excelente" };
+            return { nivel: 1, cor: "#dc3545", nome: "Nível 1 - Insuficiente" };
+        }
 
         function inicializarDados() {
             disciplinas.forEach(disciplina => {
@@ -414,10 +457,6 @@
                     };
                 }
             });
-        }
-
-        function converterNota(valor) {
-            return Math.round((valor / 20) * 10) / 10;
         }
 
         function calcularMediaTestes(testes) {
@@ -435,16 +474,12 @@
             const mediaTestes = calcularMediaTestes(d.testes);
             const mediaComp = calcularMediaComportamento(d.comportamento);
             const notaPonderada = (mediaTestes * 0.6) + (mediaComp * 0.2) + (d.questoes * 0.2);
-            return notaPonderada;
+            return Math.round(notaPonderada);
         }
 
-        function calcularNotaFinalConvertida(disciplina) {
-            return converterNota(calcularNotaFinal(disciplina));
-        }
-
-        function getStatus(notaConvertida) {
-            if (notaConvertida >= 3.0) return { texto: "APROVADO", class: "aprovado" };
-            if (notaConvertida >= 2.0) return { texto: "RECUPERAÇÃO", class: "recuperacao" };
+        function getStatus(nota) {
+            if (nota >= 70) return { texto: "APROVADO", class: "aprovado" };
+            if (nota >= 50) return { texto: "RECUPERAÇÃO", class: "recuperacao" };
             return { texto: "REPROVADO", class: "reprovado" };
         }
 
@@ -456,6 +491,8 @@
             disciplinas.forEach(disciplina => {
                 const d = dados[disciplina];
                 const id = disciplina.replace(/[^a-zA-Z]/g, '');
+                const notaFinal = calcularNotaFinal(disciplina);
+                const nivel = getNivel(notaFinal);
                 
                 const div = document.createElement('div');
                 div.className = 'disciplina-item';
@@ -496,23 +533,15 @@
                         <div class="teste-label">Questões de Aula</div>
                     </div>
                     
-                    <div class="media-display" id="media-${id}">
-                        Média: --/100 (--/5)
+                    <div class="media-display">
+                        Média: ${notaFinal}/100 
+                        <span class="nivel-display" style="background: ${nivel.cor}; color: white;">
+                            ${nivel.nome}
+                        </span>
                     </div>
                 `;
                 container.appendChild(div);
-                atualizarMediaDisplay(disciplina);
             });
-        }
-
-        function atualizarMediaDisplay(disciplina) {
-            const id = disciplina.replace(/[^a-zA-Z]/g, '');
-            const element = document.getElementById(`media-${id}`);
-            if (element) {
-                const notaOriginal = calcularNotaFinal(disciplina);
-                const notaConvertida = converterNota(notaOriginal);
-                element.innerHTML = `📊 Média: ${Math.round(notaOriginal)}/100 (${notaConvertida.toFixed(1)}/5)`;
-            }
         }
 
         function adicionarTeste(disciplina) {
@@ -537,7 +566,7 @@
             let nota = parseFloat(valor);
             if (!isNaN(nota) && nota >= 0 && nota <= 100) {
                 dados[disciplina].testes[index] = nota;
-                atualizarMediaDisplay(disciplina);
+                renderizarDisciplinas();
             }
         }
 
@@ -545,7 +574,7 @@
             let nota = parseFloat(valor);
             if (!isNaN(nota) && nota >= 0 && nota <= 100) {
                 dados[disciplina].comportamento[campo] = nota;
-                atualizarMediaDisplay(disciplina);
+                renderizarDisciplinas();
             }
         }
 
@@ -553,68 +582,94 @@
             let nota = parseFloat(valor);
             if (!isNaN(nota) && nota >= 0 && nota <= 100) {
                 dados[disciplina].questoes = nota;
-                atualizarMediaDisplay(disciplina);
+                renderizarDisciplinas();
             }
         }
 
-        let grafico = null;
-
-        function atualizarGrafico(notasConvertidas) {
-            const ctx = document.getElementById('miniChart');
+        function criarGrafico(notas, niveis, cores) {
+            const ctx = document.getElementById('niveisChart');
             if (!ctx) return;
 
-            const cores = notasConvertidas.map(n => {
-                if (n >= 3.0) return '#28a745';
-                if (n >= 2.0) return '#ffc107';
-                return '#dc3545';
-            });
+            if (meuGrafico) {
+                meuGrafico.destroy();
+            }
 
-            if (grafico) {
-                grafico.data.datasets[0].data = notasConvertidas;
-                grafico.data.datasets[0].backgroundColor = cores;
-                grafico.update();
-            } else {
-                grafico = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: disciplinas,
-                        datasets: [{
-                            label: 'Nota Final (0-5)',
-                            data: notasConvertidas,
-                            backgroundColor: cores,
-                            borderRadius: 8
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: true,
-                        plugins: {
-                            legend: { display: false }
+            meuGrafico = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: disciplinas,
+                    datasets: [{
+                        label: 'Nota Final (0-100)',
+                        data: notas,
+                        backgroundColor: cores,
+                        borderColor: cores.map(c => c),
+                        borderWidth: 1,
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            display: false
                         },
-                        scales: {
-                            y: { 
-                                beginAtZero: true, 
-                                max: 5,
-                                ticks: { stepSize: 1 }
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const nota = context.raw;
+                                    const nivel = getNivel(nota);
+                                    return `Nota: ${nota}/100 - ${nivel.nome}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            title: {
+                                display: true,
+                                text: 'Nota (0-100)'
+                            },
+                            grid: {
+                                color: '#e0e0e0'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                maxRotation: 45,
+                                minRotation: 45,
+                                font: { size: 10 }
                             }
                         }
                     }
-                });
-            }
+                }
+            });
         }
 
-        function atualizarRelatorio(notasOriginais, notasConvertidas, status) {
+        function atualizarRelatorio(notas, niveis, status) {
             const relatorioDiv = document.getElementById('relatorio');
             if (!relatorioDiv) return;
 
             let html = '';
             disciplinas.forEach((disc, i) => {
+                const nivel = niveis[i];
+                let nivelClass = '';
+                if (nivel.nivel === 1) nivelClass = 'nivel-1';
+                else if (nivel.nivel === 2) nivelClass = 'nivel-2';
+                else if (nivel.nivel === 3) nivelClass = 'nivel-3';
+                else if (nivel.nivel === 4) nivelClass = 'nivel-4';
+                else if (nivel.nivel === 5) nivelClass = 'nivel-5';
+                
                 html += `
                     <div class="relatorio-item">
                         <span><strong>${disc}</strong></span>
-                        <span>${Math.round(notasOriginais[i])}/100</span>
-                        <span>→ ${notasConvertidas[i].toFixed(1)}/5</span>
-                        <span class="${status[i].class}">${status[i].texto}</span>
+                        <div class="relatorio-notas">
+                            <span>${notas[i]}/100</span>
+                            <span class="${nivelClass}">${nivel.nome}</span>
+                            <span class="${status[i].class}">${status[i].texto}</span>
+                        </div>
                     </div>
                 `;
             });
@@ -622,66 +677,36 @@
         }
 
         function calcularTudo() {
-            const notasOriginais = disciplinas.map(d => calcularNotaFinal(d));
-            const notasConvertidas = notasOriginais.map(n => converterNota(n));
-            const status = notasConvertidas.map(n => getStatus(n));
+            const notas = disciplinas.map(d => calcularNotaFinal(d));
+            const niveis = notas.map(n => getNivel(n));
+            const status = notas.map(n => getStatus(n));
             
-            const mediaGeral = notasConvertidas.reduce((a, b) => a + b, 0) / disciplinas.length;
-            const aprovadas = notasConvertidas.filter(n => n >= 3.0).length;
-            const melhorIndex = notasConvertidas.indexOf(Math.max(...notasConvertidas));
+            const mediaGeral = notas.reduce((a, b) => a + b, 0) / disciplinas.length;
+            const aprovadas = notas.filter(n => n >= 70).length;
+            const melhorIndex = notas.indexOf(Math.max(...notas));
             const melhorDisciplina = disciplinas[melhorIndex];
-            const melhorNota = notasConvertidas[melhorIndex];
+            const melhorNota = notas[melhorIndex];
+            const melhorNivel = getNivel(melhorNota);
             
-            const notaFinalMedia = mediaGeral;
-            const notaFinalOriginal = notaFinalMedia * 20;
+            const mediaGeralNivel = getNivel(mediaGeral);
             
             document.getElementById('totalDisciplinas').innerHTML = disciplinas.length;
             document.getElementById('aprovadasCount').innerHTML = aprovadas;
             document.getElementById('mediaGeral').innerHTML = mediaGeral.toFixed(1);
-            document.getElementById('melhorDisc').innerHTML = melhorDisciplina.substring(0, 8);
+            document.getElementById('melhorDisc').innerHTML = melhorDisciplina.substring(0, 12);
             
             const resultadoDiv = document.getElementById('resultadoPrincipal');
-            let classificacaoTexto = '';
-            let classificacaoCor = '';
-            
-            if (mediaGeral >= 4.5) {
-                classificacaoTexto = '🏆 EXCELENTE - Desempenho Brilhante!';
-                classificacaoCor = '#28a745';
-            } else if (mediaGeral >= 3.5) {
-                classificacaoTexto = '👍 BOM - Parabéns, continue assim!';
-                classificacaoCor = '#17a2b8';
-            } else if (mediaGeral >= 3.0) {
-                classificacaoTexto = '✅ APROVADO - Dentro da média esperada';
-                classificacaoCor = '#28a745';
-            } else if (mediaGeral >= 2.0) {
-                classificacaoTexto = '⚠️ RECUPERAÇÃO - Precisa melhorar';
-                classificacaoCor = '#ffc107';
-            } else {
-                classificacaoTexto = '❌ REPROVADO - Estudo intensivo necessário';
-                classificacaoCor = '#dc3545';
-            }
-            
             resultadoDiv.innerHTML = `
-                <div class="nota-final">${notaFinalMedia.toFixed(1)}</div>
-                <div class="nota-original">${Math.round(notaFinalOriginal)} / 100 (${notaFinalMedia.toFixed(1)} / 5)</div>
-                <div class="classificacao" style="background: ${classificacaoCor}20; color: ${classificacaoCor};">${classificacaoTexto}</div>
+                <div class="nota-final">${mediaGeral.toFixed(1)}</div>
+                <div class="nota-original">${Math.round(mediaGeral)} / 100</div>
+                <div class="nivel-final" style="background: ${mediaGeralNivel.cor}20; color: ${mediaGeralNivel.cor}; border: 1px solid ${mediaGeralNivel.cor}">
+                    🎯 ${mediaGeralNivel.nome}
+                </div>
             `;
             
-            document.getElementById('classificacao').innerHTML = classificacaoTexto;
-            
-            atualizarGrafico(notasConvertidas);
-            atualizarRelatorio(notasOriginais, notasConvertidas, status);
-            
-            const detalhes = document.createElement('div');
-            detalhes.style.marginTop = '10px';
-            detalhes.style.fontSize = '0.85em';
-            detalhes.style.textAlign = 'center';
-            detalhes.innerHTML = `📊 ${aprovadas}/${disciplinas.length} disciplinas aprovadas | 🎯 Melhor: ${melhorDisciplina} (${melhorNota.toFixed(1)})`;
-            
-            const existente = resultadoDiv.querySelector('.detalhes-extra');
-            if (existente) existente.remove();
-            detalhes.className = 'detalhes-extra';
-            resultadoDiv.appendChild(detalhes);
+            const cores = notas.map(n => getNivel(n).cor);
+            criarGrafico(notas, niveis, cores);
+            atualizarRelatorio(notas, niveis, status);
         }
 
         function resetarTudo() {
@@ -699,11 +724,11 @@
         }
 
         function salvarDados() {
-            localStorage.setItem('dadosAvaliacao', JSON.stringify(dados));
+            localStorage.setItem('dadosAvaliacaoNiveis', JSON.stringify(dados));
         }
 
         function carregarDados() {
-            const salvos = localStorage.getItem('dadosAvaliacao');
+            const salvos = localStorage.getItem('dadosAvaliacaoNiveis');
             if (salvos) {
                 dados = JSON.parse(salvos);
             } else {
