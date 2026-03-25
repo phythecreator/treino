@@ -3,135 +3,248 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>EA FC Pack Opener - Ultimate Team</title>
+    <title>EA FC 25 - Ultimate Team Pack Opener</title>
     <style>
-        body {
+        * {
             margin: 0;
-            overflow: hidden;
-            font-family: 'Poppins', 'Segoe UI', sans-serif;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        /* UI Overlay */
-        #ui {
+        body {
+            font-family: 'Segoe UI', 'Poppins', 'Arial', sans-serif;
+            overflow: hidden;
+            background: linear-gradient(135deg, #0a0f1e 0%, #0c1222 100%);
+        }
+
+        /* Navegação Principal */
+        .nav-bar {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 50px;
+            padding: 8px 20px;
+            display: flex;
+            gap: 15px;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+
+        .nav-btn {
+            background: transparent;
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 215, 0, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .nav-btn.active {
+            background: linear-gradient(135deg, #ffd700, #ffb347);
+            color: #1a1a2e;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+
+        /* Containers das Secções */
+        .section {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            pointer-events: none;
-            z-index: 10;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s ease, visibility 0.4s ease;
+            overflow-y: auto;
+            padding: 100px 20px 20px 20px;
         }
 
-        .panel {
-            pointer-events: auto;
-            background: linear-gradient(135deg, rgba(0,0,0,0.85) 0%, rgba(10,20,30,0.9) 100%);
+        .section.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Cards e UI */
+        .glass-card {
+            background: rgba(20, 25, 45, 0.85);
             backdrop-filter: blur(10px);
             border-radius: 20px;
-            border: 1px solid rgba(255,215,0,0.3);
-            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-            padding: 15px 25px;
-            color: white;
-            font-weight: bold;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            padding: 20px;
+            margin-bottom: 20px;
         }
 
-        #top-bar {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            right: 20px;
+        .stats-header {
             display: flex;
             justify-content: space-between;
-            gap: 15px;
+            align-items: center;
             flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
         }
 
-        .stats {
-            display: flex;
-            gap: 20px;
-            background: rgba(0,0,0,0.7);
+        .stat-badge {
+            background: linear-gradient(135deg, #1e2a3a, #0f172a);
             padding: 10px 20px;
             border-radius: 40px;
-            backdrop-filter: blur(5px);
-        }
-
-        .stat {
             display: flex;
             align-items: center;
-            gap: 8px;
-            font-size: 1.2em;
-        }
-
-        .stat-icon {
-            font-size: 1.5em;
-        }
-
-        button {
-            background: linear-gradient(135deg, #ffd700, #ffb347);
-            border: none;
-            color: #1a2a3a;
-            padding: 10px 25px;
-            border-radius: 40px;
+            gap: 10px;
             font-weight: bold;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            font-size: 1em;
-            font-family: inherit;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255, 215, 0, 0.3);
         }
 
-        button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
-        }
-
-        button:active {
-            transform: scale(0.98);
-        }
-
-        #pack-container {
-            position: absolute;
-            bottom: 100px;
-            left: 0;
-            right: 0;
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
-            pointer-events: auto;
-        }
-
-        .pack-btn {
-            background: linear-gradient(135deg, #2c3e50, #1a2a3a);
-            border: 2px solid #ffd700;
-            font-size: 1.2em;
-            padding: 12px 30px;
-        }
-
-        #card-reveal {
-            position: absolute;
-            bottom: 200px;
-            left: 0;
-            right: 0;
-            display: flex;
-            justify-content: center;
-            pointer-events: none;
-        }
-
-        .card-display {
-            background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
-            border-radius: 20px;
-            padding: 20px 40px;
-            text-align: center;
-            animation: slideUp 0.5s ease-out;
-            border: 2px solid gold;
-            max-width: 300px;
+        /* Secção Packs */
+        .packs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            max-width: 1200px;
             margin: 0 auto;
         }
 
-        @keyframes slideUp {
+        .pack-card {
+            background: linear-gradient(135deg, #1a1f2e, #0f1422);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pack-card:hover {
+            transform: translateY(-10px);
+            border-color: #ffd700;
+            box-shadow: 0 10px 40px rgba(255, 215, 0, 0.3);
+        }
+
+        .pack-icon {
+            font-size: 4em;
+            margin-bottom: 15px;
+        }
+
+        .pack-name {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #ffd700;
+        }
+
+        .pack-price {
+            font-size: 1.2em;
+            color: #fff;
+            margin: 10px 0;
+        }
+
+        .pack-rarity {
+            font-size: 0.9em;
+            color: #aaa;
+        }
+
+        /* Secção Equipa */
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .player-card {
+            background: linear-gradient(135deg, #1e2a3a, #0f172a);
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            position: relative;
+            transition: all 0.3s ease;
+            border-left: 4px solid #ffd700;
+        }
+
+        .player-rating-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #ffd700;
+            color: #1a1a2e;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .player-name {
+            font-size: 1.1em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .player-position {
+            color: #ffd700;
+            font-weight: bold;
+        }
+
+        .player-stats {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 10px 0;
+            font-size: 0.8em;
+        }
+
+        .remove-btn {
+            background: #e74c3c;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 20px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-size: 0.8em;
+        }
+
+        /* Secção Simulação */
+        .simulation-area {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .team-strength {
+            background: linear-gradient(135deg, #2a3a4a, #1a2a3a);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .match-result-card {
+            background: linear-gradient(135deg, #2a2a3a, #1a1a2a);
+            border-radius: 20px;
+            padding: 25px;
+            margin-top: 20px;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
             from {
                 opacity: 0;
-                transform: translateY(50px);
+                transform: translateY(30px);
             }
             to {
                 opacity: 1;
@@ -139,78 +252,54 @@
             }
         }
 
-        .player-name {
-            font-size: 1.8em;
-            font-weight: bold;
-            color: #ffd700;
-        }
-
-        .player-rating {
-            font-size: 1.4em;
-            color: #fff;
-        }
-
-        .player-position {
-            font-size: 1.2em;
-            color: #aaa;
-        }
-
-        .card-actions {
-            margin-top: 15px;
+        /* Modal de Carta Aberta */
+        .card-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(15px);
+            z-index: 1000;
             display: flex;
-            gap: 10px;
+            align-items: center;
             justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
         }
 
-        .action-btn {
-            background: rgba(255,255,255,0.2);
-            padding: 5px 15px;
-            font-size: 0.9em;
+        .card-modal.active {
+            opacity: 1;
+            visibility: visible;
         }
 
-        #match-panel {
-            position: absolute;
-            bottom: 20px;
-            right: 20px;
-            width: 320px;
-            max-height: 80vh;
-            overflow-y: auto;
-            pointer-events: auto;
+        .card-content {
+            background: linear-gradient(145deg, #2a2a3a, #1a1a2a);
+            border-radius: 30px;
+            padding: 40px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            animation: cardFloat 0.6s ease;
+            border: 2px solid #ffd700;
         }
 
-        #team-list {
-            max-height: 200px;
-            overflow-y: auto;
-            margin: 10px 0;
+        @keyframes cardFloat {
+            from {
+                transform: scale(0.8) rotateY(90deg);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1) rotateY(0);
+                opacity: 1;
+            }
         }
 
-        .team-player {
-            background: rgba(255,215,0,0.2);
-            margin: 5px 0;
-            padding: 5px 10px;
-            border-radius: 8px;
-            font-size: 0.9em;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .match-result {
-            margin-top: 10px;
-            padding: 10px;
-            background: rgba(0,0,0,0.6);
-            border-radius: 10px;
-            font-size: 0.9em;
-        }
-
-        .commentary {
-            font-style: italic;
-            color: #ffd700;
-            margin-top: 8px;
-            font-size: 0.85em;
-        }
-
+        /* Scrollbar */
         ::-webkit-scrollbar {
-            width: 6px;
+            width: 8px;
         }
 
         ::-webkit-scrollbar-track {
@@ -219,41 +308,54 @@
 
         ::-webkit-scrollbar-thumb {
             background: #ffd700;
-            border-radius: 3px;
+            border-radius: 4px;
         }
 
         @media (max-width: 768px) {
-            .stats { font-size: 0.8em; padding: 5px 12px; }
-            button { padding: 6px 15px; font-size: 0.8em; }
-            #match-panel { width: 280px; }
+            .nav-btn { padding: 8px 16px; font-size: 0.9em; }
+            .team-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
         }
     </style>
 </head>
 <body>
-    <div id="ui">
-        <div id="top-bar">
-            <div class="stats">
-                <div class="stat"><span class="stat-icon">⭐</span> <span id="coins">5000</span></div>
-                <div class="stat"><span class="stat-icon">👥</span> <span id="team-count">0</span>/11</div>
-                <div class="stat"><span class="stat-icon">📦</span> <span id="pack-count">3</span></div>
+    <div class="nav-bar">
+        <button class="nav-btn active" data-section="packs">📦 ABRIR PACKS</button>
+        <button class="nav-btn" data-section="team">⚽ MINHA EQUIPA</button>
+        <button class="nav-btn" data-section="simulate">🎮 SIMULAR PARTIDA</button>
+    </div>
+
+    <div id="packs-section" class="section active">
+        <div class="stats-header" style="max-width: 1200px; margin: 0 auto 20px auto;">
+            <div class="stat-badge">💰 MOEDAS: <span id="coins">10000</span></div>
+            <div class="stat-badge">📦 PACKS: <span id="packs-count">5</span></div>
+            <div class="stat-badge">👥 EQUIPA: <span id="team-size">0</span>/11</div>
+        </div>
+        <div class="packs-grid" id="packs-container"></div>
+    </div>
+
+    <div id="team-section" class="section">
+        <div class="stats-header" style="max-width: 1400px; margin: 0 auto 20px auto;">
+            <h2 style="color: #ffd700;">⚽ MINHA EQUIPA</h2>
+            <div class="stat-badge">FORÇA MÉDIA: <span id="avg-rating">0</span></div>
+        </div>
+        <div id="team-container" class="team-grid"></div>
+    </div>
+
+    <div id="simulate-section" class="section">
+        <div class="simulation-area">
+            <div class="glass-card">
+                <h2 style="color: #ffd700; margin-bottom: 20px;">🎮 SIMULAR PARTIDA</h2>
+                <div class="team-strength" id="team-strength-display">
+                    <p>⚽ Carregando equipa...</p>
+                </div>
+                <button id="simulate-btn" style="width: 100%; padding: 15px; background: linear-gradient(135deg, #ffd700, #ffb347); border: none; border-radius: 40px; font-weight: bold; font-size: 1.2em; cursor: pointer;">🎮 INICIAR PARTIDA</button>
+                <div id="match-result" style="margin-top: 20px;"></div>
             </div>
-            <button id="quick-sell-btn" style="background:#e74c3c;">💰 Quick Sell (10 coins)</button>
         </div>
+    </div>
 
-        <div id="pack-container">
-            <button class="pack-btn" data-pack="bronze">🥉 Bronze Pack (100 coins)</button>
-            <button class="pack-btn" data-pack="silver">🥈 Silver Pack (300 coins)</button>
-            <button class="pack-btn" data-pack="gold">⭐ Gold Pack (500 coins)</button>
-        </div>
-
-        <div id="card-reveal"></div>
-
-        <div id="match-panel" class="panel">
-            <h3>⚽ Minha Equipe</h3>
-            <div id="team-list"></div>
-            <button id="simulate-match-btn" style="width:100%; margin-top:10px;">🎮 Simular Partida vs Bot</button>
-            <div id="match-result" class="match-result"></div>
-        </div>
+    <div id="card-modal" class="card-modal">
+        <div class="card-content" id="card-content"></div>
     </div>
 
     <script type="importmap">
@@ -267,128 +369,297 @@
     <script type="module">
         import * as THREE from 'three';
 
-        // ---------- DATABASE DE JOGADORES (200+ jogadores) ----------
-        const playersDB = [];
-        const firstNames = ["Lionel", "Cristiano", "Kylian", "Erling", "Kevin", "Mohamed", "Robert", "Neymar", "Vinicius", "Jude", "Harry", "Antoine", "Phil", "Rodri", "Virgil", "Thibaut", "Marc", "Joshua", "Toni", "Luka"];
-        const lastNames = ["Messi", "Ronaldo", "Mbappé", "Haaland", "De Bruyne", "Salah", "Lewandowski", "Jr", "Bellingham", "Kane", "Griezmann", "Foden", "Rodri", "Van Dijk", "Courtois", "Ter Stegen", "Kimmich", "Kroos", "Modrić"];
-        const positions = ["ST", "LW", "RW", "CAM", "CM", "CDM", "LB", "RB", "CB", "GK"];
-        const nations = ["🇦🇷", "🇵🇹", "🇫🇷", "🇳🇴", "🇧🇪", "🇪🇬", "🇵🇱", "🇧🇷", "🇪🇸", "🏴󠁧󠁢󠁥󠁮󠁧󠁿", "🇫🇷", "🇭🇷", "🇩🇪"];
+        // ==================== BASE DE JOGADORES REAIS (300+ jogadores) ====================
+        const realPlayers = [
+            // LENDAS e TOP (90-99)
+            { name: "Lionel Messi", rating: 94, position: "RW", nation: "🇦🇷", pace: 85, shooting: 94, passing: 91, defending: 35, physical: 65, value: 15000 },
+            { name: "Cristiano Ronaldo", rating: 93, position: "ST", nation: "🇵🇹", pace: 87, shooting: 95, passing: 82, defending: 40, physical: 78, value: 14000 },
+            { name: "Kylian Mbappé", rating: 95, position: "ST", nation: "🇫🇷", pace: 97, shooting: 92, passing: 85, defending: 40, physical: 80, value: 16000 },
+            { name: "Erling Haaland", rating: 94, position: "ST", nation: "🇳🇴", pace: 92, shooting: 96, passing: 70, defending: 45, physical: 88, value: 15500 },
+            { name: "Kevin De Bruyne", rating: 93, position: "CAM", nation: "🇧🇪", pace: 76, shooting: 88, passing: 96, defending: 65, physical: 78, value: 14500 },
+            { name: "Rodri", rating: 92, position: "CDM", nation: "🇪🇸", pace: 72, shooting: 75, passing: 86, defending: 89, physical: 85, value: 13000 },
+            { name: "Vinícius Jr", rating: 92, position: "LW", nation: "🇧🇷", pace: 95, shooting: 86, passing: 83, defending: 35, physical: 70, value: 13500 },
+            { name: "Jude Bellingham", rating: 93, position: "CM", nation: "🏴󠁧󠁢󠁥󠁮󠁧󠁿", pace: 84, shooting: 86, passing: 88, defending: 82, physical: 85, value: 14000 },
+            { name: "Harry Kane", rating: 92, position: "ST", nation: "🏴󠁧󠁢󠁥󠁮󠁧󠁿", pace: 74, shooting: 95, passing: 85, defending: 50, physical: 82, value: 13200 },
+            { name: "Mohamed Salah", rating: 92, position: "RW", nation: "🇪🇬", pace: 90, shooting: 91, passing: 83, defending: 45, physical: 75, value: 13300 },
+            { name: "Virgil van Dijk", rating: 91, position: "CB", nation: "🇳🇱", pace: 78, shooting: 60, passing: 72, defending: 94, physical: 88, value: 12500 },
+            { name: "Thibaut Courtois", rating: 91, position: "GK", nation: "🇧🇪", pace: 55, shooting: 0, passing: 68, defending: 92, physical: 85, value: 12500 },
+            { name: "Antoine Griezmann", rating: 90, position: "CF", nation: "🇫🇷", pace: 82, shooting: 88, passing: 86, defending: 60, physical: 72, value: 11000 },
+            { name: "Robert Lewandowski", rating: 91, position: "ST", nation: "🇵🇱", pace: 78, shooting: 94, passing: 78, defending: 45, physical: 82, value: 12800 },
+        ];
+
+        // Gerar mais 300+ jogadores realistas
+        const firstNamesReal = ["Marcus", "Rafael", "Bruno", "Bernardo", "Rúben", "João", "Pedro", "Luis", "Carlos", "Javier", "Thomas", "Martin", "Lautaro", "Nicolás", "Federico", "Alexis", "Christian", "Mason", "Phil", "Jack"];
+        const lastNamesReal = ["Rashford", "Leão", "Fernandes", "Silva", "Dias", "Cancelo", "Félix", "Suárez", "Martínez", "Alvarez", "Müller", "Ødegaard", "Martinez", "Valverde", "Chiesa", "Mac Allister", "Eriksen", "Mount", "Foden", "Grealish"];
+        const positionsReal = ["ST", "LW", "RW", "CAM", "CM", "CDM", "LB", "RB", "CB", "GK"];
         
-        // Gerar 220 jogadores únicos
-        for (let i = 0; i < 220; i++) {
-            const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
-            const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
-            let name = `${firstName} ${lastName}`;
-            if (i < 30) name = `${firstName} ${lastName} ${Math.floor(Math.random() * 10)}`; // variedade
+        // Adicionar 300 jogadores
+        for (let i = 0; i < 320; i++) {
+            const firstName = firstNamesReal[i % firstNamesReal.length];
+            const lastName = lastNamesReal[i % lastNamesReal.length];
+            let rating = 65 + Math.floor(Math.random() * 30); // 65-94
+            if (i < 50) rating = 85 + Math.floor(Math.random() * 10); // 85-94 top players
             
-            const rating = Math.floor(Math.random() * 40) + 60; // 60-99
-            const position = positions[Math.floor(Math.random() * positions.length)];
-            const nation = nations[Math.floor(Math.random() * nations.length)];
-            const value = Math.floor(rating * 100) + (rating > 85 ? 5000 : rating > 75 ? 1000 : 200);
+            const position = positionsReal[Math.floor(Math.random() * positionsReal.length)];
+            const nation = ["🇦🇷", "🇵🇹", "🇫🇷", "🇧🇷", "🏴󠁧󠁢󠁥󠁮󠁧󠁿", "🇪🇸", "🇩🇪", "🇮🇹", "🇳🇱", "🇧🇪"][Math.floor(Math.random() * 10)];
             
-            playersDB.push({
-                id: i,
-                name: name,
-                rating: rating,
-                position: position,
-                nation: nation,
-                value: value,
-                pace: Math.floor(Math.random() * 40) + 60,
-                shooting: Math.floor(Math.random() * 40) + 60,
-                passing: Math.floor(Math.random() * 40) + 60,
-                defending: position === "GK" ? Math.floor(Math.random() * 30) + 70 : Math.floor(Math.random() * 50) + 30,
-                physical: Math.floor(Math.random() * 50) + 40
+            const pace = 50 + Math.floor(Math.random() * 50);
+            const shooting = position === "GK" ? 30 + Math.floor(Math.random() * 30) : 60 + Math.floor(Math.random() * 40);
+            const passing = 60 + Math.floor(Math.random() * 35);
+            const defending = position === "GK" ? 80 + Math.floor(Math.random() * 20) : 30 + Math.floor(Math.random() * 50);
+            const physical = 50 + Math.floor(Math.random() * 45);
+            const value = rating * 100 + (rating > 85 ? 3000 : rating > 75 ? 800 : 150);
+            
+            realPlayers.push({
+                id: realPlayers.length,
+                name: `${firstName} ${lastName}`,
+                rating, position, nation, pace, shooting, passing, defending, physical, value
             });
         }
         
-        // Adicionar alguns lendários
-        playersDB.push({id: 220, name: "Pelé", rating: 99, position: "CAM", nation: "🇧🇷", value: 15000, pace: 95, shooting: 98, passing: 94, defending: 65, physical: 85});
-        playersDB.push({id: 221, name: "Maradona", rating: 98, position: "CAM", nation: "🇦🇷", value: 14000, pace: 92, shooting: 97, passing: 96, defending: 50, physical: 80});
-        playersDB.push({id: 222, name: "Ronaldinho", rating: 97, position: "LW", nation: "🇧🇷", value: 13000, pace: 94, shooting: 90, passing: 95, defending: 45, physical: 82});
+        // Adicionar mais lendas
+        realPlayers.push({ name: "Pelé", rating: 99, position: "CAM", nation: "🇧🇷", pace: 94, shooting: 98, passing: 95, defending: 60, physical: 85, value: 25000 });
+        realPlayers.push({ name: "Diego Maradona", rating: 98, position: "CAM", nation: "🇦🇷", pace: 92, shooting: 96, passing: 97, defending: 45, physical: 78, value: 24000 });
+        realPlayers.push({ name: "Ronaldinho", rating: 97, position: "LW", nation: "🇧🇷", pace: 93, shooting: 91, passing: 94, defending: 40, physical: 82, value: 23000 });
+        realPlayers.push({ name: "Zinedine Zidane", rating: 97, position: "CAM", nation: "🇫🇷", pace: 85, shooting: 90, passing: 98, defending: 70, physical: 85, value: 23000 });
         
-        // Sistema de estado do jogo
-        let playerCoins = 5000;
-        let playerTeam = []; // até 11 jogadores
-        let availablePacks = 3;
-        let currentRevealedCard = null;
+        // ==================== ESTADO DO JOGO ====================
+        let playerCoins = 10000;
+        let availablePacks = 5;
+        let playerTeam = [];
+        let currentOpenedPlayer = null;
         
         // Elementos UI
         const coinsSpan = document.getElementById('coins');
-        const teamCountSpan = document.getElementById('team-count');
-        const packCountSpan = document.getElementById('pack-count');
-        const teamListDiv = document.getElementById('team-list');
+        const packsCountSpan = document.getElementById('packs-count');
+        const teamSizeSpan = document.getElementById('team-size');
+        const avgRatingSpan = document.getElementById('avg-rating');
+        const teamContainer = document.getElementById('team-container');
+        const packsContainer = document.getElementById('packs-container');
+        const simulateBtn = document.getElementById('simulate-btn');
         const matchResultDiv = document.getElementById('match-result');
-        const quickSellBtn = document.getElementById('quick-sell-btn');
-        const simulateMatchBtn = document.getElementById('simulate-match-btn');
+        const teamStrengthDisplay = document.getElementById('team-strength-display');
+        const cardModal = document.getElementById('card-modal');
         
-        // Função para atualizar UI
-        function updateUI() {
-            coinsSpan.textContent = playerCoins;
-            teamCountSpan.textContent = `${playerTeam.length}/11`;
-            packCountSpan.textContent = availablePacks;
-            renderTeamList();
+        // ==================== ANIMAÇÃO 3D ====================
+        let scene, camera, renderer, packGroup, animationId;
+        
+        function init3D() {
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x050b1a);
+            camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(0, 2, 6);
+            camera.lookAt(0, 0, 0);
+            
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setClearColor(0x050b1a, 1);
+            document.body.insertBefore(renderer.domElement, document.body.firstChild);
+            
+            // Luzes
+            const ambientLight = new THREE.AmbientLight(0x404060);
+            scene.add(ambientLight);
+            const mainLight = new THREE.DirectionalLight(0xffffff, 1);
+            mainLight.position.set(2, 5, 3);
+            scene.add(mainLight);
+            const backLight = new THREE.PointLight(0xffaa33, 0.6);
+            backLight.position.set(0, 2, -3);
+            scene.add(backLight);
+            const fillLight = new THREE.PointLight(0x4466ff, 0.4);
+            fillLight.position.set(-2, 1, 2);
+            scene.add(fillLight);
+            
+            // Criar grupo do pack
+            packGroup = new THREE.Group();
+            
+            // Caixa principal
+            const boxGeo = new THREE.BoxGeometry(1.2, 1.2, 1.2);
+            const boxMat = new THREE.MeshStandardMaterial({ color: 0xffaa33, metalness: 0.9, roughness: 0.2, emissive: 0x442200 });
+            const mainBox = new THREE.Mesh(boxGeo, boxMat);
+            mainBox.castShadow = true;
+            packGroup.add(mainBox);
+            
+            // Detalhes dourados
+            const stripeMat = new THREE.MeshStandardMaterial({ color: 0xffdd88, metalness: 0.95 });
+            for (let i = -0.6; i <= 0.6; i+=0.6) {
+                const stripeGeo = new THREE.BoxGeometry(0.1, 0.05, 1.3);
+                const stripe = new THREE.Mesh(stripeGeo, stripeMat);
+                stripe.position.set(i, 0.6, 0);
+                packGroup.add(stripe);
+                
+                const stripe2 = new THREE.Mesh(stripeGeo, stripeMat);
+                stripe2.position.set(i, -0.6, 0);
+                packGroup.add(stripe2);
+            }
+            
+            scene.add(packGroup);
+            
+            // Partículas
+            const particleCount = 800;
+            const particleGeo = new THREE.BufferGeometry();
+            const positions = new Float32Array(particleCount * 3);
+            for (let i = 0; i < particleCount; i++) {
+                positions[i*3] = (Math.random() - 0.5) * 12;
+                positions[i*3+1] = (Math.random() - 0.5) * 8;
+                positions[i*3+2] = (Math.random() - 0.5) * 10 - 5;
+            }
+            particleGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            const particleMat = new THREE.PointsMaterial({ color: 0xffaa55, size: 0.03 });
+            const particles = new THREE.Points(particleGeo, particleMat);
+            scene.add(particles);
+            
+            function animate() {
+                animationId = requestAnimationFrame(animate);
+                if (packGroup) {
+                    packGroup.rotation.y += 0.008;
+                    packGroup.rotation.x = Math.sin(Date.now() * 0.001) * 0.1;
+                    packGroup.position.y = Math.sin(Date.now() * 0.002) * 0.05;
+                }
+                particles.rotation.y += 0.002;
+                particles.rotation.x += 0.001;
+                renderer.render(scene, camera);
+            }
+            animate();
+            
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
         }
         
-        // Renderizar lista de equipa
-        function renderTeamList() {
-            teamListDiv.innerHTML = '';
+        function animatePackOpen(callback) {
+            let startTime = Date.now();
+            const duration = 1000;
+            
+            function step() {
+                const elapsed = Date.now() - startTime;
+                const t = Math.min(1, elapsed / duration);
+                
+                if (packGroup) {
+                    const scale = 1 + t * 2.5;
+                    packGroup.scale.set(scale, scale, scale);
+                    packGroup.children.forEach(child => {
+                        if (child.material) child.material.emissiveIntensity = t * 3;
+                    });
+                    
+                    // Efeito de rotação rápida
+                    packGroup.rotation.z = t * Math.PI * 2;
+                    
+                    if (t >= 0.9) {
+                        packGroup.visible = false;
+                    }
+                }
+                
+                if (t < 1) {
+                    requestAnimationFrame(step);
+                } else {
+                    setTimeout(() => {
+                        if (packGroup) {
+                            packGroup.scale.set(1, 1, 1);
+                            packGroup.rotation.z = 0;
+                            packGroup.children.forEach(child => {
+                                if (child.material) child.material.emissiveIntensity = 0;
+                            });
+                            packGroup.visible = true;
+                        }
+                        callback();
+                    }, 100);
+                }
+            }
+            step();
+        }
+        
+        // ==================== FUNÇÕES DO JOGO ====================
+        function updateUI() {
+            coinsSpan.textContent = playerCoins;
+            packsCountSpan.textContent = availablePacks;
+            teamSizeSpan.textContent = `${playerTeam.length}/11`;
+            
+            if (playerTeam.length > 0) {
+                const avg = playerTeam.reduce((sum, p) => sum + p.rating, 0) / playerTeam.length;
+                avgRatingSpan.textContent = avg.toFixed(1);
+            } else {
+                avgRatingSpan.textContent = "0";
+            }
+            
+            renderTeam();
+            renderPacks();
+            updateTeamStrength();
+        }
+        
+        function renderTeam() {
+            if (!teamContainer) return;
             if (playerTeam.length === 0) {
-                teamListDiv.innerHTML = '<div style="color:#aaa;">Nenhum jogador na equipa</div>';
+                teamContainer.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #aaa;">Nenhum jogador na equipa. Abre packs para adicionar jogadores!</div>';
                 return;
             }
-            playerTeam.forEach((player, idx) => {
-                const div = document.createElement('div');
-                div.className = 'team-player';
-                div.innerHTML = `
-                    <span><strong>${player.rating}</strong> ${player.name} (${player.position}) ${player.nation}</span>
-                    <button class="remove-player" data-idx="${idx}" style="background:#c0392b; padding:2px 8px; font-size:0.7rem;">🗑️</button>
-                `;
-                teamListDiv.appendChild(div);
-            });
             
-            // Adicionar eventos de remover
-            document.querySelectorAll('.remove-player').forEach(btn => {
+            teamContainer.innerHTML = playerTeam.map((player, idx) => `
+                <div class="player-card">
+                    <div class="player-rating-badge">${player.rating}</div>
+                    <div style="font-size: 2em;">${player.position === "GK" ? "🧤" : player.position === "ST" ? "⚽" : "👕"}</div>
+                    <div class="player-name">${player.name}</div>
+                    <div class="player-position">${player.position} ${player.nation}</div>
+                    <div class="player-stats">
+                        <span>⚡${player.pace || 80}</span>
+                        <span>🎯${player.shooting || 75}</span>
+                        <span>🛡️${player.defending || 70}</span>
+                    </div>
+                    <button class="remove-btn" data-idx="${idx}">Remover</button>
+                </div>
+            `).join('');
+            
+            document.querySelectorAll('.remove-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     const idx = parseInt(btn.dataset.idx);
                     playerTeam.splice(idx, 1);
                     updateUI();
-                    showMessage(`Jogador removido da equipa.`, 1500);
+                    showMessage("Jogador removido da equipa!", 1500);
                 });
             });
         }
         
-        function showMessage(msg, duration = 2000) {
-            const msgDiv = document.createElement('div');
-            msgDiv.textContent = msg;
-            msgDiv.style.position = 'fixed';
-            msgDiv.style.bottom = '50%';
-            msgDiv.style.left = '50%';
-            msgDiv.style.transform = 'translate(-50%, -50%)';
-            msgDiv.style.backgroundColor = 'rgba(0,0,0,0.9)';
-            msgDiv.style.color = '#ffd700';
-            msgDiv.style.padding = '15px 30px';
-            msgDiv.style.borderRadius = '40px';
-            msgDiv.style.zIndex = '1000';
-            msgDiv.style.fontWeight = 'bold';
-            msgDiv.style.border = '2px solid gold';
-            document.body.appendChild(msgDiv);
-            setTimeout(() => msgDiv.remove(), duration);
+        function renderPacks() {
+            const packs = [
+                { name: "BRONZE", icon: "🥉", price: 100, rarity: "60-74 OVR", color: "#cd7f32", packType: "bronze" },
+                { name: "PRATA", icon: "🥈", price: 300, rarity: "75-84 OVR", color: "#c0c0c0", packType: "silver" },
+                { name: "OURO", icon: "⭐", price: 500, rarity: "85-99 OVR", color: "#ffd700", packType: "gold" },
+                { name: "LENDÁRIO", icon: "🏆", price: 1500, rarity: "90-99 OVR", color: "#ff6b6b", packType: "legend" }
+            ];
+            
+            packsContainer.innerHTML = packs.map(pack => `
+                <div class="pack-card" data-pack="${pack.packType}">
+                    <div class="pack-icon">${pack.icon}</div>
+                    <div class="pack-name">PACK ${pack.name}</div>
+                    <div class="pack-price">💰 ${pack.price} moedas</div>
+                    <div class="pack-rarity">${pack.rarity}</div>
+                </div>
+            `).join('');
+            
+            document.querySelectorAll('.pack-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    const packType = card.dataset.pack;
+                    openPack(packType);
+                });
+            });
         }
         
-        // Abrir pack com animação 3D
         function openPack(packType) {
-            let cost = 0;
-            let minRating = 60, maxRating = 85;
-            if (packType === 'bronze') { cost = 100; minRating = 60; maxRating = 74; }
-            else if (packType === 'silver') { cost = 300; minRating = 75; maxRating = 84; }
-            else if (packType === 'gold') { cost = 500; minRating = 85; maxRating = 99; }
+            let cost = 0, minRating = 0, maxRating = 99;
+            switch(packType) {
+                case 'bronze': cost = 100; minRating = 60; maxRating = 74; break;
+                case 'silver': cost = 300; minRating = 75; maxRating = 84; break;
+                case 'gold': cost = 500; minRating = 85; maxRating = 94; break;
+                case 'legend': cost = 1500; minRating = 90; maxRating = 99; break;
+            }
             
             if (playerCoins < cost) {
                 showMessage("Moedas insuficientes!", 1500);
                 return;
             }
             if (availablePacks <= 0) {
-                showMessage("Sem packs disponíveis! Compre mais na loja (simulado).", 1500);
+                showMessage("Sem packs disponíveis! Recarrega a página para mais packs.", 1500);
                 return;
             }
             
@@ -396,240 +667,179 @@
             availablePacks--;
             updateUI();
             
-            // Sortear jogador baseado no rating
-            const possiblePlayers = playersDB.filter(p => p.rating >= minRating && p.rating <= maxRating);
-            if (possiblePlayers.length === 0) {
-                showMessage("Erro: nenhum jogador encontrado!", 1500);
-                return;
-            }
-            const drawnPlayer = possiblePlayers[Math.floor(Math.random() * possiblePlayers.length)];
-            currentRevealedCard = { ...drawnPlayer };
+            // Sortear jogador
+            const possible = realPlayers.filter(p => p.rating >= minRating && p.rating <= maxRating);
+            const player = possible[Math.floor(Math.random() * possible.length)];
+            currentOpenedPlayer = { ...player };
             
-            // Animação 3D do pack
+            // Animação 3D
             animatePackOpen(() => {
-                showCardReveal(currentRevealedCard);
+                showCardModal(currentOpenedPlayer);
             });
         }
         
-        // Animação 3D com Three.js
-        let scene, camera, renderer, packMesh;
-        function init3D() {
-            scene = new THREE.Scene();
-            scene.background = new THREE.Color(0x050b1a);
-            camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.set(0, 2, 5);
-            camera.lookAt(0, 0, 0);
-            
-            renderer = new THREE.WebGLRenderer({ antialias: true });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.shadowMap.enabled = true;
-            document.body.appendChild(renderer.domElement);
-            
-            // Luzes
-            const ambientLight = new THREE.AmbientLight(0x404060);
-            scene.add(ambientLight);
-            const dirLight = new THREE.DirectionalLight(0xffffff, 1);
-            dirLight.position.set(2, 5, 3);
-            dirLight.castShadow = true;
-            scene.add(dirLight);
-            const backLight = new THREE.PointLight(0xffaa00, 0.5);
-            backLight.position.set(0, 1, -2);
-            scene.add(backLight);
-            
-            // Pack 3D (caixa dourada)
-            const geometry = new THREE.BoxGeometry(1.2, 1.2, 1.2);
-            const material = new THREE.MeshStandardMaterial({ color: 0xffaa33, metalness: 0.8, roughness: 0.2, emissive: 0x442200 });
-            packMesh = new THREE.Mesh(geometry, material);
-            packMesh.castShadow = true;
-            packMesh.position.y = 0;
-            scene.add(packMesh);
-            
-            // Adicionar efeito de partículas ao redor
-            const particleGeo = new THREE.BufferGeometry();
-            const particleCount = 500;
-            const positions = new Float32Array(particleCount * 3);
-            for (let i = 0; i < particleCount; i++) {
-                positions[i*3] = (Math.random() - 0.5) * 10;
-                positions[i*3+1] = (Math.random() - 0.5) * 5;
-                positions[i*3+2] = (Math.random() - 0.5) * 8 - 3;
-            }
-            particleGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-            const particleMat = new THREE.PointsMaterial({ color: 0xffaa55, size: 0.05 });
-            const particles = new THREE.Points(particleGeo, particleMat);
-            scene.add(particles);
-            
-            function animate() {
-                requestAnimationFrame(animate);
-                if (packMesh) {
-                    packMesh.rotation.y += 0.01;
-                    packMesh.rotation.x = Math.sin(Date.now() * 0.002) * 0.2;
-                }
-                particles.rotation.y += 0.005;
-                renderer.render(scene, camera);
-            }
-            animate();
-            
-            window.addEventListener('resize', onWindowResize, false);
-            function onWindowResize() {
-                camera.aspect = window.innerWidth / window.innerHeight;
-                camera.updateProjectionMatrix();
-                renderer.setSize(window.innerWidth, window.innerHeight);
-            }
-        }
-        
-        function animatePackOpen(callback) {
-            // Animação de abertura: escala e rotação rápida, depois desaparece
-            let startTime = Date.now();
-            const duration = 800;
-            function step() {
-                const elapsed = Date.now() - startTime;
-                const t = Math.min(1, elapsed / duration);
-                if (packMesh) {
-                    const scale = 1 + t * 2;
-                    packMesh.scale.set(scale, scale, scale);
-                    packMesh.material.emissiveIntensity = t * 2;
-                    if (t >= 0.8) packMesh.visible = false;
-                }
-                if (t < 1) requestAnimationFrame(step);
-                else {
-                    // Reset pack para próximo
-                    if (packMesh) {
-                        packMesh.scale.set(1, 1, 1);
-                        packMesh.material.emissiveIntensity = 0;
-                        packMesh.visible = true;
-                    }
-                    callback();
-                }
-            }
-            step();
-        }
-        
-        function showCardReveal(player) {
-            const revealDiv = document.getElementById('card-reveal');
-            revealDiv.innerHTML = `
-                <div class="card-display">
-                    <div class="player-name">${player.name} ${player.nation}</div>
-                    <div class="player-rating">⭐ Overall: ${player.rating}</div>
-                    <div class="player-position">${player.position}</div>
-                    <div class="card-actions">
-                        <button class="action-btn add-to-team">➕ Meter na Equipa</button>
-                        <button class="action-btn quick-sell-card">💰 Quick Sell (${player.value} coins)</button>
-                    </div>
+        function showCardModal(player) {
+            const cardContent = document.getElementById('card-content');
+            cardContent.innerHTML = `
+                <div style="font-size: 3em; margin-bottom: 10px;">${player.position === "GK" ? "🧤" : player.position === "ST" ? "⚽" : "⭐"}</div>
+                <div style="font-size: 2em; font-weight: bold; color: #ffd700;">${player.name}</div>
+                <div style="font-size: 1.5em; margin: 10px 0;">OVR ${player.rating}</div>
+                <div>${player.position} | ${player.nation}</div>
+                <div style="display: flex; justify-content: center; gap: 15px; margin: 20px 0;">
+                    <span>⚡ ${player.pace || 80}</span>
+                    <span>🎯 ${player.shooting || 75}</span>
+                    <span>🛡️ ${player.defending || 70}</span>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button id="add-to-team-modal" style="flex:1; background: #2ecc71; padding: 12px; border: none; border-radius: 40px; font-weight: bold;">➕ Adicionar à Equipa</button>
+                    <button id="quick-sell-modal" style="flex:1; background: #e74c3c; padding: 12px; border: none; border-radius: 40px; font-weight: bold;">💰 Vender (${player.value} coins)</button>
                 </div>
             `;
             
-            // Adicionar eventos
-            document.querySelector('.add-to-team')?.addEventListener('click', () => {
+            cardModal.classList.add('active');
+            
+            document.getElementById('add-to-team-modal')?.addEventListener('click', () => {
                 if (playerTeam.length >= 11) {
                     showMessage("Equipa cheia! Remova um jogador primeiro.", 1500);
                     return;
                 }
-                playerTeam.push({...player});
+                playerTeam.push({ ...player });
                 updateUI();
-                revealDiv.innerHTML = '';
-                showMessage(`${player.name} adicionado à equipa!`, 1500);
-                currentRevealedCard = null;
+                cardModal.classList.remove('active');
+                showMessage(`${player.name} adicionado à equipa!`, 2000);
             });
             
-            document.querySelector('.quick-sell-card')?.addEventListener('click', () => {
+            document.getElementById('quick-sell-modal')?.addEventListener('click', () => {
                 playerCoins += player.value;
                 updateUI();
-                revealDiv.innerHTML = '';
-                showMessage(`Vendeu ${player.name} por ${player.value} moedas!`, 1500);
-                currentRevealedCard = null;
+                cardModal.classList.remove('active');
+                showMessage(`Vendeu ${player.name} por ${player.value} moedas!`, 2000);
             });
             
-            // Auto desaparecer após 15 segundos
-            setTimeout(() => {
-                if (revealDiv.innerHTML !== '') revealDiv.innerHTML = '';
-            }, 15000);
+            // Fechar modal ao clicar fora
+            cardModal.addEventListener('click', (e) => {
+                if (e.target === cardModal) {
+                    cardModal.classList.remove('active');
+                }
+            });
         }
         
-        // Simular partida contra bot
+        function updateTeamStrength() {
+            if (playerTeam.length === 0) {
+                teamStrengthDisplay.innerHTML = '<p>⚠️ Adicione 11 jogadores à equipa para simular partidas!</p>';
+                return;
+            }
+            const avg = playerTeam.reduce((sum, p) => sum + p.rating, 0) / playerTeam.length;
+            teamStrengthDisplay.innerHTML = `
+                <h3>📊 FORÇA DA EQUIPA</h3>
+                <p>⚽ Overall Médio: <strong style="color: #ffd700;">${avg.toFixed(1)}</strong></p>
+                <p>👥 Jogadores: ${playerTeam.length}/11</p>
+                <p>⭐ Melhor Jogador: ${playerTeam.sort((a,b) => b.rating - a.rating)[0]?.name || 'N/A'} (${playerTeam.sort((a,b) => b.rating - a.rating)[0]?.rating || 0})</p>
+            `;
+        }
+        
         function simulateMatch() {
             if (playerTeam.length < 11) {
                 showMessage("Precisa de 11 jogadores para simular uma partida!", 1500);
                 return;
             }
             
-            // Calcular força da equipa
             const teamAvg = playerTeam.reduce((sum, p) => sum + p.rating, 0) / playerTeam.length;
-            const botRating = 70 + Math.random() * 20;
-            const homeAdvantage = 5;
-            const teamScore = teamAvg + (Math.random() * 15);
-            const botScore = botRating + (Math.random() * 15);
+            const botRating = 65 + Math.random() * 25;
+            const teamScore = (teamAvg + (Math.random() * 20)) / 12;
+            const botScore = (botRating + (Math.random() * 18)) / 12;
             
-            let goalsTeam = Math.floor(Math.max(0, teamScore / 15));
-            let goalsBot = Math.floor(Math.max(0, botScore / 15));
+            let goalsTeam = Math.floor(Math.max(0, teamScore));
+            let goalsBot = Math.floor(Math.max(0, botScore));
             
-            // Aleatoriedade extra
-            if (Math.random() < 0.2) goalsTeam++;
-            if (Math.random() < 0.2) goalsBot++;
+            // Eventos aleatórios
+            if (Math.random() < 0.15) goalsTeam++;
+            if (Math.random() < 0.15) goalsBot++;
             
             const result = goalsTeam > goalsBot ? "VITÓRIA" : goalsTeam === goalsBot ? "EMPATE" : "DERROTA";
-            const coinsReward = result === "VITÓRIA" ? 300 : result === "EMPATE" ? 100 : 0;
+            const coinsReward = result === "VITÓRIA" ? 500 : result === "EMPATE" ? 200 : 0;
+            
             if (coinsReward > 0) {
                 playerCoins += coinsReward;
                 updateUI();
             }
             
-            // Estatísticas e relato
-            const possessionTeam = 40 + Math.random() * 40;
-            const shotsTeam = 5 + Math.floor(Math.random() * 12);
-            const shotsBot = 3 + Math.floor(Math.random() * 10);
+            const possession = 35 + Math.random() * 40;
+            const shots = 4 + Math.floor(Math.random() * 12);
             const motm = playerTeam[Math.floor(Math.random() * playerTeam.length)];
             
             let commentary = "";
-            if (result === "VITÓRIA") commentary = `🎉 Incrível! A equipa dominou e garantiu os 3 pontos! ${motm.name} foi eleito o melhor em campo.`;
-            else if (result === "EMPATE") commentary = `😐 Jogo equilibrado, um ponto conquistado. A equipa precisa melhorar nas finalizações.`;
-            else commentary = `😞 Derrota amarga. O adversário foi superior. É preciso treinar mais!`;
+            if (result === "VITÓRIA") {
+                commentary = `🎉 ESPETACULAR! Vitória convincente! ${motm.name} foi o maestro da equipa com uma exibição de luxo. A equipa está de parabéns!`;
+            } else if (result === "EMPATE") {
+                commentary = `😤 Jogo muito equilibrado. Um ponto importante, mas podia ter sido mais. ${motm.name} destacou-se na partida.`;
+            } else {
+                commentary = `😔 Derrota amarga. A equipa não esteve ao seu melhor nível. É preciso trabalhar para a próxima.`;
+            }
             
             matchResultDiv.innerHTML = `
-                <strong>🏆 RESULTADO FINAL</strong><br>
-                ⚽ ${goalsTeam} - ${goalsBot} ⚽<br>
-                <strong>${result}</strong><br>
-                📊 Posse: ${possessionTeam.toFixed(0)}% | Finalizações: ${shotsTeam} - ${shotsBot}<br>
-                🌟 Melhor em campo: ${motm.name} (Rating ${motm.rating})<br>
-                ${coinsReward > 0 ? `💰 +${coinsReward} moedas` : ''}<br>
-                <div class="commentary">📝 ${commentary}</div>
+                <div class="match-result-card">
+                    <h2 style="color: #ffd700; text-align: center;">🏆 RESULTADO FINAL</h2>
+                    <div style="font-size: 3em; text-align: center; margin: 20px 0;">${goalsTeam} - ${goalsBot}</div>
+                    <div style="text-align: center; font-size: 1.5em; margin-bottom: 20px;">${result}</div>
+                    <div style="background: rgba(0,0,0,0.5); padding: 15px; border-radius: 15px;">
+                        <p>📊 Posse de bola: ${possession.toFixed(0)}%</p>
+                        <p>🎯 Finalizações: ${shots}</p>
+                        <p>⭐ Melhor em campo: ${motm.name} (${motm.rating})</p>
+                        ${coinsReward > 0 ? `<p>💰 Recompensa: +${coinsReward} moedas</p>` : ''}
+                    </div>
+                    <div style="margin-top: 20px; padding: 15px; background: rgba(255,215,0,0.1); border-radius: 15px;">
+                        <p>📝 <strong>Relato:</strong> ${commentary}</p>
+                    </div>
+                </div>
             `;
-            
-            showMessage(`Partida finalizada: ${goalsTeam} - ${goalsBot}`, 2000);
         }
         
-        // Quick Sell da última carta revelada ou venda em massa (apenas último)
-        quickSellBtn.addEventListener('click', () => {
-            if (currentRevealedCard) {
-                playerCoins += currentRevealedCard.value;
-                updateUI();
-                document.getElementById('card-reveal').innerHTML = '';
-                showMessage(`Quick Sell: ${currentRevealedCard.name} vendido por ${currentRevealedCard.value} coins!`, 1500);
-                currentRevealedCard = null;
-            } else {
-                showMessage("Nenhuma carta aberta para vender rapidamente!", 1500);
-            }
-        });
+        function showMessage(msg, duration) {
+            const msgDiv = document.createElement('div');
+            msgDiv.textContent = msg;
+            msgDiv.style.position = 'fixed';
+            msgDiv.style.bottom = '30px';
+            msgDiv.style.left = '50%';
+            msgDiv.style.transform = 'translateX(-50%)';
+            msgDiv.style.backgroundColor = 'rgba(0,0,0,0.9)';
+            msgDiv.style.color = '#ffd700';
+            msgDiv.style.padding = '12px 24px';
+            msgDiv.style.borderRadius = '40px';
+            msgDiv.style.zIndex = '2000';
+            msgDiv.style.fontWeight = 'bold';
+            msgDiv.style.border = '1px solid #ffd700';
+            document.body.appendChild(msgDiv);
+            setTimeout(() => msgDiv.remove(), duration);
+        }
         
-        simulateMatchBtn.addEventListener('click', simulateMatch);
+        // ==================== NAVEGAÇÃO ====================
+        function switchSection(sectionId) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(`${sectionId}-section`).classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.section === sectionId) {
+                    btn.classList.add('active');
+                }
+            });
+        }
         
-        // Eventos dos packs
-        document.querySelectorAll('.pack-btn').forEach(btn => {
+        document.querySelectorAll('.nav-btn').forEach(btn => {
             btn.addEventListener('click', () => {
-                const packType = btn.dataset.pack;
-                openPack(packType);
+                switchSection(btn.dataset.section);
             });
         });
         
-        // Inicializar
+        simulateBtn.addEventListener('click', simulateMatch);
+        
+        // ==================== INICIALIZAÇÃO ====================
         init3D();
         updateUI();
-        
-        // Adicionar alguns jogadores de exemplo à equipa para teste
-        // (opcional: descomentar para demo)
-        // playerTeam.push(playersDB[0], playersDB[5], playersDB[10]);
-        // updateUI();
-        
-        showMessage("Bem-vindo ao EA FC Pack Opener! Abre packs, constrói a tua equipa e simula partidas!", 4000);
+        showMessage("Bem-vindo ao EA FC 25 Ultimate Team! Abre packs e constrói a tua equipa dos sonhos! ⚽", 4000);
     </script>
 </body>
 </html>
