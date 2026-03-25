@@ -2,1258 +2,634 @@
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EA FC 26 Simulator • Packs &amp; Ultimate Team</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>EA FC Pack Opener - Ultimate Team</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Roboto+Mono:wght@400;500&amp;display=swap');
-        
-        :root {
-            --ea-green: #00ff9d;
-        }
-        
-        * {
-            transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
-            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-            transition-duration: 150ms;
-        }
-        
-        .tail-container * {
-            font-family: 'Inter', system_ui, sans-serif;
-        }
-        
-        .header {
-            background: linear-gradient(90deg, #0a0a0a, #1a1a1a);
-        }
-        
-        .card {
-            perspective: 1000px;
-            height: 220px;
-            width: 160px;
-        }
-        
-        .card-inner {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            text-align: center;
-            transition: transform 0.8s;
-            transform-style: preserve-3d;
-            box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
-        }
-        
-        .card.flipped .card-inner {
-            transform: rotateY(180deg);
-        }
-        
-        .card-front, .card-back {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            -webkit-backface-visibility: hidden;
-            backface-visibility: hidden;
-            border-radius: 12px;
+        body {
+            margin: 0;
             overflow: hidden;
+            font-family: 'Poppins', 'Segoe UI', sans-serif;
         }
-        
-        .card-back {
-            background: linear-gradient(135deg, #1e1e1e, #2a2a2a);
+
+        /* UI Overlay */
+        #ui {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .panel {
+            pointer-events: auto;
+            background: linear-gradient(135deg, rgba(0,0,0,0.85) 0%, rgba(10,20,30,0.9) 100%);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255,215,0,0.3);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+            padding: 15px 25px;
+            color: white;
+            font-weight: bold;
+        }
+
+        #top-bar {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .stats {
+            display: flex;
+            gap: 20px;
+            background: rgba(0,0,0,0.7);
+            padding: 10px 20px;
+            border-radius: 40px;
+            backdrop-filter: blur(5px);
+        }
+
+        .stat {
             display: flex;
             align-items: center;
+            gap: 8px;
+            font-size: 1.2em;
+        }
+
+        .stat-icon {
+            font-size: 1.5em;
+        }
+
+        button {
+            background: linear-gradient(135deg, #ffd700, #ffb347);
+            border: none;
+            color: #1a2a3a;
+            padding: 10px 25px;
+            border-radius: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-size: 1em;
+            font-family: inherit;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        #pack-container {
+            position: absolute;
+            bottom: 100px;
+            left: 0;
+            right: 0;
+            display: flex;
             justify-content: center;
-            transform: rotateY(180deg);
+            gap: 20px;
+            flex-wrap: wrap;
+            pointer-events: auto;
         }
-        
-        .pack-modal {
-            animation: packPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+        .pack-btn {
+            background: linear-gradient(135deg, #2c3e50, #1a2a3a);
+            border: 2px solid #ffd700;
+            font-size: 1.2em;
+            padding: 12px 30px;
         }
-        
-        @keyframes packPop {
-            0% { transform: scale(0.8); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
+
+        #card-reveal {
+            position: absolute;
+            bottom: 200px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            pointer-events: none;
         }
-        
-        .rare-flash {
-            animation: rareFlash 1.5s ease-in-out infinite;
+
+        .card-display {
+            background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+            border-radius: 20px;
+            padding: 20px 40px;
+            text-align: center;
+            animation: slideUp 0.5s ease-out;
+            border: 2px solid gold;
+            max-width: 300px;
+            margin: 0 auto;
         }
-        
-        @keyframes rareFlash {
-            0%, 100% { filter: brightness(1); }
-            50% { filter: brightness(2.5) drop-shadow(0 0 20px #ffd700); }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
-        
-        .player-card {
-            background: linear-gradient(180deg, #111827, #1f2937);
-            border: 3px solid;
+
+        .player-name {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #ffd700;
         }
-        
-        .bronze { border-color: #cd7f32; }
-        .silver { border-color: #c0c0c0; }
-        .gold { border-color: #ffd700; }
-        .rare { border-color: #a855f7; }
-        
-        .ea-button {
-            background: linear-gradient(90deg, #00ff9d, #00cc7a);
-            color: #000;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+
+        .player-rating {
+            font-size: 1.4em;
+            color: #fff;
         }
-        
-        .sidebar-active {
-            background: #00ff9d;
-            color: #000;
-            border-radius: 9999px;
+
+        .player-position {
+            font-size: 1.2em;
+            color: #aaa;
+        }
+
+        .card-actions {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .action-btn {
+            background: rgba(255,255,255,0.2);
+            padding: 5px 15px;
+            font-size: 0.9em;
+        }
+
+        #match-panel {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 320px;
+            max-height: 80vh;
+            overflow-y: auto;
+            pointer-events: auto;
+        }
+
+        #team-list {
+            max-height: 200px;
+            overflow-y: auto;
+            margin: 10px 0;
+        }
+
+        .team-player {
+            background: rgba(255,215,0,0.2);
+            margin: 5px 0;
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-size: 0.9em;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .match-result {
+            margin-top: 10px;
+            padding: 10px;
+            background: rgba(0,0,0,0.6);
+            border-radius: 10px;
+            font-size: 0.9em;
+        }
+
+        .commentary {
+            font-style: italic;
+            color: #ffd700;
+            margin-top: 8px;
+            font-size: 0.85em;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1a1a2e;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #ffd700;
+            border-radius: 3px;
+        }
+
+        @media (max-width: 768px) {
+            .stats { font-size: 0.8em; padding: 5px 12px; }
+            button { padding: 6px 15px; font-size: 0.8em; }
+            #match-panel { width: 280px; }
         }
     </style>
 </head>
-<body class="tail-container bg-[#0a0a0a] text-white min-h-screen">
-    <!-- HEADER -->
-    <div class="header sticky top-0 z-50 border-b border-[#1f2937]">
-        <div class="max-w-screen-2xl mx-auto px-6 py-3 flex items-center justify-between">
-            <!-- Logo -->
-            <div class="flex items-center gap-x-3">
-                <div class="w-10 h-10 bg-[#00ff9d] rounded-2xl flex items-center justify-center text-black font-black text-3xl rotate-12">⚽</div>
-                <div>
-                    <h1 class="text-3xl font-bold tracking-tighter">EA FC <span class="text-[#00ff9d]">26</span></h1>
-                    <p class="text-xs text-[#00ff9d] -mt-1 font-mono">ULTIMATE PACK SIMULATOR</p>
-                </div>
+<body>
+    <div id="ui">
+        <div id="top-bar">
+            <div class="stats">
+                <div class="stat"><span class="stat-icon">⭐</span> <span id="coins">5000</span></div>
+                <div class="stat"><span class="stat-icon">👥</span> <span id="team-count">0</span>/11</div>
+                <div class="stat"><span class="stat-icon">📦</span> <span id="pack-count">3</span></div>
             </div>
-            
-            <!-- Club Info -->
-            <div class="flex items-center gap-x-8">
-                <div class="flex items-center gap-x-2 bg-[#1f2937] px-5 py-2 rounded-3xl">
-                    <i class="fa-solid fa-shield-halved text-[#00ff9d]"></i>
-                    <div>
-                        <p class="text-sm font-semibold">CLUBE DO GROK</p>
-                        <p class="text-xs text-gray-400">Nível 42 • 1.284.920 XP</p>
-                    </div>
-                </div>
-                
-                <!-- Coins -->
-                <div id="coins-display" onclick="showCoinsModal()" class="flex items-center bg-[#1f2937] hover:bg-[#374151] px-6 py-2 rounded-3xl cursor-pointer">
-                    <i class="fa-solid fa-coins text-yellow-400 mr-2"></i>
-                    <span id="coins-amount" class="font-mono font-bold text-xl">124850</span>
-                </div>
-                
-                <!-- Profile -->
-                <div class="flex items-center gap-x-3">
-                    <div class="text-right">
-                        <p class="font-semibold">GrokMasterPT</p>
-                        <p class="text-xs text-emerald-400">Divisão 1 • 248 vitórias</p>
-                    </div>
-                    <div class="w-9 h-9 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center text-2xl">👑</div>
-                </div>
-            </div>
-            
-            <!-- Right side actions -->
-            <div class="flex items-center gap-x-4">
-                <button onclick="quickSellAll()" 
-                        class="flex items-center gap-x-2 px-5 py-3 bg-[#1f2937] hover:bg-red-500/10 text-red-400 rounded-3xl text-sm font-semibold">
-                    <i class="fa-solid fa-fire"></i>
-                    <span>QUICK SELL</span>
-                </button>
-                
-                <div onclick="toggleSound()" class="w-10 h-10 bg-[#1f2937] hover:bg-[#374151] rounded-2xl flex items-center justify-center cursor-pointer">
-                    <i id="sound-icon" class="fa-solid fa-volume-high"></i>
-                </div>
-                
-                <a href="https://github.com/grok-xai/ea-fc-26-simulator-pt" target="_blank"
-                   class="text-xs flex items-center gap-x-1 bg-[#00ff9d] text-black px-4 h-9 rounded-3xl font-bold hover:scale-105">
-                    <i class="fa-brands fa-github"></i>
-                    GITHUB REPO
-                </a>
-            </div>
+            <button id="quick-sell-btn" style="background:#e74c3c;">💰 Quick Sell (10 coins)</button>
         </div>
+
+        <div id="pack-container">
+            <button class="pack-btn" data-pack="bronze">🥉 Bronze Pack (100 coins)</button>
+            <button class="pack-btn" data-pack="silver">🥈 Silver Pack (300 coins)</button>
+            <button class="pack-btn" data-pack="gold">⭐ Gold Pack (500 coins)</button>
+        </div>
+
+        <div id="card-reveal"></div>
+
+        <div id="match-panel" class="panel">
+            <h3>⚽ Minha Equipe</h3>
+            <div id="team-list"></div>
+            <button id="simulate-match-btn" style="width:100%; margin-top:10px;">🎮 Simular Partida vs Bot</button>
+            <div id="match-result" class="match-result"></div>
+        </div>
+    </div>
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.128.0/build/three.module.js"
+            }
+        }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+
+        // ---------- DATABASE DE JOGADORES (200+ jogadores) ----------
+        const playersDB = [];
+        const firstNames = ["Lionel", "Cristiano", "Kylian", "Erling", "Kevin", "Mohamed", "Robert", "Neymar", "Vinicius", "Jude", "Harry", "Antoine", "Phil", "Rodri", "Virgil", "Thibaut", "Marc", "Joshua", "Toni", "Luka"];
+        const lastNames = ["Messi", "Ronaldo", "Mbappé", "Haaland", "De Bruyne", "Salah", "Lewandowski", "Jr", "Bellingham", "Kane", "Griezmann", "Foden", "Rodri", "Van Dijk", "Courtois", "Ter Stegen", "Kimmich", "Kroos", "Modrić"];
+        const positions = ["ST", "LW", "RW", "CAM", "CM", "CDM", "LB", "RB", "CB", "GK"];
+        const nations = ["🇦🇷", "🇵🇹", "🇫🇷", "🇳🇴", "🇧🇪", "🇪🇬", "🇵🇱", "🇧🇷", "🇪🇸", "🏴󠁧󠁢󠁥󠁮󠁧󠁿", "🇫🇷", "🇭🇷", "🇩🇪"];
         
-        <!-- TOP NAV TABS -->
-        <div class="max-w-screen-2xl mx-auto px-6 border-t border-[#1f2937]">
-            <div class="flex items-center text-sm font-medium">
-                <button onclick="navigate(0)" id="tab-0"
-                        class="tab-button px-8 py-4 flex items-center gap-x-2 hover:text-[#00ff9d] active">
-                    <i class="fa-solid fa-house"></i>
-                    <span>INÍCIO</span>
-                </button>
-                <button onclick="navigate(1)" id="tab-1"
-                        class="tab-button px-8 py-4 flex items-center gap-x-2 hover:text-[#00ff9d]">
-                    <i class="fa-solid fa-users"></i>
-                    <span>MINHA EQUIPA</span>
-                </button>
-                <button onclick="navigate(2)" id="tab-2"
-                        class="tab-button px-8 py-4 flex items-center gap-x-2 hover:text-[#00ff9d]">
-                    <i class="fa-solid fa-box-open"></i>
-                    <span>ABRIR PACKS</span>
-                </button>
-                <button onclick="navigate(3)" id="tab-3"
-                        class="tab-button px-8 py-4 flex items-center gap-x-2 hover:text-[#00ff9d]">
-                    <i class="fa-solid fa-store"></i>
-                    <span>LOJA</span>
-                </button>
-                <button onclick="navigate(4)" id="tab-4"
-                        class="tab-button px-8 py-4 flex items-center gap-x-2 hover:text-[#00ff9d]">
-                    <i class="fa-solid fa-futbol"></i>
-                    <span>JOGAR</span>
-                </button>
-                <button onclick="navigate(5)" id="tab-5"
-                        class="tab-button px-8 py-4 flex items-center gap-x-2 hover:text-[#00ff9d]">
-                    <i class="fa-solid fa-chart-bar"></i>
-                    <span>TRANSFERÊNCIAS</span>
-                </button>
-                <div class="flex-1"></div>
-                <div class="text-xs font-mono bg-[#00ff9d]/10 text-[#00ff9d] px-4 py-1 rounded-3xl flex items-center">
-                    <div class="w-2 h-2 bg-[#00ff9d] rounded-full mr-1 animate-pulse"></div>
-                    220 JOGADORES • 5 TIPOS DE PACKS
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="max-w-screen-2xl mx-auto flex">
-        <!-- SIDEBAR -->
-        <div class="w-72 bg-[#111827] min-h-[calc(100vh-129px)] border-r border-[#1f2937] p-6 hidden lg:flex flex-col">
-            <div class="space-y-2">
-                <div onclick="navigate(0)" class="sidebar-item flex items-center gap-x-4 px-5 py-4 rounded-3xl cursor-pointer hover:bg-[#1f2937]">
-                    <i class="fa-solid fa-house w-5"></i>
-                    <span class="font-semibold">Dashboard</span>
-                </div>
-                <div onclick="navigate(1)" class="sidebar-item flex items-center gap-x-4 px-5 py-4 rounded-3xl cursor-pointer hover:bg-[#1f2937]">
-                    <i class="fa-solid fa-users-rectangle w-5"></i>
-                    <span class="font-semibold">Equipa Principal</span>
-                    <span id="squad-count-badge" class="ml-auto bg-[#00ff9d] text-black text-xs font-bold px-3 py-px rounded-3xl">11/23</span>
-                </div>
-                <div onclick="navigate(2)" class="sidebar-item flex items-center gap-x-4 px-5 py-4 rounded-3xl cursor-pointer hover:bg-[#1f2937]">
-                    <i class="fa-solid fa-box-archive w-5"></i>
-                    <span class="font-semibold">Abrir Packs</span>
-                </div>
-                <div onclick="navigate(3)" class="sidebar-item flex items-center gap-x-4 px-5 py-4 rounded-3xl cursor-pointer hover:bg-[#1f2937]">
-                    <i class="fa-solid fa-store w-5"></i>
-                    <span class="font-semibold">Loja EA FC</span>
-                </div>
-                <div onclick="navigate(4)" class="sidebar-item flex items-center gap-x-4 px-5 py-4 rounded-3xl cursor-pointer hover:bg-[#1f2937]">
-                    <i class="fa-solid fa-trophy w-5"></i>
-                    <span class="font-semibold">Partidas vs Bots</span>
-                </div>
-                <div onclick="navigate(5)" class="sidebar-item flex items-center gap-x-4 px-5 py-4 rounded-3xl cursor-pointer hover:bg-[#1f2937]">
-                    <i class="fa-solid fa-arrow-right-arrow-left w-5"></i>
-                    <span class="font-semibold">Mercado</span>
-                </div>
-            </div>
+        // Gerar 220 jogadores únicos
+        for (let i = 0; i < 220; i++) {
+            const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+            const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
+            let name = `${firstName} ${lastName}`;
+            if (i < 30) name = `${firstName} ${lastName} ${Math.floor(Math.random() * 10)}`; // variedade
             
-            <div class="mt-auto pt-8 border-t border-[#1f2937]">
-                <p class="text-xs uppercase font-mono mb-4 text-gray-400">Estatísticas da Temporada</p>
-                <div class="grid grid-cols-2 gap-4 text-center">
-                    <div class="bg-[#1f2937] rounded-3xl p-4">
-                        <p class="text-4xl font-bold text-[#00ff9d]" id="wins-stat">142</p>
-                        <p class="text-xs text-gray-400">Vitórias</p>
-                    </div>
-                    <div class="bg-[#1f2937] rounded-3xl p-4">
-                        <p class="text-4xl font-bold text-[#00ff9d]" id="packs-opened-stat">387</p>
-                        <p class="text-xs text-gray-400">Packs abertos</p>
-                    </div>
-                </div>
-                
-                <div class="mt-8 flex flex-col gap-y-4 text-xs">
-                    <div class="flex justify-between"><span class="text-gray-400">Média da equipa</span><span id="team-ovr" class="font-mono text-2xl font-bold">87</span></div>
-                    <div class="h-2 bg-[#1f2937] rounded-full overflow-hidden"><div id="ovr-bar" class="h-2 bg-[#00ff9d] w-3/4"></div></div>
-                    <div onclick="resetGame()" class="text-red-400 flex items-center justify-center gap-x-2 cursor-pointer hover:text-red-500">
-                        <i class="fa-solid fa-rotate-right"></i>
-                        <span>REINICIAR TEMPORADA</span>
-                    </div>
-                </div>
-            </div>
+            const rating = Math.floor(Math.random() * 40) + 60; // 60-99
+            const position = positions[Math.floor(Math.random() * positions.length)];
+            const nation = nations[Math.floor(Math.random() * nations.length)];
+            const value = Math.floor(rating * 100) + (rating > 85 ? 5000 : rating > 75 ? 1000 : 200);
             
-            <div class="text-[10px] text-center text-gray-500 mt-auto pt-6">Feito com ❤️ por Grok • +220 jogadores reais + simulados • +2800 linhas de código</div>
-        </div>
-
-        <!-- MAIN CONTENT -->
-        <div class="flex-1 p-8" id="main-content">
-            <!-- TAB 0: INÍCIO / DASHBOARD -->
-            <div id="screen-0">
-                <h2 class="text-5xl font-black mb-2">Bem-vindo de volta, GrokMasterPT 👋</h2>
-                <p class="text-gray-400 mb-8">Última pack aberta há 12 minutos • 3 jogadores novos hoje</p>
-                
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <!-- Quick pack -->
-                    <div onclick="navigate(2)" class="bg-gradient-to-br from-[#1f2937] to-[#111827] rounded-3xl p-8 cursor-pointer hover:scale-105">
-                        <div class="flex justify-between">
-                            <div>
-                                <span class="px-4 py-1 bg-yellow-400 text-black text-xs font-bold rounded-3xl">HOJE RECOMENDADO</span>
-                                <h3 class="text-3xl font-bold mt-6">Pack Ultimate</h3>
-                                <p class="text-emerald-400 text-5xl font-mono">25.000 moedas</p>
-                                <p class="mt-2 text-sm">Garantia de 1 jogador 88+ • 15 cartas</p>
-                            </div>
-                            <div class="text-8xl">📦</div>
-                        </div>
-                    </div>
-                    
-                    <!-- Team highlight -->
-                    <div class="bg-[#1f2937] rounded-3xl p-8 flex flex-col">
-                        <h3 class="font-semibold text-lg mb-6">Equipa do dia</h3>
-                        <div class="flex-1 flex items-center justify-center gap-4 flex-wrap" id="highlight-squad"></div>
-                        <button onclick="navigate(4)" class="ea-button mt-6 w-full py-4 rounded-3xl text-xl">JOGAR AGORA vs BOTS</button>
-                    </div>
-                    
-                    <!-- Last pulls -->
-                    <div class="bg-[#1f2937] rounded-3xl p-8">
-                        <h3 class="font-semibold text-lg mb-6 flex items-center"><i class="fa-solid fa-gem mr-2"></i> Últimas cartas</h3>
-                        <div id="last-pulls" class="flex gap-4"></div>
-                    </div>
-                </div>
-                
-                <div class="mt-12">
-                    <h3 class="font-bold text-xl mb-4">Próximos desafios</h3>
-                    <div class="flex gap-4 overflow-x-auto pb-4">
-                        <div class="bg-[#1f2937] min-w-[260px] rounded-3xl p-6">
-                            <p class="text-emerald-400 text-sm">DIVISÃO 1</p>
-                            <p class="text-2xl font-semibold">Precisas de 3 vitórias seguidas</p>
-                            <div class="text-xs mt-8 flex justify-between"><span>2/3</span><span class="text-[#00ff9d]">+5000 moedas</span></div>
-                        </div>
-                        <div class="bg-[#1f2937] min-w-[260px] rounded-3xl p-6">
-                            <p class="text-purple-400 text-sm">EVENTO ICONS</p>
-                            <p class="text-2xl font-semibold">Abre 8 packs Gold para desbloquear</p>
-                            <div class="text-xs mt-8 flex justify-between"><span>5/8</span><span class="text-[#00ff9d]">Ícone garantido</span></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- TAB 1: MINHA EQUIPA -->
-            <div id="screen-1" class="hidden">
-                <div class="flex justify-between items-baseline mb-8">
-                    <h2 class="text-4xl font-black">Minha Equipa • 4-3-3</h2>
-                    <button onclick="autoFillSquad()" class="ea-button px-8 py-3 rounded-3xl flex items-center">
-                        <i class="fa-solid fa-wand-magic-sparkles mr-2"></i>
-                        PREENCHER AUTOMÁTICO
-                    </button>
-                </div>
-                
-                <!-- Formation grid -->
-                <div class="bg-[#111827] rounded-3xl p-8 mb-8">
-                    <div class="grid grid-cols-11 gap-2 max-w-4xl mx-auto" id="formation-grid">
-                        <!-- JS injected -->
-                    </div>
-                </div>
-                
-                <h3 class="font-semibold mb-4">Jogadores no Clube (220 disponíveis • <span id="owned-count">18</span> possuídos)</h3>
-                <div class="flex gap-4 flex-wrap" id="club-players-grid"></div>
-            </div>
-            
-            <!-- TAB 2: ABRIR PACKS -->
-            <div id="screen-2" class="hidden">
-                <h2 class="text-4xl font-black mb-8">Abrir Packs • Animações em tempo real</h2>
-                
-                <div id="pack-open-area" class="hidden">
-                    <div class="flex justify-center mb-8">
-                        <div onclick="closePackModal()" class="absolute top-8 right-8 text-4xl cursor-pointer">✕</div>
-                        <div class="pack-modal bg-gradient-to-br from-[#1f2937] to-black rounded-3xl shadow-2xl p-12 max-w-4xl w-full text-center">
-                            <h3 id="opening-pack-name" class="text-3xl mb-6 font-bold"></h3>
-                            
-                            <div class="flex justify-center gap-8 flex-wrap" id="revealed-cards"></div>
-                            
-                            <div class="mt-12 flex justify-center">
-                                <button onclick="finishPackOpening()" 
-                                        class="ea-button px-10 py-4 text-2xl rounded-3xl">GUARDAR NO CLUBE</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="grid grid-cols-2 md:grid-cols-5 gap-6" id="pack-list">
-                    <!-- JS injected packs -->
-                </div>
-            </div>
-            
-            <!-- TAB 3: LOJA -->
-            <div id="screen-3" class="hidden">
-                <h2 class="text-4xl font-black mb-8">Loja EA FC • 5 tipos de packs</h2>
-                <div id="store-packs" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
-                    <!-- JS injected -->
-                </div>
-            </div>
-            
-            <!-- TAB 4: JOGAR -->
-            <div id="screen-4" class="hidden">
-                <h2 class="text-4xl font-black mb-8">Partidas contra Bots • Resultados 100% realistas</h2>
-                <div class="flex gap-6">
-                    <div class="flex-1">
-                        <h3 class="uppercase text-sm mb-4">Escolhe um adversário</h3>
-                        <div id="bot-list" class="space-y-4"></div>
-                    </div>
-                    <div class="flex-1 bg-[#1f2937] rounded-3xl p-8">
-                        <div id="match-simulator" class="hidden">
-                            <div class="flex justify-between text-6xl font-black mb-8">
-                                <div class="text-center">
-                                    <div id="my-team-name" class="text-xl">CLUBE DO GROK</div>
-                                    <div id="my-score" class="text-8xl">0</div>
-                                </div>
-                                <div class="flex items-center text-[#00ff9d] text-5xl">VS</div>
-                                <div class="text-center">
-                                    <div id="bot-team-name" class="text-xl">FC BOTS</div>
-                                    <div id="bot-score" class="text-8xl">0</div>
-                                </div>
-                            </div>
-                            <div id="match-log" class="font-mono text-sm h-64 overflow-y-auto bg-black/40 rounded-2xl p-6 space-y-2"></div>
-                            <button onclick="finishMatch()" class="ea-button w-full mt-8 py-6 text-2xl">VER RELATÓRIO FINAL</button>
-                        </div>
-                        
-                        <div id="match-ready" class="text-center py-20">
-                            <p class="text-2xl mb-6">A tua equipa tem média <span id="match-ovr-display" class="font-mono text-6xl text-[#00ff9d]"></span></p>
-                            <button onclick="startMatchSimulation()" class="ea-button px-16 py-8 text-4xl rounded-3xl">INICIAR SIMULAÇÃO</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- TAB 5: TRANSFERÊNCIAS -->
-            <div id="screen-5" class="hidden">
-                <h2 class="text-4xl font-black mb-8">Mercado de Transferências • Vende ou compra</h2>
-                <div class="flex gap-6">
-                    <div class="flex-1">
-                        <input id="search-input" 
-                               onkeyup="if(event.key==='Enter') filterMarket()"
-                               placeholder="Procura jogadores..." 
-                               class="w-full bg-[#1f2937] text-white placeholder-gray-400 px-6 py-5 rounded-3xl outline-none">
-                        <div id="market-players" class="mt-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
-                    </div>
-                    <div class="w-96 bg-[#1f2937] rounded-3xl p-8">
-                        <h3 class="font-semibold mb-6">Teus jogadores à venda</h3>
-                        <div id="selling-list" class="space-y-4 max-h-[560px] overflow-auto"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- PLAYER DETAIL MODAL -->
-    <div onclick="if(event.target.id==='player-modal')hidePlayerModal()" 
-         id="player-modal"
-         class="hidden fixed inset-0 bg-black/80 z-[9999] flex items-center justify-center">
-        <div onclick="event.stopImmediatePropagation()" 
-             class="bg-[#111827] w-full max-w-lg mx-4 rounded-3xl p-8">
-            <div id="modal-player-card" class="player-card mx-auto w-40 h-[220px] flex flex-col items-center justify-center relative"></div>
-            
-            <div class="mt-8 space-y-4 text-sm">
-                <div class="flex justify-between"><span class="text-gray-400">Rating</span><span id="modal-rating" class="font-mono text-5xl"></span></div>
-                <div class="flex justify-between"><span class="text-gray-400">Posição</span><span id="modal-pos"></span></div>
-                <div class="flex justify-between"><span class="text-gray-400">Valor de mercado</span><span id="modal-value" class="font-mono"></span></div>
-                <div class="flex justify-between"><span class="text-gray-400">Nacionalidade</span><span id="modal-nation"></span></div>
-            </div>
-            
-            <div class="flex gap-x-4 mt-12">
-                <button onclick="sellCurrentPlayer()" 
-                        class="flex-1 py-5 border border-red-400 text-red-400 rounded-3xl font-bold">VENDER</button>
-                <button onclick="addToSquadFromModal()" 
-                        class="flex-1 ea-button py-5 rounded-3xl font-bold">COLOCAR NA EQUIPA</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- COINS MODAL -->
-    <div onclick="if(event.target.id==='coins-modal')hideCoinsModal()" 
-         id="coins-modal"
-         class="hidden fixed inset-0 bg-black/80 z-[9999] flex items-center justify-center">
-        <div class="bg-white text-black max-w-md w-full mx-4 rounded-3xl p-10 text-center">
-            <h3 class="text-4xl mb-6">As tuas Moedas EA</h3>
-            <div class="text-8xl font-mono mb-8" id="modal-coins-big">124850</div>
-            <p class="text-sm">Ganha mais abrindo packs ou vencendo partidas!</p>
-            <button onclick="hideCoinsModal()" class="mt-8 w-full py-6 text-xl bg-black text-white rounded-3xl">FEITO</button>
-        </div>
-    </div>
-
-    <script>
-        /**
-         * ====================================================
-         * EA FC 26 SIMULATOR - PROJETO COMPLETO
-         * +2800 linhas de código (contadas)
-         * Mais de 220 jogadores
-         * 5 tipos de packs com probabilidades realistas
-         * Animações de abertura de cartas com flip 3D
-         * Gestão de equipa, vendas, simulação de jogos vs bots
-         * UI 99% idêntica ao EA FC 26 (dark theme + green accents)
-         * Totalmente offline • Guarda progresso no localStorage
-         * ====================================================
-         * Criado por Grok para o utilizador em Português
-         * Copia este ficheiro inteiro → index.html
-         * GitHub: https://github.com/grok-xai/ea-fc-26-simulator-pt
-         * ====================================================
-         */
-
-        // ==================== DADOS BASE ====================
-        let coins = 124850;
-        let soundEnabled = true;
+            playersDB.push({
+                id: i,
+                name: name,
+                rating: rating,
+                position: position,
+                nation: nation,
+                value: value,
+                pace: Math.floor(Math.random() * 40) + 60,
+                shooting: Math.floor(Math.random() * 40) + 60,
+                passing: Math.floor(Math.random() * 40) + 60,
+                defending: position === "GK" ? Math.floor(Math.random() * 30) + 70 : Math.floor(Math.random() * 50) + 30,
+                physical: Math.floor(Math.random() * 50) + 40
+            });
+        }
         
-        // Base de jogadores reais + gerados (mais de 220)
-        let allPlayersPool = [];
+        // Adicionar alguns lendários
+        playersDB.push({id: 220, name: "Pelé", rating: 99, position: "CAM", nation: "🇧🇷", value: 15000, pace: 95, shooting: 98, passing: 94, defending: 65, physical: 85});
+        playersDB.push({id: 221, name: "Maradona", rating: 98, position: "CAM", nation: "🇦🇷", value: 14000, pace: 92, shooting: 97, passing: 96, defending: 50, physical: 80});
+        playersDB.push({id: 222, name: "Ronaldinho", rating: 97, position: "LW", nation: "🇧🇷", value: 13000, pace: 94, shooting: 90, passing: 95, defending: 45, physical: 82});
         
-        function generatePlayers() {
-            const realPlayers = [
-                { id: 1, name: "Lionel Messi", rating: 94, position: "RW", rarity: "rare", value: 245000, nation: "Argentina", league: "MLS" },
-                { id: 2, name: "Cristiano Ronaldo", rating: 93, position: "ST", rarity: "rare", value: 210000, nation: "Portugal", league: "Saudi" },
-                { id: 3, name: "Kylian Mbappé", rating: 92, position: "ST", rarity: "gold", value: 195000, nation: "França", league: "Ligue 1" },
-                { id: 4, name: "Erling Haaland", rating: 91, position: "ST", rarity: "gold", value: 178000, nation: "Noruega", league: "Premier League" },
-                { id: 5, name: "Vinícius Júnior", rating: 90, position: "LW", rarity: "gold", value: 165000, nation: "Brasil", league: "LaLiga" },
-                { id: 6, name: "Kevin De Bruyne", rating: 90, position: "CM", rarity: "gold", value: 158000, nation: "Bélgica", league: "Premier League" },
-                { id: 7, name: "Rodri", rating: 89, position: "CDM", rarity: "gold", value: 132000, nation: "Espanha", league: "Premier League" },
-                { id: 8, name: "Jude Bellingham", rating: 89, position: "CM", rarity: "gold", value: 145000, nation: "Inglaterra", league: "LaLiga" },
-                { id: 9, name: "Harry Kane", rating: 88, position: "ST", rarity: "gold", value: 118000, nation: "Inglaterra", league: "Bundesliga" },
-                { id: 10, name: "Mohamed Salah", rating: 88, position: "RW", rarity: "gold", value: 125000, nation: "Egito", league: "Premier League" },
-                { id: 11, name: "Virgil van Dijk", rating: 87, position: "CB", rarity: "gold", value: 98000, nation: "Holanda", league: "Premier League" },
-                { id: 12, name: "Alisson Becker", rating: 87, position: "GK", rarity: "gold", value: 85000, nation: "Brasil", league: "Premier League" },
-                { id: 13, name: "Bernardo Silva", rating: 86, position: "CM", rarity: "gold", value: 92000, nation: "Portugal", league: "Premier League" },
-                { id: 14, name: "Pedri", rating: 86, position: "CM", rarity: "gold", value: 97000, nation: "Espanha", league: "LaLiga" },
-                { id: 15, name: "Lamine Yamal", rating: 85, position: "RW", rarity: "gold", value: 110000, nation: "Espanha", league: "LaLiga" },
-                { id: 16, name: "Bruno Fernandes", rating: 85, position: "CAM", rarity: "gold", value: 88000, nation: "Portugal", league: "Premier League" },
-                { id: 17, name: "Rúben Dias", rating: 85, position: "CB", rarity: "gold", value: 76000, nation: "Portugal", league: "Premier League" },
-                { id: 18, name: "Diogo Costa", rating: 84, position: "GK", rarity: "gold", value: 62000, nation: "Portugal", league: "Primeira Liga" },
-                { id: 19, name: "João Félix", rating: 84, position: "ST", rarity: "gold", value: 69000, nation: "Portugal", league: "Premier League" },
-                { id: 20, name: "Rafael Leão", rating: 84, position: "LW", rarity: "gold", value: 72000, nation: "Portugal", league: "Serie A" }
-            ];
+        // Sistema de estado do jogo
+        let playerCoins = 5000;
+        let playerTeam = []; // até 11 jogadores
+        let availablePacks = 3;
+        let currentRevealedCard = null;
+        
+        // Elementos UI
+        const coinsSpan = document.getElementById('coins');
+        const teamCountSpan = document.getElementById('team-count');
+        const packCountSpan = document.getElementById('pack-count');
+        const teamListDiv = document.getElementById('team-list');
+        const matchResultDiv = document.getElementById('match-result');
+        const quickSellBtn = document.getElementById('quick-sell-btn');
+        const simulateMatchBtn = document.getElementById('simulate-match-btn');
+        
+        // Função para atualizar UI
+        function updateUI() {
+            coinsSpan.textContent = playerCoins;
+            teamCountSpan.textContent = `${playerTeam.length}/11`;
+            packCountSpan.textContent = availablePacks;
+            renderTeamList();
+        }
+        
+        // Renderizar lista de equipa
+        function renderTeamList() {
+            teamListDiv.innerHTML = '';
+            if (playerTeam.length === 0) {
+                teamListDiv.innerHTML = '<div style="color:#aaa;">Nenhum jogador na equipa</div>';
+                return;
+            }
+            playerTeam.forEach((player, idx) => {
+                const div = document.createElement('div');
+                div.className = 'team-player';
+                div.innerHTML = `
+                    <span><strong>${player.rating}</strong> ${player.name} (${player.position}) ${player.nation}</span>
+                    <button class="remove-player" data-idx="${idx}" style="background:#c0392b; padding:2px 8px; font-size:0.7rem;">🗑️</button>
+                `;
+                teamListDiv.appendChild(div);
+            });
             
-            // Gerar +200 jogadores fictícios realistas
-            const firstNames = ["João", "Miguel", "Pedro", "Diogo", "Rui", "André", "Tiago", "Bruno", "Gonçalo", "Lucas", "Matheus", "Gabriel", "Rafael", "Alex", "Daniel", "Vitor", "Eduardo", "Fábio", "Carlos", "Ricardo"];
-            const lastNames = ["Silva", "Santos", "Costa", "Oliveira", "Ferreira", "Pereira", "Rodrigues", "Martins", "Lopes", "Sousa", "Gomes", "Almeida", "Carvalho", "Marques", "Mendes", "Nunes", "Rocha", "Vieira", "Ribeiro", "Monteiro"];
-            const positionsList = ["ST", "RW", "LW", "CAM", "CM", "CDM", "CB", "LB", "RB", "GK"];
-            
-            allPlayersPool = [...realPlayers];
-            
-            for (let i = 21; i <= 220; i++) {
-                const rating = Math.floor(Math.random() * 32) + 58; // 58 a 89
-                const rarity = rating > 84 ? "gold" : rating > 74 ? "silver" : "bronze";
-                const value = Math.floor(rating * 1200 * (rarity === "gold" ? 1.8 : rarity === "silver" ? 1.1 : 0.6));
-                
-                allPlayersPool.push({
-                    id: i,
-                    name: `${firstNames[Math.floor(Math.random()*firstNames.length)]} ${lastNames[Math.floor(Math.random()*lastNames.length)]}`,
-                    rating: rating,
-                    position: positionsList[Math.floor(Math.random()*positionsList.length)],
-                    rarity: rarity,
-                    value: value,
-                    nation: ["Portugal", "Brasil", "Espanha", "França", "Inglaterra"][Math.floor(Math.random()*5)],
-                    league: "Liga Fictícia"
+            // Adicionar eventos de remover
+            document.querySelectorAll('.remove-player').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const idx = parseInt(btn.dataset.idx);
+                    playerTeam.splice(idx, 1);
+                    updateUI();
+                    showMessage(`Jogador removido da equipa.`, 1500);
                 });
-            }
-            
-            console.log(`✅ ${allPlayersPool.length} jogadores carregados (mais de 200)`);
-        }
-        
-        // Progresso salvo
-        let ownedPlayers = [];
-        let squadPlayers = []; // máximo 23, primeiros 11 são titulares
-        
-        // Packs disponíveis (5 tipos - realistas EA FC)
-        const packTypes = [
-            {
-                id: 1,
-                name: "Bronze Pack",
-                price: 500,
-                cards: 5,
-                icon: "🥉",
-                color: "bronze",
-                description: "5 cartas Bronze • Baixo risco",
-                odds: { bronze: 85, silver: 14, gold: 1 }
-            },
-            {
-                id: 2,
-                name: "Silver Pack",
-                price: 1500,
-                cards: 5,
-                icon: "🥈",
-                color: "silver",
-                description: "5 cartas Silver • Bom valor",
-                odds: { bronze: 30, silver: 60, gold: 10 }
-            },
-            {
-                id: 3,
-                name: "Gold Pack",
-                price: 5000,
-                cards: 5,
-                icon: "🥇",
-                color: "gold",
-                description: "5 cartas Gold • Padrão EA",
-                odds: { bronze: 5, silver: 25, gold: 70 }
-            },
-            {
-                id: 4,
-                name: "Rare Gold Pack",
-                price: 12500,
-                cards: 8,
-                icon: "💎",
-                color: "rare",
-                description: "8 cartas • Garantia Rare",
-                odds: { silver: 15, gold: 65, rare: 20 }
-            },
-            {
-                id: 5,
-                name: "Ultimate Pack",
-                price: 25000,
-                cards: 15,
-                icon: "🔥",
-                color: "rare",
-                description: "15 cartas • 1 jogador 88+ garantido",
-                odds: { gold: 60, rare: 35, special: 5 }
-            }
-        ];
-        
-        let currentOpenedPack = [];
-        let currentPlayerModalIndex = null;
-        
-        // Bots para jogos
-        const botTeams = [
-            { id: 1, name: "FC Madrid Bots", ovr: 82, logo: "🇪🇸" },
-            { id: 2, name: "Bayern AI", ovr: 86, logo: "🇩🇪" },
-            { id: 3, name: "PSG Robots", ovr: 84, logo: "🇫🇷" },
-            { id: 4, name: "Manchester Code", ovr: 85, logo: "🇬🇧" },
-            { id: 5, name: "Juventus Sim", ovr: 80, logo: "🇮🇹" },
-            { id: 6, name: "Liverpool Neural", ovr: 83, logo: "🇬🇧" },
-            { id: 7, name: "Inter AI", ovr: 81, logo: "🇮🇹" },
-            { id: 8, name: "Barça Future", ovr: 87, logo: "🇪🇸" },
-            { id: 9, name: "Dortmund Bots", ovr: 79, logo: "🇩🇪" },
-            { id: 10, name: "Atlético Matrix", ovr: 80, logo: "🇪🇸" }
-        ];
-        
-        let currentMatchBot = null;
-        let currentMatchLog = [];
-        
-        // ==================== FUNÇÕES DE UTILIDADE ====================
-        function saveProgress() {
-            localStorage.setItem("ea_fc_sim_coins", coins);
-            localStorage.setItem("ea_fc_sim_owned", JSON.stringify(ownedPlayers));
-            localStorage.setItem("ea_fc_sim_squad", JSON.stringify(squadPlayers));
-        }
-        
-        function loadProgress() {
-            if (localStorage.getItem("ea_fc_sim_coins")) {
-                coins = parseInt(localStorage.getItem("ea_fc_sim_coins"));
-            }
-            if (localStorage.getItem("ea_fc_sim_owned")) {
-                ownedPlayers = JSON.parse(localStorage.getItem("ea_fc_sim_owned"));
-            }
-            if (localStorage.getItem("ea_fc_sim_squad")) {
-                squadPlayers = JSON.parse(localStorage.getItem("ea_fc_sim_squad"));
-            }
-            updateCoinsDisplay();
-        }
-        
-        function updateCoinsDisplay() {
-            document.getElementById("coins-amount").textContent = coins.toLocaleString("pt-PT");
-            document.getElementById("modal-coins-big").textContent = coins.toLocaleString("pt-PT");
-        }
-        
-        function playSound(type) {
-            if (!soundEnabled) return;
-            // Simulação de som com AudioContext (sem ficheiros externos)
-            const ctx = new (window.AudioContext || window.webkitAudioContext)();
-            const oscillator = ctx.createOscillator();
-            if (type === "open") {
-                oscillator.frequency.setValueAtTime(420, ctx.currentTime);
-                oscillator.connect(ctx.destination);
-                oscillator.start();
-                setTimeout(() => oscillator.stop(), 80);
-                setTimeout(() => {
-                    const o2 = ctx.createOscillator();
-                    o2.frequency.setValueAtTime(680, ctx.currentTime);
-                    o2.connect(ctx.destination);
-                    o2.start();
-                    setTimeout(() => o2.stop(), 120);
-                }, 100);
-            } else if (type === "rare") {
-                oscillator.frequency.setValueAtTime(880, ctx.currentTime);
-                oscillator.connect(ctx.destination);
-                oscillator.start();
-                setTimeout(() => oscillator.stop(), 600);
-            }
-        }
-        
-        function toggleSound() {
-            soundEnabled = !soundEnabled;
-            const icon = document.getElementById("sound-icon");
-            icon.className = soundEnabled ? "fa-solid fa-volume-high" : "fa-solid fa-volume-mute";
-        }
-        
-        // ==================== NAVEGAÇÃO ====================
-        function navigate(tab) {
-            // Remover active de todos
-            document.querySelectorAll(".tab-button").forEach(b => b.classList.remove("active", "text-[#00ff9d]"));
-            document.getElementById(`tab-${tab}`).classList.add("active", "text-[#00ff9d]");
-            
-            // Esconder todos os screens
-            for (let i = 0; i < 6; i++) {
-                const screen = document.getElementById(`screen-${i}`);
-                if (screen) screen.classList.add("hidden");
-            }
-            
-            // Mostrar o selecionado
-            const activeScreen = document.getElementById(`screen-${tab}`);
-            if (activeScreen) activeScreen.classList.remove("hidden");
-            
-            // Renderizar conteúdo específico
-            if (tab === 1) renderSquadScreen();
-            if (tab === 2) renderPackSelection();
-            if (tab === 3) renderStore();
-            if (tab === 4) renderBotsScreen();
-            if (tab === 5) renderMarket();
-        }
-        
-        // ==================== PACK OPENING SYSTEM ====================
-        function renderStore() {
-            const container = document.getElementById("store-packs");
-            container.innerHTML = "";
-            
-            packTypes.forEach(pack => {
-                const div = document.createElement("div");
-                div.className = `rounded-3xl bg-gradient-to-br from-[#1f2937] to-[#111827] p-6 flex flex-col items-center cursor-pointer hover:scale-105 border border-transparent hover:border-[#00ff9d]`;
-                div.innerHTML = `
-                    <div class="text-7xl mb-4">${pack.icon}</div>
-                    <h4 class="font-bold text-2xl">${pack.name}</h4>
-                    <p class="text-xs text-gray-400 mt-1">${pack.description}</p>
-                    <div class="mt-auto w-full bg-black/30 rounded-2xl py-4 px-6 mt-8 flex justify-between items-center">
-                        <span class="font-mono text-4xl">${pack.price}</span>
-                        <span class="text-[#00ff9d]"><i class="fa-solid fa-coins"></i></span>
-                    </div>
-                    <button onclick="event.stopImmediatePropagation(); buyPack(${pack.id});" class="ea-button mt-6 w-full py-5 text-lg font-bold rounded-3xl">COMPRAR</button>
-                `;
-                container.appendChild(div);
             });
         }
         
-        function buyPack(packId) {
-            const pack = packTypes.find(p => p.id === packId);
-            if (!pack) return;
+        function showMessage(msg, duration = 2000) {
+            const msgDiv = document.createElement('div');
+            msgDiv.textContent = msg;
+            msgDiv.style.position = 'fixed';
+            msgDiv.style.bottom = '50%';
+            msgDiv.style.left = '50%';
+            msgDiv.style.transform = 'translate(-50%, -50%)';
+            msgDiv.style.backgroundColor = 'rgba(0,0,0,0.9)';
+            msgDiv.style.color = '#ffd700';
+            msgDiv.style.padding = '15px 30px';
+            msgDiv.style.borderRadius = '40px';
+            msgDiv.style.zIndex = '1000';
+            msgDiv.style.fontWeight = 'bold';
+            msgDiv.style.border = '2px solid gold';
+            document.body.appendChild(msgDiv);
+            setTimeout(() => msgDiv.remove(), duration);
+        }
+        
+        // Abrir pack com animação 3D
+        function openPack(packType) {
+            let cost = 0;
+            let minRating = 60, maxRating = 85;
+            if (packType === 'bronze') { cost = 100; minRating = 60; maxRating = 74; }
+            else if (packType === 'silver') { cost = 300; minRating = 75; maxRating = 84; }
+            else if (packType === 'gold') { cost = 500; minRating = 85; maxRating = 99; }
             
-            if (coins < pack.price) {
-                alert("❌ Moedas insuficientes! Abre mais packs ou joga para ganhar.");
+            if (playerCoins < cost) {
+                showMessage("Moedas insuficientes!", 1500);
+                return;
+            }
+            if (availablePacks <= 0) {
+                showMessage("Sem packs disponíveis! Compre mais na loja (simulado).", 1500);
                 return;
             }
             
-            coins -= pack.price;
-            updateCoinsDisplay();
-            saveProgress();
+            playerCoins -= cost;
+            availablePacks--;
+            updateUI();
             
-            // Iniciar animação de abertura
-            currentOpenedPack = [];
-            openPackAnimation(pack);
+            // Sortear jogador baseado no rating
+            const possiblePlayers = playersDB.filter(p => p.rating >= minRating && p.rating <= maxRating);
+            if (possiblePlayers.length === 0) {
+                showMessage("Erro: nenhum jogador encontrado!", 1500);
+                return;
+            }
+            const drawnPlayer = possiblePlayers[Math.floor(Math.random() * possiblePlayers.length)];
+            currentRevealedCard = { ...drawnPlayer };
+            
+            // Animação 3D do pack
+            animatePackOpen(() => {
+                showCardReveal(currentRevealedCard);
+            });
         }
         
-        function openPackAnimation(pack) {
-            document.getElementById("pack-open-area").classList.remove("hidden");
-            document.getElementById("opening-pack-name").innerHTML = `
-                ${pack.icon} ${pack.name} <span class="text-xs font-mono ml-3">(${pack.cards} cartas)</span>
-            `;
+        // Animação 3D com Three.js
+        let scene, camera, renderer, packMesh;
+        function init3D() {
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x050b1a);
+            camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(0, 2, 5);
+            camera.lookAt(0, 0, 0);
             
-            const container = document.getElementById("revealed-cards");
-            container.innerHTML = "";
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.shadowMap.enabled = true;
+            document.body.appendChild(renderer.domElement);
             
-            // Gerar cartas com odds realistas
-            for (let i = 0; i < pack.cards; i++) {
-                const cardDiv = document.createElement("div");
-                cardDiv.className = `card`;
-                cardDiv.innerHTML = `
-                    <div class="card-inner">
-                        <div class="card-back">
-                            <div class="text-6xl">🔒</div>
-                            <p class="text-xs mt-4 font-mono text-gray-400">EA FC 26</p>
-                        </div>
-                        <div class="card-front player-card flex flex-col items-center justify-center text-center ${pack.color}">
-                            <div class="absolute top-3 right-3 text-[10px] font-bold bg-black/60 px-2 py-px rounded">NEW</div>
-                            <div class="text-5xl font-black text-white" style="text-shadow: 0 0 15px black">??</div>
-                        </div>
-                    </div>
-                `;
-                container.appendChild(cardDiv);
-                
-                // Flip sequencial com delay
-                setTimeout(() => {
-                    const player = getRandomPlayerForPack(pack);
-                    currentOpenedPack.push(player);
-                    
-                    cardDiv.classList.add("flipped");
-                    playSound("open");
-                    
-                    // Substituir conteúdo da frente
-                    const front = cardDiv.querySelector(".card-front");
-                    front.innerHTML = `
-                        <div class="absolute top-4 left-4 text-xs font-bold uppercase">${player.position}</div>
-                        <div class="absolute top-4 right-4 text-5xl font-black">${player.rating}</div>
-                        <div class="text-2xl font-bold mt-8">${player.name}</div>
-                        <div class="text-xs mt-6 flex items-center justify-center gap-1">
-                            <span class="px-3 py-px rounded-3xl text-[10px] ${player.rarity === "rare" ? "bg-purple-500" : player.rarity === "gold" ? "bg-yellow-400 text-black" : "bg-gray-400 text-black"}">
-                                ${player.rarity.toUpperCase()}
-                            </span>
-                        </div>
-                        <div class="text-xs text-gray-300 mt-auto mb-4">${player.nation}</div>
-                    `;
-                    
-                    if (player.rating >= 88) {
-                        cardDiv.querySelector(".card-inner").classList.add("rare-flash");
-                        playSound("rare");
+            // Luzes
+            const ambientLight = new THREE.AmbientLight(0x404060);
+            scene.add(ambientLight);
+            const dirLight = new THREE.DirectionalLight(0xffffff, 1);
+            dirLight.position.set(2, 5, 3);
+            dirLight.castShadow = true;
+            scene.add(dirLight);
+            const backLight = new THREE.PointLight(0xffaa00, 0.5);
+            backLight.position.set(0, 1, -2);
+            scene.add(backLight);
+            
+            // Pack 3D (caixa dourada)
+            const geometry = new THREE.BoxGeometry(1.2, 1.2, 1.2);
+            const material = new THREE.MeshStandardMaterial({ color: 0xffaa33, metalness: 0.8, roughness: 0.2, emissive: 0x442200 });
+            packMesh = new THREE.Mesh(geometry, material);
+            packMesh.castShadow = true;
+            packMesh.position.y = 0;
+            scene.add(packMesh);
+            
+            // Adicionar efeito de partículas ao redor
+            const particleGeo = new THREE.BufferGeometry();
+            const particleCount = 500;
+            const positions = new Float32Array(particleCount * 3);
+            for (let i = 0; i < particleCount; i++) {
+                positions[i*3] = (Math.random() - 0.5) * 10;
+                positions[i*3+1] = (Math.random() - 0.5) * 5;
+                positions[i*3+2] = (Math.random() - 0.5) * 8 - 3;
+            }
+            particleGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            const particleMat = new THREE.PointsMaterial({ color: 0xffaa55, size: 0.05 });
+            const particles = new THREE.Points(particleGeo, particleMat);
+            scene.add(particles);
+            
+            function animate() {
+                requestAnimationFrame(animate);
+                if (packMesh) {
+                    packMesh.rotation.y += 0.01;
+                    packMesh.rotation.x = Math.sin(Date.now() * 0.002) * 0.2;
+                }
+                particles.rotation.y += 0.005;
+                renderer.render(scene, camera);
+            }
+            animate();
+            
+            window.addEventListener('resize', onWindowResize, false);
+            function onWindowResize() {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            }
+        }
+        
+        function animatePackOpen(callback) {
+            // Animação de abertura: escala e rotação rápida, depois desaparece
+            let startTime = Date.now();
+            const duration = 800;
+            function step() {
+                const elapsed = Date.now() - startTime;
+                const t = Math.min(1, elapsed / duration);
+                if (packMesh) {
+                    const scale = 1 + t * 2;
+                    packMesh.scale.set(scale, scale, scale);
+                    packMesh.material.emissiveIntensity = t * 2;
+                    if (t >= 0.8) packMesh.visible = false;
+                }
+                if (t < 1) requestAnimationFrame(step);
+                else {
+                    // Reset pack para próximo
+                    if (packMesh) {
+                        packMesh.scale.set(1, 1, 1);
+                        packMesh.material.emissiveIntensity = 0;
+                        packMesh.visible = true;
                     }
-                }, i * 420);
-            }
-        }
-        
-        function getRandomPlayerForPack(pack) {
-            // Sistema de odds realista EA FC
-            let rand = Math.random() * 100;
-            let cumulative = 0;
-            
-            const oddsKeys = Object.keys(pack.odds);
-            for (let key of oddsKeys) {
-                cumulative += pack.odds[key];
-                if (rand <= cumulative) {
-                    // Filtrar jogadores do pool que correspondam à raridade
-                    let filtered = allPlayersPool.filter(p => {
-                        if (key === "special") return p.rating >= 88;
-                        if (key === "rare") return p.rarity === "rare" || p.rating >= 85;
-                        if (key === "gold") return p.rarity === "gold" || p.rating >= 80;
-                        if (key === "silver") return p.rarity === "silver" || p.rating >= 70;
-                        return p.rarity === "bronze";
-                    });
-                    
-                    // Evitar duplicados recentes
-                    filtered = filtered.filter(p => !currentOpenedPack.some(op => op.id === p.id));
-                    
-                    if (filtered.length === 0) filtered = allPlayersPool;
-                    
-                    return filtered[Math.floor(Math.random() * filtered.length)];
+                    callback();
                 }
             }
-            return allPlayersPool[0];
+            step();
         }
         
-        function finishPackOpening() {
-            // Adicionar ao clube
-            ownedPlayers = [...ownedPlayers, ...currentOpenedPack];
-            saveProgress();
-            
-            // Mostrar últimas pulls no dashboard
-            renderLastPulls();
-            
-            // Fechar
-            document.getElementById("pack-open-area").classList.add("hidden");
-            navigate(1); // Vai para equipa
-            alert(`✅ Pack aberto! Recebeste ${currentOpenedPack.length} novos jogadores.`);
-        }
-        
-        function closePackModal() {
-            if (confirm("Cancelar abertura do pack? As cartas serão perdidas.")) {
-                document.getElementById("pack-open-area").classList.add("hidden");
-            }
-        }
-        
-        function renderPackSelection() {
-            // Já está no store, mas podemos ter preview rápido
-            console.log("Pack selection rendered");
-        }
-        
-        // ==================== SQUAD MANAGEMENT ====================
-        function renderSquadScreen() {
-            // Atualizar contadores
-            document.getElementById("owned-count").textContent = ownedPlayers.length;
-            document.getElementById("squad-count-badge").textContent = `${squadPlayers.length}/23`;
-            
-            // Renderizar formação 4-3-3
-            const grid = document.getElementById("formation-grid");
-            grid.innerHTML = `
-                <div class="col-start-6 row-start-1 text-center text-xs font-bold text-[#00ff9d]">GK</div>
-                <div onclick="assignToPosition(0)" id="pos-0" class="col-start-6 row-start-2 bg-[#1f2937] h-24 rounded-3xl flex flex-col items-center justify-center text-xs cursor-pointer border-2 border-dashed border-gray-400"></div>
-                
-                <div class="col-start-2 row-start-4 text-center text-xs font-bold text-[#00ff9d]">LB</div>
-                <div onclick="assignToPosition(1)" id="pos-1" class="col-start-2 row-start-5 bg-[#1f2937] h-24 rounded-3xl flex flex-col items-center justify-center text-xs cursor-pointer border-2 border-dashed border-gray-400"></div>
-                
-                <div class="col-start-4 row-start-4 text-center text-xs font-bold text-[#00ff9d]">CB</div>
-                <div onclick="assignToPosition(2)" id="pos-2" class="col-start-4 row-start-5 bg-[#1f2937] h-24 rounded-3xl flex flex-col items-center justify-center text-xs cursor-pointer border-2 border-dashed border-gray-400"></div>
-                
-                <div class="col-start-8 row-start-4 text-center text-xs font-bold text-[#00ff9d]">CB</div>
-                <div onclick="assignToPosition(3)" id="pos-3" class="col-start-8 row-start-5 bg-[#1f2937] h-24 rounded-3xl flex flex-col items-center justify-center text-xs cursor-pointer border-2 border-dashed border-gray-400"></div>
-                
-                <div class="col-start-10 row-start-4 text-center text-xs font-bold text-[#00ff9d]">RB</div>
-                <div onclick="assignToPosition(4)" id="pos-4" class="col-start-10 row-start-5 bg-[#1f2937] h-24 rounded-3xl flex flex-col items-center justify-center text-xs cursor-pointer border-2 border-dashed border-gray-400"></div>
-                
-                <div class="col-start-3 row-start-7 text-center text-xs font-bold text-[#00ff9d]">CM</div>
-                <div onclick="assignToPosition(5)" id="pos-5" class="col-start-3 row-start-8 bg-[#1f2937] h-24 rounded-3xl flex flex-col items-center justify-center text-xs cursor-pointer border-2 border-dashed border-gray-400"></div>
-                
-                <div class="col-start-6 row-start-7 text-center text-xs font-bold text-[#00ff9d]">CM</div>
-                <div onclick="assignToPosition(6)" id="pos-6" class="col-start-6 row-start-8 bg-[#1f2937] h-24 rounded-3xl flex flex-col items-center justify-center text-xs cursor-pointer border-2 border-dashed border-gray-400"></div>
-                
-                <div class="col-start-9 row-start-7 text-center text-xs font-bold text-[#00ff9d]">CM</div>
-                <div onclick="assignToPosition(7)" id="pos-7" class="col-start-9 row-start-8 bg-[#1f2937] h-24 rounded-3xl flex flex-col items-center justify-center text-xs cursor-pointer border-2 border-dashed border-gray-400"></div>
-                
-                <div class="col-start-2 row-start-10 text-center text-xs font-bold text-[#00ff9d]">LW</div>
-                <div onclick="assignToPosition(8)" id="pos-8" class="col-start-2 row-start-11 bg-[#1f2937] h-24 rounded-3xl flex flex-col items-center justify-center text-xs cursor-pointer border-2 border-dashed border-gray-400"></div>
-                
-                <div class="col-start-6 row-start-10 text-center text-xs font-bold text-[#00ff9d]">ST</div>
-                <div onclick="assignToPosition(9)" id="pos-9" class="col-start-6 row-start-11 bg-[#1f2937] h-24 rounded-3xl flex flex-col items-center justify-center text-xs cursor-pointer border-2 border-dashed border-gray-400"></div>
-                
-                <div class="col-start-10 row-start-10 text-center text-xs font-bold text-[#00ff9d]">RW</div>
-                <div onclick="assignToPosition(10)" id="pos-10" class="col-start-10 row-start-11 bg-[#1f2937] h-24 rounded-3xl flex flex-col items-center justify-center text-xs cursor-pointer border-2 border-dashed border-gray-400"></div>
+        function showCardReveal(player) {
+            const revealDiv = document.getElementById('card-reveal');
+            revealDiv.innerHTML = `
+                <div class="card-display">
+                    <div class="player-name">${player.name} ${player.nation}</div>
+                    <div class="player-rating">⭐ Overall: ${player.rating}</div>
+                    <div class="player-position">${player.position}</div>
+                    <div class="card-actions">
+                        <button class="action-btn add-to-team">➕ Meter na Equipa</button>
+                        <button class="action-btn quick-sell-card">💰 Quick Sell (${player.value} coins)</button>
+                    </div>
+                </div>
             `;
             
-            // Preencher posições já ocupadas
-            squadPlayers.forEach((player, idx) => {
-                if (idx < 11) {
-                    const slot = document.getElementById(`pos-${idx}`);
-                    if (slot) {
-                        slot.classList.remove("border-dashed", "border-gray-400");
-                        slot.classList.add("player-card", player.rarity);
-                        slot.innerHTML = `
-                            <div class="text-xs font-bold">${player.position}</div>
-                            <div class="text-4xl font-black">${player.rating}</div>
-                            <div class="text-[10px] leading-none text-center mt-1">${player.name.split(" ").pop()}</div>
-                        `;
-                    }
+            // Adicionar eventos
+            document.querySelector('.add-to-team')?.addEventListener('click', () => {
+                if (playerTeam.length >= 11) {
+                    showMessage("Equipa cheia! Remova um jogador primeiro.", 1500);
+                    return;
                 }
+                playerTeam.push({...player});
+                updateUI();
+                revealDiv.innerHTML = '';
+                showMessage(`${player.name} adicionado à equipa!`, 1500);
+                currentRevealedCard = null;
             });
             
-            // Grid de jogadores do clube
-            const clubGrid = document.getElementById("club-players-grid");
-            clubGrid.innerHTML = "";
-            
-            ownedPlayers.forEach((player, index) => {
-                const cardHTML = `
-                <div onclick="showPlayerModal(${index}, true)" class="player-card w-36 rounded-3xl p-4 cursor-pointer hover:scale-110 flex flex-col items-center ${player.rarity}">
-                    <div class="text-4xl font-black self-end">${player.rating}</div>
-                    <div class="text-xl font-semibold mt-4">${player.name}</div>
-                    <div class="text-xs">${player.position}</div>
-                    <div class="text-xs text-gray-400 mt-auto">${player.value} coins</div>
-                </div>`;
-                clubGrid.innerHTML += cardHTML;
+            document.querySelector('.quick-sell-card')?.addEventListener('click', () => {
+                playerCoins += player.value;
+                updateUI();
+                revealDiv.innerHTML = '';
+                showMessage(`Vendeu ${player.name} por ${player.value} moedas!`, 1500);
+                currentRevealedCard = null;
             });
             
-            if (ownedPlayers.length === 0) {
-                clubGrid.innerHTML = `<p class="text-gray-400 col-span-full text-center py-12">Nenhum jogador ainda. Abre packs!</p>`;
-            }
-            
-            // Highlight squad no dashboard
-            renderHighlightSquad();
-        }
-        
-        function assignToPosition(posIndex) {
-            // Abrir modal para escolher jogador do clube
-            if (ownedPlayers.length === 0) {
-                alert("Compra ou abre packs primeiro!");
-                return;
-            }
-            currentPlayerModalIndex = null;
-            showPlayerModal(null, false, posIndex);
-        }
-        
-        function autoFillSquad() {
-            if (ownedPlayers.length < 11) {
-                alert("Precisas de pelo menos 11 jogadores!");
-                return;
-            }
-            squadPlayers = [...ownedPlayers.slice(0, 23)];
-            saveProgress();
-            renderSquadScreen();
-        }
-        
-        // ==================== PLAYER MODAL ====================
-        function showPlayerModal(index, fromClub = true, targetPosition = null) {
-            currentPlayerModalIndex = index;
-            const modal = document.getElementById("player-modal");
-            modal.classList.remove("hidden");
-            
-            let player;
-            if (fromClub && index !== null) {
-                player = ownedPlayers[index];
-            } else if (targetPosition !== null) {
-                // Escolher de owned
-                player = ownedPlayers[Math.floor(Math.random() * ownedPlayers.length)];
-            } else {
-                player = ownedPlayers[index];
-            }
-            
-            const cardContainer = document.getElementById("modal-player-card");
-            cardContainer.className = `player-card w-40 h-[220px] flex flex-col items-center justify-center relative ${player.rarity}`;
-            cardContainer.innerHTML = `
-                <div class="absolute top-4 right-4 text-5xl font-black">${player.rating}</div>
-                <div class="text-xl font-bold mt-6">${player.name}</div>
-                <div class="text-sm">${player.position}</div>
-                <div class="mt-auto mb-6 text-xs bg-black/60 px-6 py-1 rounded-3xl">${player.nation}</div>
-            `;
-            
-            document.getElementById("modal-rating").textContent = player.rating;
-            document.getElementById("modal-pos").textContent = player.position;
-            document.getElementById("modal-value").innerHTML = `${player.value} <span class="text-xs text-yellow-400">coins</span>`;
-            document.getElementById("modal-nation").textContent = player.nation;
-            
-            // Guardar temporariamente para botões
-            window.tempPlayer = player;
-            window.tempIndex = index;
-            window.targetPosition = targetPosition;
-        }
-        
-        function hidePlayerModal() {
-            const modal = document.getElementById("player-modal");
-            modal.classList.add("hidden");
-        }
-        
-        function sellCurrentPlayer() {
-            if (window.tempIndex === null) return;
-            const player = ownedPlayers[window.tempIndex];
-            coins += Math.floor(player.value * 0.7);
-            ownedPlayers.splice(window.tempIndex, 1);
-            updateCoinsDisplay();
-            saveProgress();
-            hidePlayerModal();
-            renderSquadScreen();
-            alert(`💰 ${player.name} vendido por ${Math.floor(player.value * 0.7)} moedas!`);
-        }
-        
-        function addToSquadFromModal() {
-            const player = window.tempPlayer;
-            if (!player) return;
-            
-            if (window.targetPosition !== null) {
-                // Atribuir à posição específica
-                if (squadPlayers.length < 23) {
-                    squadPlayers[window.targetPosition] = player;
-                } else {
-                    squadPlayers.push(player);
-                }
-            } else {
-                // Adicionar ao squad geral
-                if (squadPlayers.length < 23) squadPlayers.push(player);
-            }
-            
-            saveProgress();
-            hidePlayerModal();
-            renderSquadScreen();
-        }
-        
-        function renderHighlightSquad() {
-            const container = document.getElementById("highlight-squad");
-            container.innerHTML = "";
-            const sample = squadPlayers.length > 0 ? squadPlayers.slice(0, 7) : ownedPlayers.slice(0, 7);
-            sample.forEach(p => {
-                const mini = document.createElement("div");
-                mini.className = `player-card text-center rounded-2xl px-3 py-2 text-xs ${p.rarity}`;
-                mini.innerHTML = `<div class="font-black">${p.rating}</div><div class="text-[10px]">${p.name.split(" ").pop()}</div>`;
-                container.append(mini);
-            });
-        }
-        
-        function renderLastPulls() {
-            const container = document.getElementById("last-pulls");
-            container.innerHTML = "";
-            const latest = ownedPlayers.slice(-4);
-            latest.forEach(p => {
-                const el = document.createElement("div");
-                el.className = `player-card rounded-2xl px-4 py-3 text-center text-xs w-28 ${p.rarity}`;
-                el.innerHTML = `${p.rating}<br><span class="text-[10px]">${p.name}</span>`;
-                container.appendChild(el);
-            });
-        }
-        
-        // ==================== MARKET / TRANSFERS ====================
-        function renderMarket() {
-            filterMarket();
-            
-            // Lista de venda
-            const sellContainer = document.getElementById("selling-list");
-            sellContainer.innerHTML = "";
-            
-            ownedPlayers.forEach((p, i) => {
-                const row = document.createElement("div");
-                row.className = "flex justify-between items-center bg-[#111827] rounded-2xl p-4";
-                row.innerHTML = `
-                    <div>
-                        <span class="font-bold">${p.name}</span><br>
-                        <span class="text-xs">${p.position} • ${p.rating}</span>
-                    </div>
-                    <div class="text-right">
-                        <div class="font-mono">${p.value} coins</div>
-                        <button onclick="sellPlayer(${i}); event.stopImmediatePropagation()" class="text-red-400 text-xs mt-2">VENDER</button>
-                    </div>
-                `;
-                sellContainer.appendChild(row);
-            });
-        }
-        
-        function filterMarket() {
-            const query = (document.getElementById("search-input").value || "").toLowerCase();
-            const container = document.getElementById("market-players");
-            container.innerHTML = "";
-            
-            const filtered = allPlayersPool.filter(p => 
-                p.name.toLowerCase().includes(query) && !ownedPlayers.some(op => op.id === p.id)
-            ).slice(0, 12);
-            
-            filtered.forEach(player => {
-                const card = document.createElement("div");
-                card.className = `player-card rounded-3xl p-5 cursor-pointer ${player.rarity}`;
-                card.innerHTML = `
-                    <div class="flex justify-between"><span class="text-3xl font-black">${player.rating}</span><span class="text-xs">${player.position}</span></div>
-                    <div class="font-semibold mt-6">${player.name}</div>
-                    <button onclick="buyPlayerFromMarket(${player.id}); event.stopImmediatePropagation()" class="text-xs mt-8 w-full ea-button py-3 rounded-3xl">COMPRAR • ${player.value}</button>
-                `;
-                container.appendChild(card);
-            });
-        }
-        
-        function buyPlayerFromMarket(id) {
-            const player = allPlayersPool.find(p => p.id === id);
-            if (coins < player.value) return alert("Moedas insuficientes");
-            
-            coins -= player.value;
-            ownedPlayers.push({...player});
-            updateCoinsDisplay();
-            saveProgress();
-            renderMarket();
-            alert(`✅ ${player.name} comprado e adicionado ao clube!`);
-        }
-        
-        function sellPlayer(index) {
-            const player = ownedPlayers[index];
-            coins += Math.floor(player.value * 0.75);
-            ownedPlayers.splice(index, 1);
-            updateCoinsDisplay();
-            saveProgress();
-            renderMarket();
-            renderSquadScreen();
-        }
-        
-        function quickSellAll() {
-            if (ownedPlayers.length === 0 || !confirm("Vender TODOS os jogadores do clube por 70% do valor?")) return;
-            
-            let total = 0;
-            ownedPlayers.forEach(p => total += Math.floor(p.value * 0.7));
-            coins += total;
-            ownedPlayers = [];
-            updateCoinsDisplay();
-            saveProgress();
-            renderSquadScreen();
-            alert(`🔥 Quick Sell feito! +${total} moedas`);
-        }
-        
-        // ==================== MATCH SIMULATION ====================
-        function renderBotsScreen() {
-            const container = document.getElementById("bot-list");
-            container.innerHTML = "";
-            
-            botTeams.forEach(bot => {
-                const div = document.createElement("div");
-                div.className = "flex justify-between items-center bg-[#1f2937] rounded-3xl px-8 py-6 cursor-pointer hover:bg-[#374151]";
-                div.innerHTML = `
-                    <div class="flex items-center gap-x-6">
-                        <span class="text-4xl">${bot.logo}</span>
-                        <div>
-                            <div class="font-semibold">${bot.name}</div>
-                            <div class="text-xs text-gray-400">OVR ${bot.ovr}</div>
-                        </div>
-                    </div>
-                    <button onclick="selectBotForMatch(${bot.id}); event.stopImmediatePropagation()" class="ea-button px-8 py-4 rounded-3xl text-sm">JOGAR</button>
-                `;
-                container.appendChild(div);
-            });
-        }
-        
-        function selectBotForMatch(botId) {
-            currentMatchBot = botTeams.find(b => b.id === botId);
-            document.getElementById("match-simulator").classList.remove("hidden");
-            document.getElementById("match-ready").classList.add("hidden");
-            
-            const myOVR = calculateTeamOVR();
-            document.getElementById("match-ovr-display").textContent = myOVR;
-            
-            document.getElementById("my-team-name").textContent = "CLUBE DO GROK";
-            document.getElementById("bot-team-name").textContent = currentMatchBot.name;
-        }
-        
-        function calculateTeamOVR() {
-            if (squadPlayers.length === 0) return 75;
-            const ratings = squadPlayers.slice(0, 11).map(p => p.rating);
-            return Math.round(ratings.reduce((a, b) => a + b, 0) / ratings.length);
-        }
-        
-        function startMatchSimulation() {
-            currentMatchLog = [];
-            const myOVR = calculateTeamOVR();
-            const botOVR = currentMatchBot.ovr;
-            
-            let myScore = 0;
-            let botScore = 0;
-            
-            // Simulação realista baseada em OVR (Poisson-like)
-            const diff = myOVR - botOVR;
-            const myGoalsProb = Math.max(0.3, 0.5 + diff / 30);
-            
-            // 90 minutos simulados em 12 "minutos" de log
-            for (let minute = 1; minute <= 12; minute++) {
-                const time = minute * 7 + Math.floor(Math.random() * 4);
-                if (Math.random() < myGoalsProb) {
-                    myScore++;
-                    currentMatchLog.push(`<span class="text-emerald-400">${time}' GOOOOOL! ${squadPlayers[Math.floor(Math.random()*squadPlayers.length)].name}</span>`);
-                } else if (Math.random() < 0.45) {
-                    botScore++;
-                    currentMatchLog.push(`<span class="text-red-400">${time}' GOOOOOL! ${currentMatchBot.name}</span>`);
-                } else {
-                    currentMatchLog.push(`<span class="text-gray-400">${time}' • Posse de bola equilibrada</span>`);
-                }
-            }
-            
-            // Resultado final com 10% de possibilidade de golo nos acréscimos
-            if (Math.random() > 0.8) myScore++;
-            if (Math.random() > 0.85) botScore++;
-            
-            document.getElementById("my-score").textContent = myScore;
-            document.getElementById("bot-score").textContent = botScore;
-            
-            const logEl = document.getElementById("match-log");
-            logEl.innerHTML = currentMatchLog.join("<br>");
-            
-            // Recompensa
-            const reward = (myScore > botScore) ? 8500 : (myScore === botScore ? 3200 : 1200);
-            coins += reward;
-            updateCoinsDisplay();
-            
+            // Auto desaparecer após 15 segundos
             setTimeout(() => {
-                alert(`🎉 Partida terminada! ${myScore} - ${botScore} • +${reward} moedas`);
-                saveProgress();
-                finishMatch();
-            }, 1800);
+                if (revealDiv.innerHTML !== '') revealDiv.innerHTML = '';
+            }, 15000);
         }
         
-        function finishMatch() {
-            document.getElementById("match-simulator").classList.add("hidden");
-            document.getElementById("match-ready").classList.remove("hidden");
-            currentMatchBot = null;
-            navigate(0); // voltar ao dashboard
-        }
-        
-        // ==================== RESET GAME ====================
-        function resetGame() {
-            if (!confirm("Reiniciar TODA a progressão?")) return;
-            localStorage.clear();
-            location.reload();
-        }
-        
-        // ==================== INIT ====================
-        function initializeGame() {
-            generatePlayers();
-            loadProgress();
-            
-            // Se não tiver jogadores, dar starter pack grátis
-            if (ownedPlayers.length === 0) {
-                ownedPlayers = allPlayersPool.slice(0, 8);
-                coins = 50000;
-                saveProgress();
+        // Simular partida contra bot
+        function simulateMatch() {
+            if (playerTeam.length < 11) {
+                showMessage("Precisa de 11 jogadores para simular uma partida!", 1500);
+                return;
             }
             
-            updateCoinsDisplay();
-            renderLastPulls();
-            renderHighlightSquad();
+            // Calcular força da equipa
+            const teamAvg = playerTeam.reduce((sum, p) => sum + p.rating, 0) / playerTeam.length;
+            const botRating = 70 + Math.random() * 20;
+            const homeAdvantage = 5;
+            const teamScore = teamAvg + (Math.random() * 15);
+            const botScore = botRating + (Math.random() * 15);
             
-            // Mostrar dashboard por defeito
-            navigate(0);
+            let goalsTeam = Math.floor(Math.max(0, teamScore / 15));
+            let goalsBot = Math.floor(Math.max(0, botScore / 15));
             
-            console.log("%c🚀 EA FC 26 Simulator carregado com sucesso! +2800 linhas • UI idêntica • Animações 3D • 220+ jogadores", "background:#00ff9d;color:#000;font-size:13px;padding:1px 4px;border-radius:2px");
-            console.log("GitHub repo pronto para push → https://github.com/grok-xai/ea-fc-26-simulator-pt");
+            // Aleatoriedade extra
+            if (Math.random() < 0.2) goalsTeam++;
+            if (Math.random() < 0.2) goalsBot++;
+            
+            const result = goalsTeam > goalsBot ? "VITÓRIA" : goalsTeam === goalsBot ? "EMPATE" : "DERROTA";
+            const coinsReward = result === "VITÓRIA" ? 300 : result === "EMPATE" ? 100 : 0;
+            if (coinsReward > 0) {
+                playerCoins += coinsReward;
+                updateUI();
+            }
+            
+            // Estatísticas e relato
+            const possessionTeam = 40 + Math.random() * 40;
+            const shotsTeam = 5 + Math.floor(Math.random() * 12);
+            const shotsBot = 3 + Math.floor(Math.random() * 10);
+            const motm = playerTeam[Math.floor(Math.random() * playerTeam.length)];
+            
+            let commentary = "";
+            if (result === "VITÓRIA") commentary = `🎉 Incrível! A equipa dominou e garantiu os 3 pontos! ${motm.name} foi eleito o melhor em campo.`;
+            else if (result === "EMPATE") commentary = `😐 Jogo equilibrado, um ponto conquistado. A equipa precisa melhorar nas finalizações.`;
+            else commentary = `😞 Derrota amarga. O adversário foi superior. É preciso treinar mais!`;
+            
+            matchResultDiv.innerHTML = `
+                <strong>🏆 RESULTADO FINAL</strong><br>
+                ⚽ ${goalsTeam} - ${goalsBot} ⚽<br>
+                <strong>${result}</strong><br>
+                📊 Posse: ${possessionTeam.toFixed(0)}% | Finalizações: ${shotsTeam} - ${shotsBot}<br>
+                🌟 Melhor em campo: ${motm.name} (Rating ${motm.rating})<br>
+                ${coinsReward > 0 ? `💰 +${coinsReward} moedas` : ''}<br>
+                <div class="commentary">📝 ${commentary}</div>
+            `;
+            
+            showMessage(`Partida finalizada: ${goalsTeam} - ${goalsBot}`, 2000);
         }
         
-        // BOOT
-        window.onload = initializeGame;
+        // Quick Sell da última carta revelada ou venda em massa (apenas último)
+        quickSellBtn.addEventListener('click', () => {
+            if (currentRevealedCard) {
+                playerCoins += currentRevealedCard.value;
+                updateUI();
+                document.getElementById('card-reveal').innerHTML = '';
+                showMessage(`Quick Sell: ${currentRevealedCard.name} vendido por ${currentRevealedCard.value} coins!`, 1500);
+                currentRevealedCard = null;
+            } else {
+                showMessage("Nenhuma carta aberta para vender rapidamente!", 1500);
+            }
+        });
+        
+        simulateMatchBtn.addEventListener('click', simulateMatch);
+        
+        // Eventos dos packs
+        document.querySelectorAll('.pack-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const packType = btn.dataset.pack;
+                openPack(packType);
+            });
+        });
+        
+        // Inicializar
+        init3D();
+        updateUI();
+        
+        // Adicionar alguns jogadores de exemplo à equipa para teste
+        // (opcional: descomentar para demo)
+        // playerTeam.push(playersDB[0], playersDB[5], playersDB[10]);
+        // updateUI();
+        
+        showMessage("Bem-vindo ao EA FC Pack Opener! Abre packs, constrói a tua equipa e simula partidas!", 4000);
     </script>
 </body>
 </html>
