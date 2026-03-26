@@ -3,471 +3,921 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Liga de Apostas Pro</title>
+    <title>BetAmigos • Premium Betting</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
-        /* Estilo Casino / Betano */
         :root {
-            --bg-dark: #0b0e11;
-            --bg-card: #1a1f24;
-            --bg-input: #2a3138;
-            --primary: #ff6a00; /* Laranja Betano */
-            --primary-hover: #e65c00;
-            --text-main: #ffffff;
-            --text-muted: #a0a5aa;
-            --success: #00c853;
-            --danger: #d50000;
+            --sidebar-width: 280px;
+            --bg-deep: #0a0c14;
+            --bg-surface: #12151f;
+            --bg-card: #1a1f2b;
+            --accent: #ff6a00;
+            --accent-hover: #ff8533;
+            --accent-glow: rgba(255, 106, 0, 0.4);
+            --text-primary: #ffffff;
+            --text-secondary: #a3b4d0;
+            --border: #2a3245;
+            --success: #00ff9d;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        * { 
+            box-sizing: border-box; 
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); 
         }
 
         body {
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-dark);
-            color: var(--text-main);
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0a0c14, #12151f);
+            color: var(--text-primary);
             margin: 0;
-            padding: 20px;
-        }
-
-        h1, h2, h3, h4 { color: var(--text-main); margin-top: 0; }
-        h1 { text-align: center; color: var(--primary); font-size: 2.5em; text-transform: uppercase; letter-spacing: 2px; }
-        
-        .container {
-            max-width: 950px;
-            margin: auto;
-        }
-
-        .card {
-            background: var(--bg-card);
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.4);
-            margin-bottom: 20px;
-            border-top: 4px solid var(--primary);
-        }
-
-        .form-group {
             display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ==================== SIDEBAR ==================== */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--bg-surface);
+            border-right: 2px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.3);
+            z-index: 100;
+        }
+
+        .logo-area {
+            padding: 32px 24px;
+            text-align: center;
+            background: linear-gradient(90deg, var(--accent), #ff9a33);
+            color: white;
+            font-weight: 900;
+            font-size: 2rem;
+            letter-spacing: -2px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 4px 15px var(--accent-glow);
+        }
+
+        .logo-area::after {
+            content: "•";
+            color: #fff;
+            animation: pulse 2s infinite;
+        }
+
+        .nav-menu {
+            padding: 24px 16px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .nav-item {
+            display: flex;
             align-items: center;
-            margin-bottom: 15px;
-        }
-
-        input[type="text"], input[type="number"], select {
-            padding: 12px;
-            background-color: var(--bg-input);
-            border: 1px solid #3a424a;
-            color: white;
-            border-radius: 6px;
-            font-size: 14px;
-        }
-
-        input[type="file"] {
-            color: var(--text-muted);
-            font-size: 12px;
-            max-width: 200px;
-        }
-
-        button {
-            background-color: var(--primary);
-            color: white;
+            gap: 14px;
+            padding: 16px 20px;
+            border-radius: 14px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 1.05rem;
+            font-weight: 600;
+            background: transparent;
             border: none;
-            padding: 12px 20px;
             cursor: pointer;
-            font-weight: bold;
-            border-radius: 6px;
-            text-transform: uppercase;
-            transition: background 0.3s;
         }
 
-        button:hover { background-color: var(--primary-hover); }
-
-        .game-header {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 20px;
-            font-size: 1.5em;
-            font-weight: bold;
-            background: #111418;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-        }
-
-        .game-header img {
-            width: 50px;
-            height: 50px;
-            object-fit: cover;
-            border-radius: 50%;
-            background: white;
-            padding: 2px;
-        }
-
-        .bet-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: var(--bg-input);
-            padding: 12px;
-            border-radius: 6px;
-            margin-bottom: 10px;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .bet-row strong { color: var(--primary); font-size: 1.1em; width: 60px; }
-
-        .stat-bet-zone {
-            border-left: 3px solid var(--primary);
-            padding-left: 10px;
-            margin-left: 10px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
+        .nav-item:hover, .nav-item.active {
             background: var(--bg-card);
-            border-radius: 8px;
+            color: white;
+            box-shadow: var(--shadow);
+            transform: translateX(6px);
+        }
+
+        .nav-item span { font-size: 1.4rem; }
+
+        /* ==================== MAIN CONTENT ==================== */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            flex-grow: 1;
+            padding: 40px 50px;
+            max-width: 1400px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.4rem;
+            font-weight: 800;
+            margin: 0;
+            background: linear-gradient(90deg, #fff, var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .section { display: none; }
+        .section.active { display: block; animation: fadeIn 0.4s ease forwards; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        /* ==================== CARDS & MATCHES ==================== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 24px;
+            margin-bottom: 50px;
+        }
+
+        .mini-card {
+            background: var(--bg-card);
+            padding: 24px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        .mini-card small {
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            opacity: 0.7;
+        }
+
+        .game-card {
+            background: var(--bg-card);
+            border-radius: 24px;
+            padding: 32px;
+            margin-bottom: 32px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            position: relative;
             overflow: hidden;
         }
 
-        th, td {
-            padding: 12px;
+        .game-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 6px;
+            background: linear-gradient(90deg, var(--accent), transparent);
+        }
+
+        .match-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 28px;
+        }
+
+        .team {
             text-align: center;
-            border-bottom: 1px solid var(--bg-input);
+            flex: 1;
+            max-width: 220px;
         }
 
-        th { background-color: var(--bg-input); color: var(--primary); text-transform: uppercase; }
-        
-        .export-btn { background-color: #4caf50; width: 100%; margin-bottom: 20px; font-size: 1.1em; }
-        .export-btn:hover { background-color: #388e3c; }
+        .team img {
+            width: 96px;
+            height: 96px;
+            border-radius: 50%;
+            border: 5px solid #fff;
+            box-shadow: 0 0 25px var(--accent-glow);
+            object-fit: cover;
+            background: #fff;
+            margin-bottom: 12px;
+        }
 
-        .badge {
-            background: var(--primary);
+        .team-name {
+            font-size: 1.35rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .vs-badge {
+            background: linear-gradient(45deg, #ff6a00, #ff9a33);
             color: white;
-            padding: 3px 8px;
-            border-radius: 4px;
-            font-size: 0.8em;
-            margin-left: 10px;
+            font-weight: 900;
+            font-size: 1.4rem;
+            padding: 12px 32px;
+            border-radius: 9999px;
+            box-shadow: 0 0 25px var(--accent-glow);
+            letter-spacing: 2px;
         }
+
+        .result-badge {
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--success);
+        }
+
+        /* Bets Grid */
+        .bets-container {
+            margin-top: 32px;
+            border-top: 2px solid var(--border);
+            padding-top: 28px;
+        }
+
+        .bets-title {
+            font-size: 1.1rem;
+            margin-bottom: 18px;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .bets-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 18px;
+        }
+
+        .player-bet-box {
+            background: var(--bg-surface);
+            border-radius: 16px;
+            padding: 20px;
+            border: 2px solid var(--border);
+        }
+
+        .player-bet-box .player-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .player-bet-box.confirmed {
+            border-color: var(--success);
+        }
+
+        /* Form styling */
+        .bet-form {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .segmented {
+            display: flex;
+            background: var(--bg-deep);
+            border-radius: 12px;
+            padding: 4px;
+        }
+
+        .segmented button {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            background: transparent;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        .segmented button.active {
+            background: var(--accent);
+            color: white;
+            box-shadow: 0 4px 15px var(--accent-glow);
+        }
+
+        input, select {
+            background: var(--bg-deep);
+            border: 2px solid var(--border);
+            color: white;
+            padding: 14px 16px;
+            border-radius: 12px;
+            font-size: 1rem;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--accent);
+            outline: none;
+            box-shadow: 0 0 0 4px var(--accent-glow);
+        }
+
+        button.primary {
+            background: linear-gradient(90deg, var(--accent), #ff9a33);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 14px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            box-shadow: 0 8px 20px var(--accent-glow);
+        }
+
+        button.primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px var(--accent-glow);
+        }
+
+        /* Table & Leaderboard */
+        .full-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--bg-card);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .full-table th {
+            background: #0f1320;
+            padding: 18px 20px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .full-table td {
+            padding: 18px 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        .tag {
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        /* ADMIN */
+        .admin-card {
+            background: var(--bg-card);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: var(--shadow);
+        }
+
+        /* MISC */
+        .status-open { color: var(--accent); }
+        .status-closed { color: var(--success); }
     </style>
 </head>
 <body>
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="logo-area">BETAMIGOS</div>
+        
+        <nav class="nav-menu">
+            <button class="nav-item active" data-section="games">
+                <span>⚽</span>
+                <span>Jogos Ativos</span>
+            </button>
+            <button class="nav-item" data-section="leaderboard">
+                <span>🏆</span>
+                <span>Ranking</span>
+            </button>
+            <button class="nav-item" data-section="admin">
+                <span>⚙️</span>
+                <span>Administração</span>
+            </button>
+            <button class="nav-item" style="color:#ff4444; margin-top:auto;" onclick="clearAllData()">
+                <span>🗑️</span>
+                <span>Limpar Tudo</span>
+            </button>
+        </nav>
 
-<div class="container">
-    <h1>🔥 LIGA DE APOSTAS PRO 🔥</h1>
-    
-    <div class="card" id="admin-section">
-        <h2>Criar Novo Evento</h2>
-        <div class="form-group">
-            <input type="text" id="homeTeam" placeholder="Equipa Casa" required>
-            <input type="file" id="homeFile" accept="image/*">
+        <div style="padding: 24px 20px;">
+            <button onclick="exportPDF()" 
+                    style="background: linear-gradient(90deg, #2a3245, #3a4459); color:white; border:none; width:100%; padding:18px; border-radius:16px; font-size:1.1rem; font-weight:700; cursor:pointer; box-shadow:0 8px 20px rgba(0,0,0,0.3);">
+                📄 Exportar Relatório PDF
+            </button>
+            <small style="display:block; text-align:center; margin-top:12px; color:var(--text-secondary);">
+                PDF super organizado e bonito
+            </small>
         </div>
-        <div class="form-group">
-            <input type="text" id="awayTeam" placeholder="Equipa Fora" required>
-            <input type="file" id="awayFile" accept="image/*">
-        </div>
-        <div class="form-group" style="background: var(--bg-input); padding: 10px; border-radius: 6px;">
-            <label style="color: var(--text-muted);">Estatística do Jogo (Opcional para os jogadores):</label>
-            <select id="statType">
-                <option value="Remates à Baliza">Remates à Baliza</option>
-                <option value="Remates Totais">Remates Totais</option>
-                <option value="Passes Totais">Passes Totais</option>
-                <option value="Cantos">Cantos</option>
-            </select>
-            <button onclick="addGame()" style="margin-left: auto;">Criar Jogo</button>
-        </div>
-    </div>
+    </aside>
 
-    <button class="export-btn" onclick="exportPDF()">📄 EXPORTAR RESULTADOS (PDF)</button>
+    <!-- MAIN -->
+    <main class="main-content">
+        <!-- GAMES SECTION -->
+        <section id="games" class="section active">
+            <div class="header">
+                <h1>Próximos Confrontos</h1>
+                <div style="background:#1a1f2b; padding:8px 20px; border-radius:9999px; font-size:0.95rem; display:flex; align-items:center; gap:8px;">
+                    <span style="color:var(--success);">●</span> 
+                    <span id="live-count">0 jogos abertos</span>
+                </div>
+            </div>
+            <div id="games-list"></div>
+        </section>
 
-    <div id="pdf-content">
-        <div class="card">
-            <h2 style="color: var(--primary); text-align: center;">🏆 Classificação Geral</h2>
-            <table>
+        <!-- LEADERBOARD SECTION -->
+        <section id="leaderboard" class="section">
+            <div class="header">
+                <h1>Tabela de Classificação</h1>
+            </div>
+            <div class="stats-grid" id="ranking-cards"></div>
+            
+            <h2 style="margin-top:50px; margin-bottom:20px;">Detalhe Completo</h2>
+            <table class="full-table" id="full-table">
                 <thead>
                     <tr>
-                        <th>#</th>
                         <th>Jogador</th>
-                        <th>Pontos</th>
+                        <th>Pontos Totais</th>
+                        <th>Apostas Válidas</th>
                     </tr>
                 </thead>
-                <tbody id="leaderboard-body"></tbody>
+                <tbody id="full-table-body"></tbody>
             </table>
-        </div>
+        </section>
 
-        <h2 style="margin-top: 30px; border-bottom: 2px solid var(--primary); padding-bottom: 10px;">Cartazes de Jogos</h2>
-        <div id="games-list"></div>
-    </div>
-</div>
+        <!-- ADMIN SECTION -->
+        <section id="admin" class="section">
+            <div class="header">
+                <h1>Criar Novo Jogo de Apostas</h1>
+            </div>
+            
+            <div class="admin-card">
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:30px;">
+                    <!-- Equipa Casa -->
+                    <div>
+                        <label style="font-weight:700; display:block; margin-bottom:8px;">Equipa da Casa</label>
+                        <input type="text" id="hName" placeholder="Ex: FC Porto" style="width:100%; margin-bottom:12px;">
+                        <label style="font-weight:700; display:block; margin-bottom:8px;">Logótipo da Casa</label>
+                        <input type="file" id="hImg" accept="image/*">
+                    </div>
+                    
+                    <!-- Equipa Fora -->
+                    <div>
+                        <label style="font-weight:700; display:block; margin-bottom:8px;">Equipa de Fora</label>
+                        <input type="text" id="vName" placeholder="Ex: SL Benfica" style="width:100%; margin-bottom:12px;">
+                        <label style="font-weight:700; display:block; margin-bottom:8px;">Logótipo de Fora</label>
+                        <input type="file" id="vImg" accept="image/*">
+                    </div>
+                </div>
+
+                <div style="margin-top:30px;">
+                    <label style="font-weight:700; display:block; margin-bottom:8px;">Estatística Especial (12 pontos)</label>
+                    <select id="statType" style="width:100%;">
+                        <option value="Remates à Baliza">Remates à Baliza</option>
+                        <option value="Chutes à Baliza">Chutes à Baliza</option>
+                        <option value="Cantos">Cantos</option>
+                        <option value="Posse de Bola (%)">Posse de Bola (%)</option>
+                        <option value="Passes Certos">Passes Certos</option>
+                    </select>
+                </div>
+
+                <button class="primary" onclick="addGame()" style="margin-top:40px; width:100%; font-size:1.3rem;">
+                    ✅ PUBLICAR NOVO JOGO
+                </button>
+            </div>
+        </section>
+    </main>
 
 <script>
-    const players = ['Sá', 'Silva', 'Pedro', 'João'];
-    let games = JSON.parse(localStorage.getItem('betano_games')) || [];
+    // ==================== CONFIG ====================
+    const players = ['Sá', 'Silva', 'Pedro'];
+    let games = JSON.parse(localStorage.getItem('betAmigos_db')) || [];
 
-    function saveData() {
-        localStorage.setItem('betano_games', JSON.stringify(games));
-        render();
-    }
-
-    // Função para ler imagem e encolher (para não esgotar a memória do navegador)
-    function processImage(file, callback) {
-        if (!file) return callback('https://via.placeholder.com/50?text=VS');
-        const reader = new FileReader();
-        reader.onload = function(event) {
-            const img = new Image();
-            img.onload = function() {
-                const canvas = document.createElement('canvas');
-                canvas.width = 100; canvas.height = 100; // Tamanho fixo
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(img, 0, 0, 100, 100);
-                callback(canvas.toDataURL('image/jpeg', 0.8));
-            }
-            img.src = event.target.result;
-        }
-        reader.readAsDataURL(file);
-    }
-
-    // Adicionar Jogo
-    function addGame() {
-        const homeTeam = document.getElementById('homeTeam').value;
-        const awayTeam = document.getElementById('awayTeam').value;
-        const homeFile = document.getElementById('homeFile').files[0];
-        const awayFile = document.getElementById('awayFile').files[0];
-        const statType = document.getElementById('statType').value;
-
-        if (!homeTeam || !awayTeam) return alert("Faltam os nomes das equipas!");
-
-        processImage(homeFile, (homeLogoBase64) => {
-            processImage(awayFile, (awayLogoBase64) => {
-                const newGame = {
-                    id: Date.now(),
-                    homeTeam, awayTeam,
-                    homeLogo: homeLogoBase64, awayLogo: awayLogoBase64,
-                    statType: statType,
-                    status: 'pending',
-                    homeScore: null, awayScore: null, actualStat: null,
-                    bets: {}
-                };
-                games.push(newGame);
-                document.getElementById('homeTeam').value = '';
-                document.getElementById('awayTeam').value = '';
-                document.getElementById('homeFile').value = '';
-                document.getElementById('awayFile').value = '';
-                saveData();
-            });
+    // ==================== UTILITIES ====================
+    function processImage(file) {
+        return new Promise(resolve => {
+            if (!file) return resolve('https://via.placeholder.com/96?text=LOGO');
+            const reader = new FileReader();
+            reader.onload = e => resolve(e.target.result);
+            reader.readAsDataURL(file);
         });
     }
 
-    // Registar Aposta
-    function placeBet(gameId, player) {
-        const type = document.getElementById(`bet-type-${gameId}-${player}`).value;
-        const gameIndex = games.findIndex(g => g.id === gameId);
-        const statBetInput = document.getElementById(`bet-stat-${gameId}-${player}`).value;
-        
-        let betData = { type, statGuess: statBetInput ? parseInt(statBetInput) : null };
-        
-        if (type === 'exact') {
-            const h = document.getElementById(`bet-home-${gameId}-${player}`).value;
-            const a = document.getElementById(`bet-away-${gameId}-${player}`).value;
-            if (h === '' || a === '') return alert("Preenche os golos!");
-            betData.home = parseInt(h);
-            betData.away = parseInt(a);
-        } else {
-            betData.outcome = document.getElementById(`bet-outcome-${gameId}-${player}`).value;
+    function getRealOutcome(h, v) {
+        if (h > v) return 'h';
+        if (v > h) return 'v';
+        return 'draw';
+    }
+
+    function calculatePoints(bet, results) {
+        if (!bet || !results) return 0;
+        const realOut = getRealOutcome(results.h, results.v);
+
+        // Se apostou na estatística (modo risco)
+        if (bet.stat !== null && bet.stat !== undefined) {
+            return (bet.stat === results.s) ? 12 : 0;
         }
 
-        games[gameIndex].bets[player] = betData;
-        saveData();
+        // Modo normal
+        if (bet.type === 'score') {
+            return (bet.h === results.h && bet.v === results.v) ? 6 : 0;
+        }
+        if (bet.type === 'win') {
+            return (bet.win === realOut) ? 3 : 0;
+        }
+        return 0;
     }
 
-    // Terminar Jogo e Inserir Resultado Real
-    function finishGame(gameId) {
-        const h = document.getElementById(`res-home-${gameId}`).value;
-        const a = document.getElementById(`res-away-${gameId}`).value;
-        const s = document.getElementById(`res-stat-${gameId}`).value;
-        
-        if (h === '' || a === '' || s === '') return alert("Preenche o resultado final e a estatística real!");
+    // ==================== RENDER ====================
+    function renderGames() {
+        const container = document.getElementById('games-list');
+        container.innerHTML = '';
 
-        const gameIndex = games.findIndex(g => g.id === gameId);
-        games[gameIndex].homeScore = parseInt(h);
-        games[gameIndex].awayScore = parseInt(a);
-        games[gameIndex].actualStat = parseInt(s);
-        games[gameIndex].status = 'finished';
-        saveData();
-    }
-
-    // Lógica de Pontos
-    function calculatePoints() {
-        let scores = { 'Sá': 0, 'Silva': 0, 'Pedro': 0, 'João': 0 };
-
-        games.filter(g => g.status === 'finished').forEach(game => {
-            const actualHome = game.homeScore;
-            const actualAway = game.awayScore;
-            const actualStat = game.actualStat;
-            
-            let actualOutcome = 'draw';
-            if (actualHome > actualAway) actualOutcome = 'home';
-            if (actualHome < actualAway) actualOutcome = 'away';
-
-            players.forEach(player => {
-                const bet = game.bets[player];
-                if (bet) {
-                    let earnedPoints = 0;
-
-                    // Avaliar se apostou na estatística
-                    if (bet.statGuess !== null) {
-                        if (bet.statGuess === actualStat) {
-                            earnedPoints = 12; // Acertou a estatística = 12 pontos
-                        } else {
-                            earnedPoints = 0; // Errou a estatística = Perde TUDO (0 pontos)
-                        }
-                    } else {
-                        // Se não apostou na estatística, regras normais
-                        if (bet.type === 'exact') {
-                            if (bet.home === actualHome && bet.away === actualAway) earnedPoints = 6;
-                        } else if (bet.type === 'outcome') {
-                            if (bet.outcome === actualOutcome) earnedPoints = 3;
-                        }
-                    }
-                    scores[player] += earnedPoints;
-                }
-            });
-        });
-        return scores;
-    }
-
-    function toggleBetInputs(gameId, player) {
-        const type = document.getElementById(`bet-type-${gameId}-${player}`).value;
-        document.getElementById(`exact-inputs-${gameId}-${player}`).style.display = type === 'exact' ? 'inline-block' : 'none';
-        document.getElementById(`outcome-inputs-${gameId}-${player}`).style.display = type === 'outcome' ? 'inline-block' : 'none';
-    }
-
-    function render() {
-        const gamesList = document.getElementById('games-list');
-        gamesList.innerHTML = '';
+        const openCount = games.filter(g => g.status === 'open').length;
+        document.getElementById('live-count').innerHTML = `
+            <span style="color:var(--success);">●</span> 
+            ${openCount} jogo${openCount !== 1 ? 's' : ''} abertos
+        `;
 
         games.slice().reverse().forEach(game => {
+            const isClosed = game.status === 'closed';
             let html = `
-                <div class="card">
-                    <div class="game-header">
-                        <img src="${game.homeLogo}"> <span>${game.homeTeam}</span>
-                        <span style="color:var(--primary);">VS</span>
-                        <span>${game.awayTeam}</span> <img src="${game.awayLogo}">
+                <div class="game-card">
+                    <div class="match-header">
+                        <div class="team">
+                            <img src="${game.hLogo}" alt="${game.hName}">
+                            <p class="team-name">${game.hName}</p>
+                        </div>
+                        <div style="text-align:center;">
+                            ${isClosed 
+                                ? `<div class="result-badge">${game.results.h} - ${game.results.v}</div>` 
+                                : `<div class="vs-badge">VS</div>`
+                            }
+                            ${isClosed ? `<small style="display:block; margin-top:8px; color:var(--text-secondary);">Estatística: ${game.results.s} ${game.statType}</small>` : ''}
+                        </div>
+                        <div class="team">
+                            <img src="${game.vLogo}" alt="${game.vName}">
+                            <p class="team-name">${game.vName}</p>
+                        </div>
                     </div>
-                    <div style="text-align:center; color:var(--text-muted); margin-bottom: 15px;">
-                        Estatística do Jogo: <strong>${game.statType}</strong>
+
+                    <div class="bets-container">
+                        <div class="bets-title">
+                            <span>👥</span> 
+                            APOSTAS DOS AMIGOS
+                        </div>
+                        <div class="bets-grid" id="bets-grid-${game.id}"></div>
                     </div>
             `;
 
-            if (game.status === 'pending') {
-                players.forEach(player => {
-                    const bet = game.bets[player];
-                    if (!bet) {
-                        html += `
-                            <div class="bet-row">
-                                <strong>${player}</strong> 
-                                <div>
-                                    <select id="bet-type-${game.id}-${player}" onchange="toggleBetInputs(${game.id}, '${player}')">
-                                        <option value="outcome">Só Vencedor (3pts)</option>
-                                        <option value="exact">Placar Exato (6pts)</option>
-                                    </select>
-                                    
-                                    <span id="outcome-inputs-${game.id}-${player}">
-                                        <select id="bet-outcome-${game.id}-${player}">
-                                            <option value="home">${game.homeTeam}</option>
-                                            <option value="draw">Empate</option>
-                                            <option value="away">${game.awayTeam}</option>
-                                        </select>
-                                    </span>
-
-                                    <span id="exact-inputs-${game.id}-${player}" style="display:none;">
-                                        <input type="number" id="bet-home-${game.id}-${player}" style="width:50px;" placeholder="C"> - 
-                                        <input type="number" id="bet-away-${game.id}-${player}" style="width:50px;" placeholder="F">
-                                    </span>
-                                </div>
-                                <div class="stat-bet-zone">
-                                    <input type="number" id="bet-stat-${game.id}-${player}" style="width:70px;" placeholder="Palpite ${game.statType}">
-                                    <small style="color:var(--text-muted); display:block;">(Opcional) 12pts ou 0pts</small>
-                                </div>
-                                <button onclick="placeBet(${game.id}, '${player}')">Apostar</button>
-                            </div>
-                        `;
-                    } else {
-                        const betStr = bet.type === 'exact' ? `${bet.home}-${bet.away}` : (bet.outcome === 'home' ? game.homeTeam : (bet.outcome === 'away' ? game.awayTeam : 'Empate'));
-                        const statStr = bet.statGuess !== null ? `<span class="badge">Apostou Estatística: ${bet.statGuess}</span>` : '';
-                        html += `<div class="bet-row"><strong>${player}</strong> <span style="color:var(--success);">✔ Aposta Registada (${betStr}) ${statStr}</span></div>`;
-                    }
-                });
-
+            // ADMIN: fechar jogo
+            if (!isClosed) {
                 html += `
-                    <div style="margin-top:20px; padding-top:15px; border-top:1px solid #333;">
-                        <h4 style="color:var(--danger);">Fechar Jogo (Admin)</h4>
-                        <div class="form-group">
-                            <input type="number" id="res-home-${game.id}" placeholder="Golos Casa" style="width:90px;">
-                            <input type="number" id="res-away-${game.id}" placeholder="Golos Fora" style="width:90px;">
-                            <input type="number" id="res-stat-${game.id}" placeholder="Real: ${game.statType}" style="width:150px;">
-                            <button style="background:var(--danger);" onclick="finishGame(${game.id})">Terminar Jogo</button>
+                    <div style="margin-top:28px; padding:20px; background:#0f1320; border-radius:16px;">
+                        <strong style="color:var(--accent);">🔒 ADMIN — Fechar Jogo</strong>
+                        <div style="display:flex; gap:16px; margin-top:14px; flex-wrap:wrap;">
+                            <input type="number" id="resH-${game.id}" placeholder="Golos Casa" style="width:110px;">
+                            <input type="number" id="resV-${game.id}" placeholder="Golos Fora" style="width:110px;">
+                            <input type="number" id="resS-${game.id}" placeholder="${game.statType}" style="width:160px;">
+                            <button onclick="finishGame(${game.id})" class="primary" style="width:auto; padding:0 32px;">FECHAR JOGO</button>
                         </div>
                     </div>
                 `;
-            } else {
-                html += `
-                    <div style="text-align:center; font-size:2em; color:var(--success); margin: 15px 0;">
-                        RESULTADO: ${game.homeScore} - ${game.awayScore}
-                    </div>
-                    <div style="text-align:center; margin-bottom: 15px; color:var(--primary);">
-                        Real (${game.statType}): ${game.actualStat}
-                    </div>
-                `;
-                players.forEach(player => {
-                    const bet = game.bets[player];
-                    if (bet) {
-                        const betStr = bet.type === 'exact' ? `${bet.home}-${bet.away}` : (bet.outcome === 'home' ? game.homeTeam : (bet.outcome === 'away' ? game.awayTeam : 'Empate'));
-                        const statStr = bet.statGuess !== null ? `<span class="badge">Estatística: ${bet.statGuess}</span>` : '';
-                        html += `<div class="bet-row"><strong>${player}</strong> <span>${betStr} ${statStr}</span></div>`;
-                    } else {
-                        html += `<div class="bet-row"><strong>${player}</strong> <span style="color:var(--text-muted);">Não apostou.</span></div>`;
-                    }
-                });
             }
 
             html += `</div>`;
-            gamesList.innerHTML += html;
+            container.innerHTML += html;
+
+            // Renderizar apostas de cada jogador
+            renderPlayerBets(game);
+        });
+    }
+
+    function renderPlayerBets(game) {
+        const grid = document.getElementById(`bets-grid-${game.id}`);
+        if (!grid) return;
+        grid.innerHTML = '';
+
+        players.forEach(player => {
+            const bet = game.bets[player];
+            const box = document.createElement('div');
+            box.className = `player-bet-box ${bet ? 'confirmed' : ''}`;
+
+            if (bet) {
+                // Já apostou
+                let betText = '';
+                if (bet.stat !== null) {
+                    betText = `Estatística: ${bet.stat} <span class="tag" style="background:#00ff9d;color:#000;">12 PTS</span>`;
+                } else if (bet.type === 'score') {
+                    betText = `Placar: ${bet.h}–${bet.v} <span class="tag" style="background:#ff6a00;">6 PTS</span>`;
+                } else {
+                    const team = bet.win === 'h' ? game.hName : bet.win === 'v' ? game.vName : 'Empate';
+                    betText = `Vencedor: ${team} <span class="tag" style="background:#ff6a00;">3 PTS</span>`;
+                }
+
+                box.innerHTML = `
+                    <div class="player-header">
+                        👤 ${player}
+                        <span style="margin-left:auto; color:var(--success); font-size:0.9rem;">✓ Confirmado</span>
+                    </div>
+                    <p style="margin:0; font-size:1rem;">${betText}</p>
+                `;
+            } else if (game.status === 'open') {
+                // Formulário de aposta
+                box.innerHTML = `
+                    <div class="player-header">👤 ${player}</div>
+                    <div class="bet-form">
+                        <div class="segmented" id="type-segment-${game.id}-${player}">
+                            <button onclick="setBetType('${game.id}', '${player}', 'win')" class="active">Vencedor (3pts)</button>
+                            <button onclick="setBetType('${game.id}', '${player}', 'score')">Placar Exato (6pts)</button>
+                        </div>
+
+                        <div id="win-options-${game.id}-${player}">
+                            <select id="win-select-${game.id}-${player}" style="width:100%;">
+                                <option value="h">${game.hName}</option>
+                                <option value="draw">Empate</option>
+                                <option value="v">${game.vName}</option>
+                            </select>
+                        </div>
+
+                        <div id="score-options-${game.id}-${player}" style="display:none; gap:12px; display:flex;">
+                            <input type="number" id="h-score-${game.id}-${player}" placeholder="${game.hName}" style="width:50%;">
+                            <input type="number" id="v-score-${game.id}-${player}" placeholder="${game.vName}" style="width:50%;">
+                        </div>
+
+                        <div style="margin-top:8px;">
+                            <label style="font-size:0.85rem; color:var(--text-secondary);">Estatística Especial (12pts - arriscado)</label>
+                            <input type="number" id="stat-${game.id}-${player}" placeholder="${game.statType}" style="width:100%;">
+                        </div>
+
+                        <button onclick="placeBet('${game.id}', '${player}')" class="primary" style="margin-top:10px;">CONFIRMAR APOSTA</button>
+                    </div>
+                `;
+            } else {
+                box.innerHTML = `<div class="player-header">👤 ${player}</div><p style="color:#666; text-align:center;">Sem aposta</p>`;
+            }
+
+            grid.appendChild(box);
+        });
+    }
+
+    window.setBetType = function(gId, player, type) {
+        const winDiv = document.getElementById(`win-options-${gId}-${player}`);
+        const scoreDiv = document.getElementById(`score-options-${gId}-${player}`);
+        
+        const buttons = document.querySelectorAll(`#type-segment-${gId}-${player} button`);
+        buttons.forEach(b => b.classList.remove('active'));
+        if (type === 'win') {
+            winDiv.style.display = 'block';
+            scoreDiv.style.display = 'none';
+            buttons[0].classList.add('active');
+        } else {
+            winDiv.style.display = 'none';
+            scoreDiv.style.display = 'flex';
+            buttons[1].classList.add('active');
+        }
+    };
+
+    // ==================== ACTIONS ====================
+    window.addGame = async function() {
+        const hName = document.getElementById('hName').value.trim();
+        const vName = document.getElementById('vName').value.trim();
+        if (!hName || !vName) return alert('Preenche os nomes das equipas!');
+
+        const hLogo = await processImage(document.getElementById('hImg').files[0]);
+        const vLogo = await processImage(document.getElementById('vImg').files[0]);
+
+        games.push({
+            id: Date.now(),
+            hName,
+            vName,
+            hLogo,
+            vLogo,
+            statType: document.getElementById('statType').value,
+            status: 'open',
+            results: null,
+            bets: {}
         });
 
-        // Atualizar Tabela
-        const scores = calculatePoints();
-        const sortedPlayers = players.map(p => ({ name: p, points: scores[p] })).sort((a, b) => b.points - a.points);
+        localStorage.setItem('betAmigos_db', JSON.stringify(games));
+        renderGames();
+        showSection('games');
         
-        const tbody = document.getElementById('leaderboard-body');
-        tbody.innerHTML = '';
-        sortedPlayers.forEach((p, index) => {
-            let medal = index === 0 ? '🥇' : (index === 1 ? '🥈' : (index === 2 ? '🥉' : ''));
-            tbody.innerHTML += `
+        // Limpar formulário
+        document.getElementById('hName').value = '';
+        document.getElementById('vName').value = '';
+        document.getElementById('hImg').value = '';
+        document.getElementById('vImg').value = '';
+    };
+
+    window.placeBet = function(gId, player) {
+        const game = games.find(g => g.id == gId);
+        if (!game) return;
+
+        // Verificar se apostou estatística
+        const statVal = document.getElementById(`stat-${gId}-${player}`).value.trim();
+        let betObj = {};
+
+        if (statVal !== '') {
+            betObj.stat = parseInt(statVal);
+        } else {
+            // Tipo normal
+            const typeBtns = document.querySelectorAll(`#type-segment-${gId}-${player} button`);
+            const isScore = typeBtns[1].classList.contains('active');
+            
+            if (isScore) {
+                betObj.type = 'score';
+                betObj.h = parseInt(document.getElementById(`h-score-${gId}-${player}`).value);
+                betObj.v = parseInt(document.getElementById(`v-score-${gId}-${player}`).value);
+                if (isNaN(betObj.h) || isNaN(betObj.v)) return alert('Preenche o placar!');
+            } else {
+                betObj.type = 'win';
+                betObj.win = document.getElementById(`win-select-${gId}-${player}`).value;
+            }
+        }
+
+        game.bets[player] = betObj;
+        localStorage.setItem('betAmigos_db', JSON.stringify(games));
+        renderGames();
+    };
+
+    window.finishGame = function(gId) {
+        const game = games.find(g => g.id == gId);
+        if (!game) return;
+
+        const h = parseInt(document.getElementById(`resH-${gId}`).value);
+        const v = parseInt(document.getElementById(`resV-${gId}`).value);
+        const s = parseInt(document.getElementById(`resS-${gId}`).value);
+
+        if (isNaN(h) || isNaN(v) || isNaN(s)) return alert('Preenche todos os resultados!');
+
+        game.results = { h, v, s };
+        game.status = 'closed';
+        localStorage.setItem('betAmigos_db', JSON.stringify(games));
+        renderGames();
+        updateLeaderboard();
+    };
+
+    function updateLeaderboard() {
+        let totalPoints = {};
+        players.forEach(p => totalPoints[p] = 0);
+
+        games.filter(g => g.status === 'closed').forEach(game => {
+            players.forEach(p => {
+                const bet = game.bets[p];
+                if (bet) {
+                    totalPoints[p] += calculatePoints(bet, game.results);
+                }
+            });
+        });
+
+        // Ranking cards
+        const sorted = Object.entries(totalPoints).sort((a, b) => b[1] - a[1]);
+        const rankHTML = sorted.map(([player, pts], i) => `
+            <div class="mini-card">
+                <small>${i+1}º LUGAR</small>
+                <h3 style="margin:12px 0 8px;">${player}</h3>
+                <div style="font-size:2rem; font-weight:900; color:var(--accent);">${pts} PTS</div>
+            </div>
+        `).join('');
+        document.getElementById('ranking-cards').innerHTML = rankHTML;
+
+        // Tabela detalhada
+        const tbody = document.getElementById('full-table-body');
+        tbody.innerHTML = sorted.map(([player, pts]) => `
+            <tr>
+                <td><strong>${player}</strong></td>
+                <td><span style="color:var(--accent); font-size:1.4rem;">${pts}</span></td>
+                <td>${games.filter(g => g.status === 'closed' && g.bets[player]).length} apostas</td>
+            </tr>
+        `).join('');
+    }
+
+    function showSection(section) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.getElementById(section).classList.add('active');
+
+        document.querySelectorAll('.nav-item').forEach(btn => {
+            btn.classList.toggle('active', btn.getAttribute('data-section') === section);
+        });
+
+        if (section === 'leaderboard') updateLeaderboard();
+    }
+
+    window.clearAllData = function() {
+        if (confirm('❗ Apagar TODOS os jogos, apostas e pontos?')) {
+            localStorage.removeItem('betAmigos_db');
+            games = [];
+            renderGames();
+            updateLeaderboard();
+        }
+    };
+
+    // ==================== PDF SUPER BONITO ====================
+    function generateReportHTML() {
+        let html = `
+            <div style="font-family:Inter,Arial,sans-serif; max-width:1000px; margin:0 auto; color:#111; background:#fff; padding:50px 40px; border-radius:20px;">
+                <h1 style="text-align:center; color:#ff6a00; font-size:42px; margin-bottom:10px;">BETAMIGOS</h1>
+                <p style="text-align:center; font-size:18px; color:#555; margin-bottom:40px;">Relatório Completo de Apostas • ${new Date().toLocaleDateString('pt-PT')}</p>
+                
+                <h2 style="color:#ff6a00; border-bottom:4px solid #ff6a00; padding-bottom:10px;">Classificação Final</h2>
+                <table style="width:100%; border-collapse:collapse; margin-bottom:50px;">
+                    <tr style="background:#f8f8f8;">
+                        <th style="padding:15px; text-align:left;">Posição</th>
+                        <th style="padding:15px; text-align:left;">Jogador</th>
+                        <th style="padding:15px; text-align:center;">Pontos</th>
+                    </tr>
+        `;
+
+        let totalPoints = {};
+        players.forEach(p => totalPoints[p] = 0);
+        games.filter(g => g.status === 'closed').forEach(game => {
+            players.forEach(p => {
+                const bet = game.bets[p];
+                if (bet) totalPoints[p] += calculatePoints(bet, game.results);
+            });
+        });
+
+        const sorted = Object.entries(totalPoints).sort((a,b)=>b[1]-a[1]);
+        sorted.forEach(([player, pts], i) => {
+            html += `
                 <tr>
-                    <td style="font-size:1.2em;">${medal} ${index + 1}</td>
-                    <td style="font-weight:bold; font-size:1.1em;">${p.name}</td>
-                    <td style="color:var(--primary); font-weight:bold; font-size:1.2em;">${p.points}</td>
+                    <td style="padding:15px; font-weight:bold;">${i+1}º</td>
+                    <td style="padding:15px;">${player}</td>
+                    <td style="padding:15px; text-align:center; font-size:24px; color:#ff6a00;">${pts}</td>
                 </tr>
             `;
         });
+
+        html += `</table><h2 style="color:#ff6a00; border-bottom:4px solid #ff6a00; padding-bottom:10px;">Todos os Jogos</h2>`;
+
+        games.forEach(game => {
+            html += `
+                <div style="margin-bottom:50px; padding:30px; border:3px solid #eee; border-radius:16px;">
+                    <h3 style="margin-top:0;">${game.hName} vs ${game.vName}</h3>
+                    <p><strong>Resultado final:</strong> ${game.status === 'closed' ? `${game.results.h} - ${game.results.v} • ${game.statType}: ${game.results.s}` : 'Ainda aberto'}</p>
+                    
+                    <table style="width:100%; border-collapse:collapse;">
+                        <tr style="background:#f8f8f8;">
+                            <th style="padding:12px;">Jogador</th>
+                            <th style="padding:12px;">Aposta</th>
+                            <th style="padding:12px; text-align:center;">Pontos Ganhos</th>
+                        </tr>
+            `;
+
+            players.forEach(player => {
+                const bet = game.bets[player];
+                let betDesc = '—';
+                let pts = 0;
+                if (bet && game.results) {
+                    pts = calculatePoints(bet, game.results);
+                    if (bet.stat !== null) betDesc = `Estatística: ${bet.stat}`;
+                    else if (bet.type === 'score') betDesc = `Placar: ${bet.h}-${bet.v}`;
+                    else betDesc = `Vencedor: ${bet.win === 'h' ? game.hName : bet.win === 'v' ? game.vName : 'Empate'}`;
+                }
+                html += `
+                    <tr>
+                        <td style="padding:12px;">${player}</td>
+                        <td style="padding:12px;">${betDesc}</td>
+                        <td style="padding:12px; text-align:center; font-weight:bold; color:${pts > 0 ? '#00ff9d' : '#999'};">${pts} pts</td>
+                    </tr>
+                `;
+            });
+
+            html += `</table></div>`;
+        });
+
+        html += `<p style="text-align:center; color:#888; margin-top:60px;">Gerado automaticamente pelo BetAmigos • Interface Premium</p></div>`;
+        return html;
     }
 
-    function exportPDF() {
-        const element = document.getElementById('pdf-content');
-        const opt = {
-            margin:       10,
-            filename:     'Resultados_Liga_Pro.pdf',
-            image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#1a1f24' },
-            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        };
-        html2pdf().set(opt).from(element).save();
+    window.exportPDF = function() {
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = generateReportHTML();
+        document.body.appendChild(tempDiv);
+
+        html2pdf()
+            .from(tempDiv)
+            .set({
+                margin: [20, 15, 20, 15],
+                filename: `BetAmigos_Relatorio_${new Date().toISOString().slice(0,10)}.pdf`,
+                html2canvas: { scale: 3, backgroundColor: '#ffffff', useCORS: true },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            })
+            .save()
+            .then(() => {
+                document.body.removeChild(tempDiv);
+            });
+    };
+
+    // ==================== INIT ====================
+    function init() {
+        // Event listeners para sidebar
+        document.querySelectorAll('.nav-item[data-section]').forEach(btn => {
+            btn.addEventListener('click', () => showSection(btn.getAttribute('data-section')));
+        });
+
+        renderGames();
+        updateLeaderboard();
     }
 
-    render();
+    init();
 </script>
 </body>
 </html>
