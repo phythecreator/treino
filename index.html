@@ -1,172 +1,272 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-PT">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Liga de Apostas dos Amigos</title>
+    <title>Liga de Apostas Pro</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
+        /* Estilo Casino / Betano */
         :root {
-            --primary: #2e7d32; /* Verde relva */
-            --secondary: #1b5e20;
-            --bg: #f4f6f8;
-            --text: #333;
+            --bg-dark: #0b0e11;
+            --bg-card: #1a1f24;
+            --bg-input: #2a3138;
+            --primary: #ff6a00; /* Laranja Betano */
+            --primary-hover: #e65c00;
+            --text-main: #ffffff;
+            --text-muted: #a0a5aa;
+            --success: #00c853;
+            --danger: #d50000;
         }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
             margin: 0;
             padding: 20px;
         }
-        h1, h2, h3 { color: var(--secondary); }
+
+        h1, h2, h3, h4 { color: var(--text-main); margin-top: 0; }
+        h1 { text-align: center; color: var(--primary); font-size: 2.5em; text-transform: uppercase; letter-spacing: 2px; }
+        
         .container {
-            max-width: 900px;
+            max-width: 950px;
             margin: auto;
-            background: white;
+        }
+
+        .card {
+            background: var(--bg-card);
             padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+            margin-bottom: 20px;
+            border-top: 4px solid var(--primary);
         }
+
         .form-group {
-            margin-bottom: 15px;
             display: flex;
-            gap: 10px;
+            gap: 15px;
             flex-wrap: wrap;
+            align-items: center;
+            margin-bottom: 15px;
         }
-        input, select, button {
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
+
+        input[type="text"], input[type="number"], select {
+            padding: 12px;
+            background-color: var(--bg-input);
+            border: 1px solid #3a424a;
+            color: white;
+            border-radius: 6px;
+            font-size: 14px;
         }
+
+        input[type="file"] {
+            color: var(--text-muted);
+            font-size: 12px;
+            max-width: 200px;
+        }
+
         button {
             background-color: var(--primary);
             color: white;
             border: none;
+            padding: 12px 20px;
             cursor: pointer;
             font-weight: bold;
+            border-radius: 6px;
+            text-transform: uppercase;
+            transition: background 0.3s;
         }
-        button:hover { background-color: var(--secondary); }
-        .game-card {
-            border: 1px solid #ddd;
+
+        button:hover { background-color: var(--primary-hover); }
+
+        .game-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            font-size: 1.5em;
+            font-weight: bold;
+            background: #111418;
             padding: 15px;
             border-radius: 8px;
             margin-bottom: 15px;
-            background: #fafafa;
         }
-        .team-info {
+
+        .game-header img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 50%;
+            background: white;
+            padding: 2px;
+        }
+
+        .bet-row {
             display: flex;
             align-items: center;
+            justify-content: space-between;
+            background: var(--bg-input);
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
             gap: 10px;
-            font-weight: bold;
-            font-size: 1.2em;
         }
-        .team-info img {
-            width: 40px;
-            height: 40px;
-            object-fit: contain;
+
+        .bet-row strong { color: var(--primary); font-size: 1.1em; width: 60px; }
+
+        .stat-bet-zone {
+            border-left: 3px solid var(--primary);
+            padding-left: 10px;
+            margin-left: 10px;
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 10px;
+            background: var(--bg-card);
+            border-radius: 8px;
+            overflow: hidden;
         }
+
         th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
+            padding: 12px;
             text-align: center;
+            border-bottom: 1px solid var(--bg-input);
         }
-        th { background-color: var(--primary); color: white; }
-        .export-btn {
-            background-color: #d32f2f;
-            margin-bottom: 20px;
+
+        th { background-color: var(--bg-input); color: var(--primary); text-transform: uppercase; }
+        
+        .export-btn { background-color: #4caf50; width: 100%; margin-bottom: 20px; font-size: 1.1em; }
+        .export-btn:hover { background-color: #388e3c; }
+
+        .badge {
+            background: var(--primary);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            margin-left: 10px;
         }
-        .export-btn:hover { background-color: #b71c1c; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>🏆 Liga de Apostas</h1>
+    <h1>🔥 LIGA DE APOSTAS PRO 🔥</h1>
     
-    <div id="admin-section">
-        <h2>Adicionar Novo Jogo</h2>
+    <div class="card" id="admin-section">
+        <h2>Criar Novo Evento</h2>
         <div class="form-group">
             <input type="text" id="homeTeam" placeholder="Equipa Casa" required>
-            <input type="url" id="homeLogo" placeholder="URL Foto Casa">
-            <span> VS </span>
+            <input type="file" id="homeFile" accept="image/*">
+        </div>
+        <div class="form-group">
             <input type="text" id="awayTeam" placeholder="Equipa Fora" required>
-            <input type="url" id="awayLogo" placeholder="URL Foto Fora">
-            <button onclick="addGame()">Adicionar Jogo</button>
+            <input type="file" id="awayFile" accept="image/*">
+        </div>
+        <div class="form-group" style="background: var(--bg-input); padding: 10px; border-radius: 6px;">
+            <label style="color: var(--text-muted);">Estatística do Jogo (Opcional para os jogadores):</label>
+            <select id="statType">
+                <option value="Remates à Baliza">Remates à Baliza</option>
+                <option value="Remates Totais">Remates Totais</option>
+                <option value="Passes Totais">Passes Totais</option>
+                <option value="Cantos">Cantos</option>
+            </select>
+            <button onclick="addGame()" style="margin-left: auto;">Criar Jogo</button>
         </div>
     </div>
 
-    <hr>
-
-    <button class="export-btn" onclick="exportPDF()">📄 Exportar Relatório para PDF</button>
+    <button class="export-btn" onclick="exportPDF()">📄 EXPORTAR RESULTADOS (PDF)</button>
 
     <div id="pdf-content">
-        <h2>Tabela de Classificações</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Posição</th>
-                    <th>Jogador</th>
-                    <th>Pontos</th>
-                </tr>
-            </thead>
-            <tbody id="leaderboard-body">
-                </tbody>
-        </table>
+        <div class="card">
+            <h2 style="color: var(--primary); text-align: center;">🏆 Classificação Geral</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Jogador</th>
+                        <th>Pontos</th>
+                    </tr>
+                </thead>
+                <tbody id="leaderboard-body"></tbody>
+            </table>
+        </div>
 
-        <h2>Jogos e Apostas</h2>
-        <div id="games-list">
-            </div>
+        <h2 style="margin-top: 30px; border-bottom: 2px solid var(--primary); padding-bottom: 10px;">Cartazes de Jogos</h2>
+        <div id="games-list"></div>
     </div>
 </div>
 
 <script>
     const players = ['Sá', 'Silva', 'Pedro', 'João'];
-    let games = JSON.parse(localStorage.getItem('apostas_games')) || [];
+    let games = JSON.parse(localStorage.getItem('betano_games')) || [];
 
-    // Função para guardar dados no navegador
     function saveData() {
-        localStorage.setItem('apostas_games', JSON.stringify(games));
+        localStorage.setItem('betano_games', JSON.stringify(games));
         render();
     }
 
-    // Adicionar um novo jogo
+    // Função para ler imagem e encolher (para não esgotar a memória do navegador)
+    function processImage(file, callback) {
+        if (!file) return callback('https://via.placeholder.com/50?text=VS');
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            const img = new Image();
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                canvas.width = 100; canvas.height = 100; // Tamanho fixo
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, 100, 100);
+                callback(canvas.toDataURL('image/jpeg', 0.8));
+            }
+            img.src = event.target.result;
+        }
+        reader.readAsDataURL(file);
+    }
+
+    // Adicionar Jogo
     function addGame() {
         const homeTeam = document.getElementById('homeTeam').value;
         const awayTeam = document.getElementById('awayTeam').value;
-        const homeLogo = document.getElementById('homeLogo').value || 'https://via.placeholder.com/40';
-        const awayLogo = document.getElementById('awayLogo').value || 'https://via.placeholder.com/40';
+        const homeFile = document.getElementById('homeFile').files[0];
+        const awayFile = document.getElementById('awayFile').files[0];
+        const statType = document.getElementById('statType').value;
 
-        if (!homeTeam || !awayTeam) return alert("Preenche o nome das equipas!");
+        if (!homeTeam || !awayTeam) return alert("Faltam os nomes das equipas!");
 
-        const newGame = {
-            id: Date.now(),
-            homeTeam, awayTeam, homeLogo, awayLogo,
-            status: 'pending', // 'pending' ou 'finished'
-            homeScore: null,
-            awayScore: null,
-            bets: {}
-        };
-
-        games.push(newGame);
-        document.getElementById('homeTeam').value = '';
-        document.getElementById('awayTeam').value = '';
-        document.getElementById('homeLogo').value = '';
-        document.getElementById('awayLogo').value = '';
-        saveData();
+        processImage(homeFile, (homeLogoBase64) => {
+            processImage(awayFile, (awayLogoBase64) => {
+                const newGame = {
+                    id: Date.now(),
+                    homeTeam, awayTeam,
+                    homeLogo: homeLogoBase64, awayLogo: awayLogoBase64,
+                    statType: statType,
+                    status: 'pending',
+                    homeScore: null, awayScore: null, actualStat: null,
+                    bets: {}
+                };
+                games.push(newGame);
+                document.getElementById('homeTeam').value = '';
+                document.getElementById('awayTeam').value = '';
+                document.getElementById('homeFile').value = '';
+                document.getElementById('awayFile').value = '';
+                saveData();
+            });
+        });
     }
 
-    // Registar aposta de um jogador
+    // Registar Aposta
     function placeBet(gameId, player) {
         const type = document.getElementById(`bet-type-${gameId}-${player}`).value;
         const gameIndex = games.findIndex(g => g.id === gameId);
+        const statBetInput = document.getElementById(`bet-stat-${gameId}-${player}`).value;
         
-        let betData = { type };
+        let betData = { type, statGuess: statBetInput ? parseInt(statBetInput) : null };
         
         if (type === 'exact') {
             const h = document.getElementById(`bet-home-${gameId}-${player}`).value;
@@ -175,34 +275,37 @@
             betData.home = parseInt(h);
             betData.away = parseInt(a);
         } else {
-            const outcome = document.getElementById(`bet-outcome-${gameId}-${player}`).value;
-            betData.outcome = outcome;
+            betData.outcome = document.getElementById(`bet-outcome-${gameId}-${player}`).value;
         }
 
         games[gameIndex].bets[player] = betData;
         saveData();
     }
 
-    // Registar resultado final do jogo
+    // Terminar Jogo e Inserir Resultado Real
     function finishGame(gameId) {
         const h = document.getElementById(`res-home-${gameId}`).value;
         const a = document.getElementById(`res-away-${gameId}`).value;
-        if (h === '' || a === '') return alert("Preenche o resultado final!");
+        const s = document.getElementById(`res-stat-${gameId}`).value;
+        
+        if (h === '' || a === '' || s === '') return alert("Preenche o resultado final e a estatística real!");
 
         const gameIndex = games.findIndex(g => g.id === gameId);
         games[gameIndex].homeScore = parseInt(h);
         games[gameIndex].awayScore = parseInt(a);
+        games[gameIndex].actualStat = parseInt(s);
         games[gameIndex].status = 'finished';
         saveData();
     }
 
-    // Calcular pontos
+    // Lógica de Pontos
     function calculatePoints() {
         let scores = { 'Sá': 0, 'Silva': 0, 'Pedro': 0, 'João': 0 };
 
         games.filter(g => g.status === 'finished').forEach(game => {
             const actualHome = game.homeScore;
             const actualAway = game.awayScore;
+            const actualStat = game.actualStat;
             
             let actualOutcome = 'draw';
             if (actualHome > actualAway) actualOutcome = 'home';
@@ -211,141 +314,159 @@
             players.forEach(player => {
                 const bet = game.bets[player];
                 if (bet) {
-                    if (bet.type === 'exact') {
-                        // Regra: Acertou placar exato = 6. Se errar placar (mesmo acertando vencedor) = 0.
-                        if (bet.home === actualHome && bet.away === actualAway) {
-                            scores[player] += 6;
+                    let earnedPoints = 0;
+
+                    // Avaliar se apostou na estatística
+                    if (bet.statGuess !== null) {
+                        if (bet.statGuess === actualStat) {
+                            earnedPoints = 12; // Acertou a estatística = 12 pontos
+                        } else {
+                            earnedPoints = 0; // Errou a estatística = Perde TUDO (0 pontos)
                         }
-                    } else if (bet.type === 'outcome') {
-                        // Regra: Apostou só no resultado (1x2) e acertou = 3 pontos.
-                        if (bet.outcome === actualOutcome) {
-                            scores[player] += 3;
+                    } else {
+                        // Se não apostou na estatística, regras normais
+                        if (bet.type === 'exact') {
+                            if (bet.home === actualHome && bet.away === actualAway) earnedPoints = 6;
+                        } else if (bet.type === 'outcome') {
+                            if (bet.outcome === actualOutcome) earnedPoints = 3;
                         }
                     }
+                    scores[player] += earnedPoints;
                 }
             });
         });
         return scores;
     }
 
-    // Mudar os inputs dependendo do tipo de aposta escolhida
     function toggleBetInputs(gameId, player) {
         const type = document.getElementById(`bet-type-${gameId}-${player}`).value;
-        document.getElementById(`exact-inputs-${gameId}-${player}`).style.display = type === 'exact' ? 'inline' : 'none';
-        document.getElementById(`outcome-inputs-${gameId}-${player}`).style.display = type === 'outcome' ? 'inline' : 'none';
+        document.getElementById(`exact-inputs-${gameId}-${player}`).style.display = type === 'exact' ? 'inline-block' : 'none';
+        document.getElementById(`outcome-inputs-${gameId}-${player}`).style.display = type === 'outcome' ? 'inline-block' : 'none';
     }
 
-    // Atualizar a interface HTML
     function render() {
         const gamesList = document.getElementById('games-list');
         gamesList.innerHTML = '';
 
-        // Renderizar Jogos
         games.slice().reverse().forEach(game => {
             let html = `
-                <div class="game-card">
-                    <div class="team-info">
-                        <img src="${game.homeLogo}" alt="Logo"> ${game.homeTeam} 
-                        VS 
-                        ${game.awayTeam} <img src="${game.awayLogo}" alt="Logo">
+                <div class="card">
+                    <div class="game-header">
+                        <img src="${game.homeLogo}"> <span>${game.homeTeam}</span>
+                        <span style="color:var(--primary);">VS</span>
+                        <span>${game.awayTeam}</span> <img src="${game.awayLogo}">
+                    </div>
+                    <div style="text-align:center; color:var(--text-muted); margin-bottom: 15px;">
+                        Estatística do Jogo: <strong>${game.statType}</strong>
                     </div>
             `;
 
             if (game.status === 'pending') {
-                html += `<h4>Fazer Apostas:</h4>`;
                 players.forEach(player => {
                     const bet = game.bets[player];
                     if (!bet) {
                         html += `
-                            <div style="margin-bottom:5px;">
-                                <strong>${player}:</strong> 
-                                <select id="bet-type-${game.id}-${player}" onchange="toggleBetInputs(${game.id}, '${player}')">
-                                    <option value="exact">Placar Exato (6pts)</option>
-                                    <option value="outcome">Só Vencedor (3pts)</option>
-                                </select>
-                                
-                                <span id="exact-inputs-${game.id}-${player}">
-                                    <input type="number" id="bet-home-${game.id}-${player}" style="width:40px;" placeholder="C"> - 
-                                    <input type="number" id="bet-away-${game.id}-${player}" style="width:40px;" placeholder="F">
-                                </span>
-                                
-                                <span id="outcome-inputs-${game.id}-${player}" style="display:none;">
-                                    <select id="bet-outcome-${game.id}-${player}">
-                                        <option value="home">Vitória Casa</option>
-                                        <option value="draw">Empate</option>
-                                        <option value="away">Vitória Fora</option>
+                            <div class="bet-row">
+                                <strong>${player}</strong> 
+                                <div>
+                                    <select id="bet-type-${game.id}-${player}" onchange="toggleBetInputs(${game.id}, '${player}')">
+                                        <option value="outcome">Só Vencedor (3pts)</option>
+                                        <option value="exact">Placar Exato (6pts)</option>
                                     </select>
-                                </span>
-                                
-                                <button onclick="placeBet(${game.id}, '${player}')">Guardar</button>
+                                    
+                                    <span id="outcome-inputs-${game.id}-${player}">
+                                        <select id="bet-outcome-${game.id}-${player}">
+                                            <option value="home">${game.homeTeam}</option>
+                                            <option value="draw">Empate</option>
+                                            <option value="away">${game.awayTeam}</option>
+                                        </select>
+                                    </span>
+
+                                    <span id="exact-inputs-${game.id}-${player}" style="display:none;">
+                                        <input type="number" id="bet-home-${game.id}-${player}" style="width:50px;" placeholder="C"> - 
+                                        <input type="number" id="bet-away-${game.id}-${player}" style="width:50px;" placeholder="F">
+                                    </span>
+                                </div>
+                                <div class="stat-bet-zone">
+                                    <input type="number" id="bet-stat-${game.id}-${player}" style="width:70px;" placeholder="Palpite ${game.statType}">
+                                    <small style="color:var(--text-muted); display:block;">(Opcional) 12pts ou 0pts</small>
+                                </div>
+                                <button onclick="placeBet(${game.id}, '${player}')">Apostar</button>
                             </div>
                         `;
                     } else {
-                        const betStr = bet.type === 'exact' ? `${bet.home} - ${bet.away}` : (bet.outcome === 'home' ? 'Vitória Casa' : (bet.outcome === 'away' ? 'Vitória Fora' : 'Empate'));
-                        html += `<div><strong>${player}:</strong> Aposta guardada (${betStr})</div>`;
+                        const betStr = bet.type === 'exact' ? `${bet.home}-${bet.away}` : (bet.outcome === 'home' ? game.homeTeam : (bet.outcome === 'away' ? game.awayTeam : 'Empate'));
+                        const statStr = bet.statGuess !== null ? `<span class="badge">Apostou Estatística: ${bet.statGuess}</span>` : '';
+                        html += `<div class="bet-row"><strong>${player}</strong> <span style="color:var(--success);">✔ Aposta Registada (${betStr}) ${statStr}</span></div>`;
                     }
                 });
 
                 html += `
-                    <hr>
-                    <h4>Inserir Resultado Final:</h4>
-                    <input type="number" id="res-home-${game.id}" style="width:40px;"> - 
-                    <input type="number" id="res-away-${game.id}" style="width:40px;">
-                    <button onclick="finishGame(${game.id})">Fechar Jogo</button>
+                    <div style="margin-top:20px; padding-top:15px; border-top:1px solid #333;">
+                        <h4 style="color:var(--danger);">Fechar Jogo (Admin)</h4>
+                        <div class="form-group">
+                            <input type="number" id="res-home-${game.id}" placeholder="Golos Casa" style="width:90px;">
+                            <input type="number" id="res-away-${game.id}" placeholder="Golos Fora" style="width:90px;">
+                            <input type="number" id="res-stat-${game.id}" placeholder="Real: ${game.statType}" style="width:150px;">
+                            <button style="background:var(--danger);" onclick="finishGame(${game.id})">Terminar Jogo</button>
+                        </div>
+                    </div>
                 `;
             } else {
                 html += `
-                    <h3 style="color:#d32f2f;">Resultado Final: ${game.homeScore} - ${game.awayScore}</h3>
-                    <h4>Apostas feitas:</h4>
-                    <ul>
+                    <div style="text-align:center; font-size:2em; color:var(--success); margin: 15px 0;">
+                        RESULTADO: ${game.homeScore} - ${game.awayScore}
+                    </div>
+                    <div style="text-align:center; margin-bottom: 15px; color:var(--primary);">
+                        Real (${game.statType}): ${game.actualStat}
+                    </div>
                 `;
                 players.forEach(player => {
                     const bet = game.bets[player];
                     if (bet) {
-                        const betStr = bet.type === 'exact' ? `${bet.home} - ${bet.away} (Placar)` : (bet.outcome === 'home' ? 'Vitória Casa' : (bet.outcome === 'away' ? 'Vitória Fora' : 'Empate'));
-                        html += `<li><strong>${player}:</strong> ${betStr}</li>`;
+                        const betStr = bet.type === 'exact' ? `${bet.home}-${bet.away}` : (bet.outcome === 'home' ? game.homeTeam : (bet.outcome === 'away' ? game.awayTeam : 'Empate'));
+                        const statStr = bet.statGuess !== null ? `<span class="badge">Estatística: ${bet.statGuess}</span>` : '';
+                        html += `<div class="bet-row"><strong>${player}</strong> <span>${betStr} ${statStr}</span></div>`;
                     } else {
-                        html += `<li><strong>${player}:</strong> Não apostou.</li>`;
+                        html += `<div class="bet-row"><strong>${player}</strong> <span style="color:var(--text-muted);">Não apostou.</span></div>`;
                     }
                 });
-                html += `</ul>`;
             }
 
             html += `</div>`;
             gamesList.innerHTML += html;
         });
 
-        // Renderizar Classificação
+        // Atualizar Tabela
         const scores = calculatePoints();
         const sortedPlayers = players.map(p => ({ name: p, points: scores[p] })).sort((a, b) => b.points - a.points);
         
         const tbody = document.getElementById('leaderboard-body');
         tbody.innerHTML = '';
         sortedPlayers.forEach((p, index) => {
+            let medal = index === 0 ? '🥇' : (index === 1 ? '🥈' : (index === 2 ? '🥉' : ''));
             tbody.innerHTML += `
                 <tr>
-                    <td>${index + 1}º</td>
-                    <td><strong>${p.name}</strong></td>
-                    <td>${p.points}</td>
+                    <td style="font-size:1.2em;">${medal} ${index + 1}</td>
+                    <td style="font-weight:bold; font-size:1.1em;">${p.name}</td>
+                    <td style="color:var(--primary); font-weight:bold; font-size:1.2em;">${p.points}</td>
                 </tr>
             `;
         });
     }
 
-    // Função para exportar PDF
     function exportPDF() {
         const element = document.getElementById('pdf-content');
         const opt = {
             margin:       10,
-            filename:     'Apostas_Resultados.pdf',
+            filename:     'Resultados_Liga_Pro.pdf',
             image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  { scale: 2 },
+            html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#1a1f24' },
             jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
         html2pdf().set(opt).from(element).save();
     }
 
-    // Iniciar a página
     render();
 </script>
 </body>
