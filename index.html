@@ -3,744 +3,350 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Avaliação - Níveis de Desempenho</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>Liga de Apostas dos Amigos</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+            --primary: #2e7d32; /* Verde relva */
+            --secondary: #1b5e20;
+            --bg: #f4f6f8;
+            --text: #333;
         }
-
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
             padding: 20px;
         }
-
+        h1, h2, h3 { color: var(--secondary); }
         .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 25px;
-        }
-
-        .header h1 {
-            color: white;
-            font-size: 1.8em;
-            margin-bottom: 5px;
-        }
-
-        .header p {
-            color: rgba(255,255,255,0.9);
-            font-size: 0.9em;
-        }
-
-        .niveis-info {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 10px;
-            flex-wrap: wrap;
-        }
-
-        .nivel-badge {
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.75em;
-            font-weight: bold;
-            color: white;
-        }
-
-        .main-grid {
-            display: grid;
-            grid-template-columns: 1fr 380px;
-            gap: 20px;
-        }
-
-        .card {
+            max-width: 900px;
+            margin: auto;
             background: white;
-            border-radius: 16px;
             padding: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
-
-        .card-title {
-            font-size: 1.2em;
-            font-weight: 600;
+        .form-group {
             margin-bottom: 15px;
-            color: #333;
             display: flex;
-            align-items: center;
-            gap: 8px;
-            border-left: 4px solid #2a5298;
-            padding-left: 12px;
-        }
-
-        .disciplinas-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 12px;
-            max-height: 550px;
-            overflow-y: auto;
-            padding-right: 5px;
-        }
-
-        .disciplina-item {
-            background: #f8f9fa;
-            border-radius: 12px;
-            padding: 12px;
-            transition: all 0.2s;
-        }
-
-        .disciplina-nome {
-            font-weight: 600;
-            color: #2a5298;
-            margin-bottom: 10px;
-            font-size: 0.95em;
-        }
-
-        .testes-row {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 10px;
+            gap: 10px;
             flex-wrap: wrap;
         }
-
-        .teste-input {
-            flex: 1;
-            min-width: 60px;
+        input, select, button {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
         }
-
-        .teste-input input {
-            width: 100%;
-            padding: 6px 8px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 0.85em;
-            text-align: center;
-        }
-
-        .teste-label {
-            font-size: 0.7em;
-            color: #666;
-            text-align: center;
-            margin-top: 2px;
-        }
-
-        .btn-add {
-            background: #28a745;
+        button {
+            background-color: var(--primary);
             color: white;
             border: none;
-            padding: 4px 10px;
-            border-radius: 6px;
             cursor: pointer;
-            font-size: 0.75em;
-            margin-top: 5px;
-        }
-
-        .btn-add:hover { background: #218838; }
-        .btn-remove:hover { background: #c82333; }
-
-        .comport-group {
-            display: flex;
-            gap: 8px;
-            margin: 10px 0;
-        }
-
-        .comport-item {
-            flex: 1;
-        }
-
-        .comport-item input {
-            width: 100%;
-            padding: 5px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            font-size: 0.8em;
-            text-align: center;
-        }
-
-        .comport-item label {
-            font-size: 0.65em;
-            display: block;
-            text-align: center;
-            color: #666;
-        }
-
-        .questoes-input {
-            margin-top: 8px;
-        }
-
-        .questoes-input input {
-            width: 100%;
-            padding: 6px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            text-align: center;
-        }
-
-        .media-display {
-            text-align: right;
-            margin-top: 8px;
-            padding-top: 8px;
-            border-top: 1px solid #e0e0e0;
             font-weight: bold;
-            font-size: 0.9em;
         }
-
-        .nivel-display {
-            font-size: 0.8em;
-            margin-top: 5px;
-            text-align: right;
-            padding: 4px 8px;
-            border-radius: 12px;
-            display: inline-block;
-            float: right;
+        button:hover { background-color: var(--secondary); }
+        .game-card {
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            background: #fafafa;
         }
-
-        .painel-resultado {
-            background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
+        .team-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: bold;
+            font-size: 1.2em;
         }
-
-        .resultado-principal {
+        .team-info img {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
             text-align: center;
-            padding: 20px;
-            background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%);
-            border-radius: 12px;
-            color: white;
+        }
+        th { background-color: var(--primary); color: white; }
+        .export-btn {
+            background-color: #d32f2f;
             margin-bottom: 20px;
         }
-
-        .nota-final {
-            font-size: 3.5em;
-            font-weight: bold;
-        }
-
-        .nota-original {
-            font-size: 1.2em;
-            opacity: 0.9;
-            margin-top: 5px;
-        }
-
-        .nivel-final {
-            margin-top: 10px;
-            padding: 8px;
-            border-radius: 20px;
-            font-size: 1em;
-            font-weight: bold;
-        }
-
-        .btn-calcular {
-            width: 100%;
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-            color: white;
-            border: none;
-            padding: 14px;
-            border-radius: 10px;
-            font-size: 1.1em;
-            font-weight: bold;
-            cursor: pointer;
-            margin: 15px 0;
-            transition: transform 0.2s;
-        }
-
-        .btn-calcular:hover {
-            transform: scale(1.02);
-        }
-
-        .btn-reset {
-            background: #6c757d;
-            margin-top: 0;
-        }
-
-        .stats {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin: 15px 0;
-        }
-
-        .stat-card {
-            background: white;
-            padding: 12px;
-            border-radius: 10px;
-            text-align: center;
-        }
-
-        .stat-value {
-            font-size: 1.3em;
-            font-weight: bold;
-            color: #2a5298;
-        }
-
-        .stat-label {
-            font-size: 0.7em;
-            color: #666;
-        }
-
-        .grafico-container {
-            margin: 15px 0;
-            background: white;
-            padding: 10px;
-            border-radius: 10px;
-        }
-
-        canvas {
-            max-height: 220px;
-            width: 100%;
-        }
-
-        .relatorio {
-            margin-top: 15px;
-            max-height: 280px;
-            overflow-y: auto;
-            font-size: 0.85em;
-        }
-
-        .relatorio-item {
-            padding: 10px;
-            border-bottom: 1px solid #e0e0e0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 5px;
-        }
-
-        .relatorio-notas {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
-        .nivel-1 { background: #dc3545; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.7em; font-weight: bold; }
-        .nivel-2 { background: #fd7e14; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.7em; font-weight: bold; }
-        .nivel-3 { background: #ffc107; color: #333; padding: 2px 8px; border-radius: 12px; font-size: 0.7em; font-weight: bold; }
-        .nivel-4 { background: #20c997; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.7em; font-weight: bold; }
-        .nivel-5 { background: #28a745; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.7em; font-weight: bold; }
-        .aprovado { color: #28a745; font-weight: bold; }
-        .recuperacao { color: #ffc107; font-weight: bold; }
-        .reprovado { color: #dc3545; font-weight: bold; }
-
-        .footer {
-            text-align: center;
-            margin-top: 20px;
-            color: rgba(255,255,255,0.7);
-            font-size: 0.8em;
-        }
-
-        @media (max-width: 900px) {
-            .main-grid {
-                grid-template-columns: 1fr;
-            }
-            .disciplinas-container {
-                max-height: 400px;
-            }
-        }
-
-        ::-webkit-scrollbar {
-            width: 5px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 10px;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #2a5298;
-            border-radius: 10px;
-        }
+        .export-btn:hover { background-color: #b71c1c; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>📊 Sistema de Avaliação por Níveis</h1>
-            <p>Notas de 0 a 100 | Classificação por Níveis de 1 a 5</p>
-            <div class="niveis-info">
-                <span class="nivel-badge" style="background:#dc3545">Nível 1: 0-20</span>
-                <span class="nivel-badge" style="background:#fd7e14">Nível 2: 20-50</span>
-                <span class="nivel-badge" style="background:#ffc107; color:#333">Nível 3: 50-69</span>
-                <span class="nivel-badge" style="background:#20c997">Nível 4: 70-89</span>
-                <span class="nivel-badge" style="background:#28a745">Nível 5: 90-100</span>
-            </div>
-        </div>
 
-        <div class="main-grid">
-            <div class="card">
-                <div class="card-title">
-                    <span>📚</span> Disciplinas
-                </div>
-                <div class="disciplinas-container" id="disciplinasContainer"></div>
-            </div>
-
-            <div>
-                <div class="card painel-resultado">
-                    <div class="card-title">
-                        <span>🎯</span> Resultado Final
-                    </div>
-                    
-                    <div class="resultado-principal" id="resultadoPrincipal">
-                        <div class="nota-final">0.0</div>
-                        <div class="nota-original">0 / 100</div>
-                        <div class="nivel-final" id="nivelFinal">Nível --</div>
-                    </div>
-
-                    <button class="btn-calcular" onclick="calcularTudo()">🔢 CALCULAR MÉDIA FINAL</button>
-                    <button class="btn-calcular btn-reset" onclick="resetarTudo()">🔄 RESETAR TUDO</button>
-
-                    <div class="stats">
-                        <div class="stat-card">
-                            <div class="stat-value" id="totalDisciplinas">0</div>
-                            <div class="stat-label">Disciplinas</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-value" id="aprovadasCount">0</div>
-                            <div class="stat-label">Aprovadas (≥70)</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-value" id="mediaGeral">0.0</div>
-                            <div class="stat-label">Média Geral</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-value" id="melhorDisc">-</div>
-                            <div class="stat-label">Melhor</div>
-                        </div>
-                    </div>
-
-                    <div class="grafico-container">
-                        <canvas id="niveisChart"></canvas>
-                    </div>
-
-                    <div class="card-title" style="margin-top: 10px;">
-                        <span>📋</span> Relatório Detalhado
-                    </div>
-                    <div class="relatorio" id="relatorio"></div>
-                </div>
-            </div>
-        </div>
-        <div class="footer">
-            <p>📝 Testes (60%) | 👥 Comportamento (20%) | 📚 Questões Aula (20%)</p>
+<div class="container">
+    <h1>🏆 Liga de Apostas</h1>
+    
+    <div id="admin-section">
+        <h2>Adicionar Novo Jogo</h2>
+        <div class="form-group">
+            <input type="text" id="homeTeam" placeholder="Equipa Casa" required>
+            <input type="url" id="homeLogo" placeholder="URL Foto Casa">
+            <span> VS </span>
+            <input type="text" id="awayTeam" placeholder="Equipa Fora" required>
+            <input type="url" id="awayLogo" placeholder="URL Foto Fora">
+            <button onclick="addGame()">Adicionar Jogo</button>
         </div>
     </div>
 
-    <script>
-        const disciplinas = [
-            "Matemática", "Português", "Ciências", "Físico-Química",
-            "Inglês", "Francês", "História", "Geografia"
-        ];
+    <hr>
 
-        let dados = {};
-        let meuGrafico = null;
+    <button class="export-btn" onclick="exportPDF()">📄 Exportar Relatório para PDF</button>
 
-        function getNivel(nota) {
-            if (nota >= 0 && nota < 20) return { nivel: 1, cor: "#dc3545", nome: "Nível 1 - Insuficiente" };
-            if (nota >= 20 && nota < 50) return { nivel: 2, cor: "#fd7e14", nome: "Nível 2 - Regular" };
-            if (nota >= 50 && nota < 70) return { nivel: 3, cor: "#ffc107", nome: "Nível 3 - Satisfatório" };
-            if (nota >= 70 && nota < 90) return { nivel: 4, cor: "#20c997", nome: "Nível 4 - Bom" };
-            if (nota >= 90 && nota <= 100) return { nivel: 5, cor: "#28a745", nome: "Nível 5 - Excelente" };
-            return { nivel: 1, cor: "#dc3545", nome: "Nível 1 - Insuficiente" };
+    <div id="pdf-content">
+        <h2>Tabela de Classificações</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Posição</th>
+                    <th>Jogador</th>
+                    <th>Pontos</th>
+                </tr>
+            </thead>
+            <tbody id="leaderboard-body">
+                </tbody>
+        </table>
+
+        <h2>Jogos e Apostas</h2>
+        <div id="games-list">
+            </div>
+    </div>
+</div>
+
+<script>
+    const players = ['Sá', 'Silva', 'Pedro', 'João'];
+    let games = JSON.parse(localStorage.getItem('apostas_games')) || [];
+
+    // Função para guardar dados no navegador
+    function saveData() {
+        localStorage.setItem('apostas_games', JSON.stringify(games));
+        render();
+    }
+
+    // Adicionar um novo jogo
+    function addGame() {
+        const homeTeam = document.getElementById('homeTeam').value;
+        const awayTeam = document.getElementById('awayTeam').value;
+        const homeLogo = document.getElementById('homeLogo').value || 'https://via.placeholder.com/40';
+        const awayLogo = document.getElementById('awayLogo').value || 'https://via.placeholder.com/40';
+
+        if (!homeTeam || !awayTeam) return alert("Preenche o nome das equipas!");
+
+        const newGame = {
+            id: Date.now(),
+            homeTeam, awayTeam, homeLogo, awayLogo,
+            status: 'pending', // 'pending' ou 'finished'
+            homeScore: null,
+            awayScore: null,
+            bets: {}
+        };
+
+        games.push(newGame);
+        document.getElementById('homeTeam').value = '';
+        document.getElementById('awayTeam').value = '';
+        document.getElementById('homeLogo').value = '';
+        document.getElementById('awayLogo').value = '';
+        saveData();
+    }
+
+    // Registar aposta de um jogador
+    function placeBet(gameId, player) {
+        const type = document.getElementById(`bet-type-${gameId}-${player}`).value;
+        const gameIndex = games.findIndex(g => g.id === gameId);
+        
+        let betData = { type };
+        
+        if (type === 'exact') {
+            const h = document.getElementById(`bet-home-${gameId}-${player}`).value;
+            const a = document.getElementById(`bet-away-${gameId}-${player}`).value;
+            if (h === '' || a === '') return alert("Preenche os golos!");
+            betData.home = parseInt(h);
+            betData.away = parseInt(a);
+        } else {
+            const outcome = document.getElementById(`bet-outcome-${gameId}-${player}`).value;
+            betData.outcome = outcome;
         }
 
-        function inicializarDados() {
-            disciplinas.forEach(disciplina => {
-                if (!dados[disciplina]) {
-                    dados[disciplina] = {
-                        testes: [70, 70],
-                        comportamento: { pontualidade: 70, atitudes: 70, empenho: 70 },
-                        questoes: 70
-                    };
-                }
-            });
-        }
+        games[gameIndex].bets[player] = betData;
+        saveData();
+    }
 
-        function calcularMediaTestes(testes) {
-            if (!testes || testes.length === 0) return 0;
-            const soma = testes.reduce((a, b) => a + b, 0);
-            return soma / testes.length;
-        }
+    // Registar resultado final do jogo
+    function finishGame(gameId) {
+        const h = document.getElementById(`res-home-${gameId}`).value;
+        const a = document.getElementById(`res-away-${gameId}`).value;
+        if (h === '' || a === '') return alert("Preenche o resultado final!");
 
-        function calcularMediaComportamento(comp) {
-            return (comp.pontualidade + comp.atitudes + comp.empenho) / 3;
-        }
+        const gameIndex = games.findIndex(g => g.id === gameId);
+        games[gameIndex].homeScore = parseInt(h);
+        games[gameIndex].awayScore = parseInt(a);
+        games[gameIndex].status = 'finished';
+        saveData();
+    }
 
-        function calcularNotaFinal(disciplina) {
-            const d = dados[disciplina];
-            const mediaTestes = calcularMediaTestes(d.testes);
-            const mediaComp = calcularMediaComportamento(d.comportamento);
-            const notaPonderada = (mediaTestes * 0.6) + (mediaComp * 0.2) + (d.questoes * 0.2);
-            return Math.round(notaPonderada);
-        }
+    // Calcular pontos
+    function calculatePoints() {
+        let scores = { 'Sá': 0, 'Silva': 0, 'Pedro': 0, 'João': 0 };
 
-        function getStatus(nota) {
-            if (nota >= 70) return { texto: "APROVADO", class: "aprovado" };
-            if (nota >= 50) return { texto: "RECUPERAÇÃO", class: "recuperacao" };
-            return { texto: "REPROVADO", class: "reprovado" };
-        }
+        games.filter(g => g.status === 'finished').forEach(game => {
+            const actualHome = game.homeScore;
+            const actualAway = game.awayScore;
+            
+            let actualOutcome = 'draw';
+            if (actualHome > actualAway) actualOutcome = 'home';
+            if (actualHome < actualAway) actualOutcome = 'away';
 
-        function renderizarDisciplinas() {
-            const container = document.getElementById('disciplinasContainer');
-            if (!container) return;
-            container.innerHTML = '';
-
-            disciplinas.forEach(disciplina => {
-                const d = dados[disciplina];
-                const id = disciplina.replace(/[^a-zA-Z]/g, '');
-                const notaFinal = calcularNotaFinal(disciplina);
-                const nivel = getNivel(notaFinal);
-                
-                const div = document.createElement('div');
-                div.className = 'disciplina-item';
-                div.innerHTML = `
-                    <div class="disciplina-nome">${disciplina}</div>
-                    <div class="testes-row" id="testes-${id}">
-                        ${d.testes.map((nota, idx) => `
-                            <div class="teste-input">
-                                <input type="number" step="1" min="0" max="100" value="${nota}" 
-                                       onchange="atualizarTeste('${disciplina}', ${idx}, this.value)">
-                                <div class="teste-label">Teste ${idx+1}</div>
-                            </div>
-                        `).join('')}
-                    </div>
-                    <button class="btn-add" onclick="adicionarTeste('${disciplina}')">+ Adicionar Teste</button>
-                    
-                    <div class="comport-group">
-                        <div class="comport-item">
-                            <input type="number" step="1" min="0" max="100" value="${d.comportamento.pontualidade}"
-                                   onchange="atualizarComp('${disciplina}', 'pontualidade', this.value)">
-                            <label>Pontualidade</label>
-                        </div>
-                        <div class="comport-item">
-                            <input type="number" step="1" min="0" max="100" value="${d.comportamento.atitudes}"
-                                   onchange="atualizarComp('${disciplina}', 'atitudes', this.value)">
-                            <label>Atitudes</label>
-                        </div>
-                        <div class="comport-item">
-                            <input type="number" step="1" min="0" max="100" value="${d.comportamento.empenho}"
-                                   onchange="atualizarComp('${disciplina}', 'empenho', this.value)">
-                            <label>Empenho</label>
-                        </div>
-                    </div>
-                    
-                    <div class="questoes-input">
-                        <input type="number" step="1" min="0" max="100" value="${d.questoes}"
-                               onchange="atualizarQuestoes('${disciplina}', this.value)">
-                        <div class="teste-label">Questões de Aula</div>
-                    </div>
-                    
-                    <div class="media-display">
-                        Média: ${notaFinal}/100 
-                        <span class="nivel-display" style="background: ${nivel.cor}; color: white;">
-                            ${nivel.nome}
-                        </span>
-                    </div>
-                `;
-                container.appendChild(div);
-            });
-        }
-
-        function adicionarTeste(disciplina) {
-            if (dados[disciplina].testes.length < 6) {
-                dados[disciplina].testes.push(70);
-                renderizarDisciplinas();
-            } else {
-                alert("Máximo de 6 testes por disciplina!");
-            }
-        }
-
-        function removerTeste(disciplina, index) {
-            if (dados[disciplina].testes.length > 2) {
-                dados[disciplina].testes.splice(index, 1);
-                renderizarDisciplinas();
-            } else {
-                alert("Mínimo de 2 testes!");
-            }
-        }
-
-        function atualizarTeste(disciplina, index, valor) {
-            let nota = parseFloat(valor);
-            if (!isNaN(nota) && nota >= 0 && nota <= 100) {
-                dados[disciplina].testes[index] = nota;
-                renderizarDisciplinas();
-            }
-        }
-
-        function atualizarComp(disciplina, campo, valor) {
-            let nota = parseFloat(valor);
-            if (!isNaN(nota) && nota >= 0 && nota <= 100) {
-                dados[disciplina].comportamento[campo] = nota;
-                renderizarDisciplinas();
-            }
-        }
-
-        function atualizarQuestoes(disciplina, valor) {
-            let nota = parseFloat(valor);
-            if (!isNaN(nota) && nota >= 0 && nota <= 100) {
-                dados[disciplina].questoes = nota;
-                renderizarDisciplinas();
-            }
-        }
-
-        function criarGrafico(notas, niveis, cores) {
-            const ctx = document.getElementById('niveisChart');
-            if (!ctx) return;
-
-            if (meuGrafico) {
-                meuGrafico.destroy();
-            }
-
-            meuGrafico = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: disciplinas,
-                    datasets: [{
-                        label: 'Nota Final (0-100)',
-                        data: notas,
-                        backgroundColor: cores,
-                        borderColor: cores.map(c => c),
-                        borderWidth: 1,
-                        borderRadius: 8
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: true,
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    const nota = context.raw;
-                                    const nivel = getNivel(nota);
-                                    return `Nota: ${nota}/100 - ${nivel.nome}`;
-                                }
-                            }
+            players.forEach(player => {
+                const bet = game.bets[player];
+                if (bet) {
+                    if (bet.type === 'exact') {
+                        // Regra: Acertou placar exato = 6. Se errar placar (mesmo acertando vencedor) = 0.
+                        if (bet.home === actualHome && bet.away === actualAway) {
+                            scores[player] += 6;
                         }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            max: 100,
-                            title: {
-                                display: true,
-                                text: 'Nota (0-100)'
-                            },
-                            grid: {
-                                color: '#e0e0e0'
-                            }
-                        },
-                        x: {
-                            ticks: {
-                                maxRotation: 45,
-                                minRotation: 45,
-                                font: { size: 10 }
-                            }
+                    } else if (bet.type === 'outcome') {
+                        // Regra: Apostou só no resultado (1x2) e acertou = 3 pontos.
+                        if (bet.outcome === actualOutcome) {
+                            scores[player] += 3;
                         }
                     }
                 }
             });
-        }
+        });
+        return scores;
+    }
 
-        function atualizarRelatorio(notas, niveis, status) {
-            const relatorioDiv = document.getElementById('relatorio');
-            if (!relatorioDiv) return;
+    // Mudar os inputs dependendo do tipo de aposta escolhida
+    function toggleBetInputs(gameId, player) {
+        const type = document.getElementById(`bet-type-${gameId}-${player}`).value;
+        document.getElementById(`exact-inputs-${gameId}-${player}`).style.display = type === 'exact' ? 'inline' : 'none';
+        document.getElementById(`outcome-inputs-${gameId}-${player}`).style.display = type === 'outcome' ? 'inline' : 'none';
+    }
 
-            let html = '';
-            disciplinas.forEach((disc, i) => {
-                const nivel = niveis[i];
-                let nivelClass = '';
-                if (nivel.nivel === 1) nivelClass = 'nivel-1';
-                else if (nivel.nivel === 2) nivelClass = 'nivel-2';
-                else if (nivel.nivel === 3) nivelClass = 'nivel-3';
-                else if (nivel.nivel === 4) nivelClass = 'nivel-4';
-                else if (nivel.nivel === 5) nivelClass = 'nivel-5';
-                
-                html += `
-                    <div class="relatorio-item">
-                        <span><strong>${disc}</strong></span>
-                        <div class="relatorio-notas">
-                            <span>${notas[i]}/100</span>
-                            <span class="${nivelClass}">${nivel.nome}</span>
-                            <span class="${status[i].class}">${status[i].texto}</span>
-                        </div>
+    // Atualizar a interface HTML
+    function render() {
+        const gamesList = document.getElementById('games-list');
+        gamesList.innerHTML = '';
+
+        // Renderizar Jogos
+        games.slice().reverse().forEach(game => {
+            let html = `
+                <div class="game-card">
+                    <div class="team-info">
+                        <img src="${game.homeLogo}" alt="Logo"> ${game.homeTeam} 
+                        VS 
+                        ${game.awayTeam} <img src="${game.awayLogo}" alt="Logo">
                     </div>
-                `;
-            });
-            relatorioDiv.innerHTML = html;
-        }
-
-        function calcularTudo() {
-            const notas = disciplinas.map(d => calcularNotaFinal(d));
-            const niveis = notas.map(n => getNivel(n));
-            const status = notas.map(n => getStatus(n));
-            
-            const mediaGeral = notas.reduce((a, b) => a + b, 0) / disciplinas.length;
-            const aprovadas = notas.filter(n => n >= 70).length;
-            const melhorIndex = notas.indexOf(Math.max(...notas));
-            const melhorDisciplina = disciplinas[melhorIndex];
-            const melhorNota = notas[melhorIndex];
-            const melhorNivel = getNivel(melhorNota);
-            
-            const mediaGeralNivel = getNivel(mediaGeral);
-            
-            document.getElementById('totalDisciplinas').innerHTML = disciplinas.length;
-            document.getElementById('aprovadasCount').innerHTML = aprovadas;
-            document.getElementById('mediaGeral').innerHTML = mediaGeral.toFixed(1);
-            document.getElementById('melhorDisc').innerHTML = melhorDisciplina.substring(0, 12);
-            
-            const resultadoDiv = document.getElementById('resultadoPrincipal');
-            resultadoDiv.innerHTML = `
-                <div class="nota-final">${mediaGeral.toFixed(1)}</div>
-                <div class="nota-original">${Math.round(mediaGeral)} / 100</div>
-                <div class="nivel-final" style="background: ${mediaGeralNivel.cor}20; color: ${mediaGeralNivel.cor}; border: 1px solid ${mediaGeralNivel.cor}">
-                    🎯 ${mediaGeralNivel.nome}
-                </div>
             `;
-            
-            const cores = notas.map(n => getNivel(n).cor);
-            criarGrafico(notas, niveis, cores);
-            atualizarRelatorio(notas, niveis, status);
-        }
 
-        function resetarTudo() {
-            if (confirm('⚠️ Resetar todas as notas para 70? (média padrão)')) {
-                disciplinas.forEach(disciplina => {
-                    dados[disciplina] = {
-                        testes: [70, 70],
-                        comportamento: { pontualidade: 70, atitudes: 70, empenho: 70 },
-                        questoes: 70
-                    };
+            if (game.status === 'pending') {
+                html += `<h4>Fazer Apostas:</h4>`;
+                players.forEach(player => {
+                    const bet = game.bets[player];
+                    if (!bet) {
+                        html += `
+                            <div style="margin-bottom:5px;">
+                                <strong>${player}:</strong> 
+                                <select id="bet-type-${game.id}-${player}" onchange="toggleBetInputs(${game.id}, '${player}')">
+                                    <option value="exact">Placar Exato (6pts)</option>
+                                    <option value="outcome">Só Vencedor (3pts)</option>
+                                </select>
+                                
+                                <span id="exact-inputs-${game.id}-${player}">
+                                    <input type="number" id="bet-home-${game.id}-${player}" style="width:40px;" placeholder="C"> - 
+                                    <input type="number" id="bet-away-${game.id}-${player}" style="width:40px;" placeholder="F">
+                                </span>
+                                
+                                <span id="outcome-inputs-${game.id}-${player}" style="display:none;">
+                                    <select id="bet-outcome-${game.id}-${player}">
+                                        <option value="home">Vitória Casa</option>
+                                        <option value="draw">Empate</option>
+                                        <option value="away">Vitória Fora</option>
+                                    </select>
+                                </span>
+                                
+                                <button onclick="placeBet(${game.id}, '${player}')">Guardar</button>
+                            </div>
+                        `;
+                    } else {
+                        const betStr = bet.type === 'exact' ? `${bet.home} - ${bet.away}` : (bet.outcome === 'home' ? 'Vitória Casa' : (bet.outcome === 'away' ? 'Vitória Fora' : 'Empate'));
+                        html += `<div><strong>${player}:</strong> Aposta guardada (${betStr})</div>`;
+                    }
                 });
-                renderizarDisciplinas();
-                calcularTudo();
-            }
-        }
 
-        function salvarDados() {
-            localStorage.setItem('dadosAvaliacaoNiveis', JSON.stringify(dados));
-        }
-
-        function carregarDados() {
-            const salvos = localStorage.getItem('dadosAvaliacaoNiveis');
-            if (salvos) {
-                dados = JSON.parse(salvos);
+                html += `
+                    <hr>
+                    <h4>Inserir Resultado Final:</h4>
+                    <input type="number" id="res-home-${game.id}" style="width:40px;"> - 
+                    <input type="number" id="res-away-${game.id}" style="width:40px;">
+                    <button onclick="finishGame(${game.id})">Fechar Jogo</button>
+                `;
             } else {
-                inicializarDados();
+                html += `
+                    <h3 style="color:#d32f2f;">Resultado Final: ${game.homeScore} - ${game.awayScore}</h3>
+                    <h4>Apostas feitas:</h4>
+                    <ul>
+                `;
+                players.forEach(player => {
+                    const bet = game.bets[player];
+                    if (bet) {
+                        const betStr = bet.type === 'exact' ? `${bet.home} - ${bet.away} (Placar)` : (bet.outcome === 'home' ? 'Vitória Casa' : (bet.outcome === 'away' ? 'Vitória Fora' : 'Empate'));
+                        html += `<li><strong>${player}:</strong> ${betStr}</li>`;
+                    } else {
+                        html += `<li><strong>${player}:</strong> Não apostou.</li>`;
+                    }
+                });
+                html += `</ul>`;
             }
-        }
 
-        window.addEventListener('beforeunload', () => salvarDados());
+            html += `</div>`;
+            gamesList.innerHTML += html;
+        });
+
+        // Renderizar Classificação
+        const scores = calculatePoints();
+        const sortedPlayers = players.map(p => ({ name: p, points: scores[p] })).sort((a, b) => b.points - a.points);
         
-        carregarDados();
-        renderizarDisciplinas();
-        calcularTudo();
-    </script>
+        const tbody = document.getElementById('leaderboard-body');
+        tbody.innerHTML = '';
+        sortedPlayers.forEach((p, index) => {
+            tbody.innerHTML += `
+                <tr>
+                    <td>${index + 1}º</td>
+                    <td><strong>${p.name}</strong></td>
+                    <td>${p.points}</td>
+                </tr>
+            `;
+        });
+    }
+
+    // Função para exportar PDF
+    function exportPDF() {
+        const element = document.getElementById('pdf-content');
+        const opt = {
+            margin:       10,
+            filename:     'Apostas_Resultados.pdf',
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2 },
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+        html2pdf().set(opt).from(element).save();
+    }
+
+    // Iniciar a página
+    render();
+</script>
 </body>
 </html>
