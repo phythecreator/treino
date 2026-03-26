@@ -153,12 +153,6 @@
             text-align: center;
         }
 
-        .mini-card small {
-            font-size: 0.85rem;
-            letter-spacing: 1px;
-            opacity: 0.7;
-        }
-
         .game-card {
             background: var(--bg-card);
             border-radius: 24px;
@@ -220,7 +214,7 @@
         }
 
         .result-badge {
-            font-size: 2rem;
+            font-size: 2.2rem;
             font-weight: 900;
             color: var(--success);
         }
@@ -254,20 +248,11 @@
             border: 2px solid var(--border);
         }
 
-        .player-bet-box .player-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 16px;
-            font-weight: 700;
-            font-size: 1.1rem;
-        }
-
         .player-bet-box.confirmed {
             border-color: var(--success);
         }
 
-        /* Form styling */
+        /* Form styling - AGORA COM REGRAS CLARAS */
         .bet-form {
             display: flex;
             flex-direction: column;
@@ -279,21 +264,30 @@
             background: var(--bg-deep);
             border-radius: 12px;
             padding: 4px;
+            margin-bottom: 8px;
         }
 
         .segmented button {
             flex: 1;
-            padding: 10px;
+            padding: 12px 16px;
             border: none;
             background: transparent;
             border-radius: 10px;
-            font-weight: 600;
+            font-weight: 700;
+            font-size: 1rem;
         }
 
         .segmented button.active {
             background: var(--accent);
             color: white;
             box-shadow: 0 4px 15px var(--accent-glow);
+        }
+
+        .points-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: -6px;
+            margin-bottom: 8px;
         }
 
         input, select {
@@ -366,10 +360,6 @@
             padding: 40px;
             box-shadow: var(--shadow);
         }
-
-        /* MISC */
-        .status-open { color: var(--accent); }
-        .status-closed { color: var(--success); }
     </style>
 </head>
 <body>
@@ -401,9 +391,6 @@
                     style="background: linear-gradient(90deg, #2a3245, #3a4459); color:white; border:none; width:100%; padding:18px; border-radius:16px; font-size:1.1rem; font-weight:700; cursor:pointer; box-shadow:0 8px 20px rgba(0,0,0,0.3);">
                 📄 Exportar Relatório PDF
             </button>
-            <small style="display:block; text-align:center; margin-top:12px; color:var(--text-secondary);">
-                PDF super organizado e bonito
-            </small>
         </div>
     </aside>
 
@@ -449,7 +436,6 @@
             
             <div class="admin-card">
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:30px;">
-                    <!-- Equipa Casa -->
                     <div>
                         <label style="font-weight:700; display:block; margin-bottom:8px;">Equipa da Casa</label>
                         <input type="text" id="hName" placeholder="Ex: FC Porto" style="width:100%; margin-bottom:12px;">
@@ -457,7 +443,6 @@
                         <input type="file" id="hImg" accept="image/*">
                     </div>
                     
-                    <!-- Equipa Fora -->
                     <div>
                         <label style="font-weight:700; display:block; margin-bottom:8px;">Equipa de Fora</label>
                         <input type="text" id="vName" placeholder="Ex: SL Benfica" style="width:100%; margin-bottom:12px;">
@@ -467,7 +452,7 @@
                 </div>
 
                 <div style="margin-top:30px;">
-                    <label style="font-weight:700; display:block; margin-bottom:8px;">Estatística Especial (12 pontos)</label>
+                    <label style="font-weight:700; display:block; margin-bottom:8px;">Estatística Especial (12 pontos se acertar)</label>
                     <select id="statType" style="width:100%;">
                         <option value="Remates à Baliza">Remates à Baliza</option>
                         <option value="Chutes à Baliza">Chutes à Baliza</option>
@@ -489,7 +474,6 @@
     const players = ['Sá', 'Silva', 'Pedro'];
     let games = JSON.parse(localStorage.getItem('betAmigos_db')) || [];
 
-    // ==================== UTILITIES ====================
     function processImage(file) {
         return new Promise(resolve => {
             if (!file) return resolve('https://via.placeholder.com/96?text=LOGO');
@@ -505,22 +489,28 @@
         return 'draw';
     }
 
+    // ==================== PONTOS EXATAMENTE COMO PEDISTE ====================
     function calculatePoints(bet, results) {
         if (!bet || !results) return 0;
+
         const realOut = getRealOutcome(results.h, results.v);
 
-        // Se apostou na estatística (modo risco)
+        // 1. APOSTA NA ESTATÍSTICA ESPECIAL (12 pontos ou 0)
         if (bet.stat !== null && bet.stat !== undefined) {
             return (bet.stat === results.s) ? 12 : 0;
         }
 
-        // Modo normal
+        // 2. APOSTA NORMAL
         if (bet.type === 'score') {
+            // Acertar placar exato → 6 pontos
             return (bet.h === results.h && bet.v === results.v) ? 6 : 0;
         }
+        
         if (bet.type === 'win') {
+            // Acertar apenas quem ganha (ou empate) → 3 pontos
             return (bet.win === realOut) ? 3 : 0;
         }
+
         return 0;
     }
 
@@ -566,7 +556,6 @@
                     </div>
             `;
 
-            // ADMIN: fechar jogo
             if (!isClosed) {
                 html += `
                     <div style="margin-top:28px; padding:20px; background:#0f1320; border-radius:16px;">
@@ -584,7 +573,6 @@
             html += `</div>`;
             container.innerHTML += html;
 
-            // Renderizar apostas de cada jogador
             renderPlayerBets(game);
         });
     }
@@ -600,7 +588,6 @@
             box.className = `player-bet-box ${bet ? 'confirmed' : ''}`;
 
             if (bet) {
-                // Já apostou
                 let betText = '';
                 if (bet.stat !== null) {
                     betText = `Estatística: ${bet.stat} <span class="tag" style="background:#00ff9d;color:#000;">12 PTS</span>`;
@@ -619,7 +606,6 @@
                     <p style="margin:0; font-size:1rem;">${betText}</p>
                 `;
             } else if (game.status === 'open') {
-                // Formulário de aposta
                 box.innerHTML = `
                     <div class="player-header">👤 ${player}</div>
                     <div class="bet-form">
@@ -634,14 +620,16 @@
                                 <option value="draw">Empate</option>
                                 <option value="v">${game.vName}</option>
                             </select>
+                            <div class="points-label">Acertar só quem ganha = 3 pontos</div>
                         </div>
 
                         <div id="score-options-${game.id}-${player}" style="display:none; gap:12px; display:flex;">
                             <input type="number" id="h-score-${game.id}-${player}" placeholder="${game.hName}" style="width:50%;">
                             <input type="number" id="v-score-${game.id}-${player}" placeholder="${game.vName}" style="width:50%;">
+                            <div class="points-label" style="grid-column:1/-1">Acertar placar exato = 6 pontos</div>
                         </div>
 
-                        <div style="margin-top:8px;">
+                        <div style="margin-top:12px;">
                             <label style="font-size:0.85rem; color:var(--text-secondary);">Estatística Especial (12pts - arriscado)</label>
                             <input type="number" id="stat-${game.id}-${player}" placeholder="${game.statType}" style="width:100%;">
                         </div>
@@ -663,6 +651,7 @@
         
         const buttons = document.querySelectorAll(`#type-segment-${gId}-${player} button`);
         buttons.forEach(b => b.classList.remove('active'));
+
         if (type === 'win') {
             winDiv.style.display = 'block';
             scoreDiv.style.display = 'none';
@@ -685,10 +674,7 @@
 
         games.push({
             id: Date.now(),
-            hName,
-            vName,
-            hLogo,
-            vLogo,
+            hName, vName, hLogo, vLogo,
             statType: document.getElementById('statType').value,
             status: 'open',
             results: null,
@@ -699,7 +685,6 @@
         renderGames();
         showSection('games');
         
-        // Limpar formulário
         document.getElementById('hName').value = '';
         document.getElementById('vName').value = '';
         document.getElementById('hImg').value = '';
@@ -710,22 +695,19 @@
         const game = games.find(g => g.id == gId);
         if (!game) return;
 
-        // Verificar se apostou estatística
         const statVal = document.getElementById(`stat-${gId}-${player}`).value.trim();
         let betObj = {};
 
         if (statVal !== '') {
             betObj.stat = parseInt(statVal);
         } else {
-            // Tipo normal
-            const typeBtns = document.querySelectorAll(`#type-segment-${gId}-${player} button`);
-            const isScore = typeBtns[1].classList.contains('active');
+            const isScore = document.getElementById(`score-options-${gId}-${player}`).style.display !== 'none';
             
             if (isScore) {
                 betObj.type = 'score';
                 betObj.h = parseInt(document.getElementById(`h-score-${gId}-${player}`).value);
                 betObj.v = parseInt(document.getElementById(`v-score-${gId}-${player}`).value);
-                if (isNaN(betObj.h) || isNaN(betObj.v)) return alert('Preenche o placar!');
+                if (isNaN(betObj.h) || isNaN(betObj.v)) return alert('Preenche o placar exato!');
             } else {
                 betObj.type = 'win';
                 betObj.win = document.getElementById(`win-select-${gId}-${player}`).value;
@@ -761,14 +743,12 @@
         games.filter(g => g.status === 'closed').forEach(game => {
             players.forEach(p => {
                 const bet = game.bets[p];
-                if (bet) {
-                    totalPoints[p] += calculatePoints(bet, game.results);
-                }
+                if (bet) totalPoints[p] += calculatePoints(bet, game.results);
             });
         });
 
-        // Ranking cards
         const sorted = Object.entries(totalPoints).sort((a, b) => b[1] - a[1]);
+        
         const rankHTML = sorted.map(([player, pts], i) => `
             <div class="mini-card">
                 <small>${i+1}º LUGAR</small>
@@ -778,7 +758,6 @@
         `).join('');
         document.getElementById('ranking-cards').innerHTML = rankHTML;
 
-        // Tabela detalhada
         const tbody = document.getElementById('full-table-body');
         tbody.innerHTML = sorted.map(([player, pts]) => `
             <tr>
@@ -809,12 +788,11 @@
         }
     };
 
-    // ==================== PDF SUPER BONITO ====================
     function generateReportHTML() {
         let html = `
             <div style="font-family:Inter,Arial,sans-serif; max-width:1000px; margin:0 auto; color:#111; background:#fff; padding:50px 40px; border-radius:20px;">
                 <h1 style="text-align:center; color:#ff6a00; font-size:42px; margin-bottom:10px;">BETAMIGOS</h1>
-                <p style="text-align:center; font-size:18px; color:#555; margin-bottom:40px;">Relatório Completo de Apostas • ${new Date().toLocaleDateString('pt-PT')}</p>
+                <p style="text-align:center; font-size:18px; color:#555; margin-bottom:40px;">Relatório Completo • ${new Date().toLocaleDateString('pt-PT')}</p>
                 
                 <h2 style="color:#ff6a00; border-bottom:4px solid #ff6a00; padding-bottom:10px;">Classificação Final</h2>
                 <table style="width:100%; border-collapse:collapse; margin-bottom:50px;">
@@ -868,7 +846,7 @@
                 if (bet && game.results) {
                     pts = calculatePoints(bet, game.results);
                     if (bet.stat !== null) betDesc = `Estatística: ${bet.stat}`;
-                    else if (bet.type === 'score') betDesc = `Placar: ${bet.h}-${bet.v}`;
+                    else if (bet.type === 'score') betDesc = `Placar exato: ${bet.h}-${bet.v}`;
                     else betDesc = `Vencedor: ${bet.win === 'h' ? game.hName : bet.win === 'v' ? game.vName : 'Empate'}`;
                 }
                 html += `
@@ -883,7 +861,7 @@
             html += `</table></div>`;
         });
 
-        html += `<p style="text-align:center; color:#888; margin-top:60px;">Gerado automaticamente pelo BetAmigos • Interface Premium</p></div>`;
+        html += `<p style="text-align:center; color:#888; margin-top:60px;">Gerado automaticamente pelo BetAmigos • Regras: 3pts vencedor • 6pts placar exato • 12pts estatística</p></div>`;
         return html;
     }
 
@@ -897,18 +875,14 @@
             .set({
                 margin: [20, 15, 20, 15],
                 filename: `BetAmigos_Relatorio_${new Date().toISOString().slice(0,10)}.pdf`,
-                html2canvas: { scale: 3, backgroundColor: '#ffffff', useCORS: true },
+                html2canvas: { scale: 3, backgroundColor: '#ffffff' },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
             })
             .save()
-            .then(() => {
-                document.body.removeChild(tempDiv);
-            });
+            .then(() => document.body.removeChild(tempDiv));
     };
 
-    // ==================== INIT ====================
     function init() {
-        // Event listeners para sidebar
         document.querySelectorAll('.nav-item[data-section]').forEach(btn => {
             btn.addEventListener('click', () => showSection(btn.getAttribute('data-section')));
         });
